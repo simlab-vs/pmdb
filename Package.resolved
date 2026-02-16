@@ -1,0 +1,33 @@
+{
+  "originHash" : "13a1ca949555e2207150b50cac3ef0f25845775efce48f37127896148513a28b",
+  "pins" : [
+    {
+      "identity" : "archivist",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kyouko-taiga/archivist.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "086c16e150ae2ea11bbdbe4546c3a6de6bd22a31"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}
