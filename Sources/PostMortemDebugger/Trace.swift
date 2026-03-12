@@ -1,4 +1,5 @@
 import Archivist
+import Foundation
 
 /// Metadata about a trace archive.
 public struct TraceHeader: Sendable {
@@ -54,19 +55,19 @@ public struct Trace: Sendable {
   public typealias ID = UInt128
 
   /// The unique identifier of the trace.
-  public let identifier: ID
+  public let identity: ID
 
   /// A map from observation identity to its position.
-  private var observations: [ObservationOffset]
-
-  /// The snapshots recorded in the trace, along with their identities.
-  private var snaps: [ObservationEntry<Snap>]
-
-  /// The calls recorded in the trace, along with their identities.
-  private var calls: [ObservationEntry<Call>]
+  fileprivate var observations: [ObservationOffset]
 
   /// A map from a node to its parent.
-  private var parent: [Int]
+  fileprivate var parent: [ObservationIndex]
+
+  /// The snapshots recorded in the trace, along with their identities.
+  public private(set) var snaps: [ObservationEntry<Snap>]
+
+  /// The calls recorded in the trace, along with their identities.
+  public private(set) var calls: [ObservationEntry<Call>]
 
   /// Creates an instance from the contents of `data`.
   public init<T: Sequence<UInt8>>(archive data: T) throws {
@@ -74,32 +75,33 @@ public struct Trace: Sendable {
 
     // Read the trace's header.
     let header = try archive.read(TraceHeader.self)
-    self.identifier = header.identifier
+    self.identity = header.identifier
 
     // Parse the trace's contents.
     let count = try Int(archive.readUnsignedLEB128())
     self.observations = .init(minimumCapacity: count)
     self.snaps = .init()
     self.calls = .init()
-    self.parent = .init(minimumCapacity: count)
 
     for i in 0 ..< count {
       switch try archive.readByte() {
       case 0x01:
         observations.append(.init(snap: snaps.count))
-        try snaps.append(.init(id: i, value: Snap(from: &archive)))
+        try snaps.append(.init(index: .init(untagged: i), value: Snap(from: &archive)))
 
       case 0x02:
         observations.append(.init(call: calls.count))
-        try calls.append(.init(id: i, value: Call(from: &archive)))
+        try calls.append(.init(index: .init(untagged: i), value: Call(from: &archive)))
 
       default:
         throw ArchiveError.invalidInput
       }
     }
 
+    self.parent = .init(minimumCapacity: count)
     for i in 0 ..< count {
-      let p = try Int(archive.readUnsignedLEB128())
+      let p = try ObservationIndex(archive.readUnsignedLEB128())
+      parent.append(p)
 
       // The root has itself for parent.
       if p == i { continue }
@@ -113,64 +115,72 @@ public struct Trace: Sendable {
     }
   }
 
-  /// Returns the observations that satisfy the query `q`.
-  public func select(_ q: Query) -> [ObservationIdentity] {
-    switch q.entity {
-    case .snap:
-      return selectSnaps(where: q.filter)
-    default:
-      fatalError()
+  /// Creates an instance with the contents of `url`.
+  public init(contentsOf url: URL) throws {
+    let d = try Data.init(contentsOf: url)
+    try self.init(archive: d)
+  }
+
+  /// Accesses the observation at index `i`.
+  public subscript(at i: ObservationIndex) -> any Observation {
+    let offset = observations[i]
+    if let s = offset.snap {
+      return snaps[s].value
+    } else {
+      return calls[offset.call!].value
     }
   }
 
-  public func selectSnaps(where filter: QueryFilter? = nil) -> [ObservationIdentity] {
-    guard let f = filter else {
-      return snaps.map({ e in .init(trace: identifier, index: e.id) })
-    }
-
-    var result: [ObservationIdentity] = []
-    for e in snaps where satisfies(e, f) {
-      result.append(.init(trace: identifier, index: e.id))
-    }
-    return result
+  /// Accesses the observation at index `i`.
+  public subscript(at i: Snap.Index) -> Snap {
+    snaps[observations[i.untagged].snap!].value
   }
 
-  private func satisfies<T: Observation>(_ o: ObservationEntry<T>, _ f: QueryFilter) -> Bool {
-    switch f {
-    case .under(let callee, let depth):
-      let m = depth ?? Int.max
-      var d = 0
-      var j = o.id
-      while (parent[j] != j) && (d < m) {
-        j = parent[j]
-        d += 1
+  /// Accesses the observation at index `i`.
+  public subscript(at i: Call.Index) -> Call {
+    calls[observations[i.untagged].call!].value
+  }
 
-        // Is the filter defined for a specific depth?
-        if (depth == nil) || (d != m) { continue }
+  /// Returns the index of the observation following `i` at the same depth, if any.
+  fileprivate func sibling(after i: ObservationIndex) -> ObservationIndex? {
+    let p = parent[i]
 
-        // Did we get to a parent we're looking for.
-        if let p = observations[j].call {
-          if calls[p].value.function == callee { return true }
-        }
-      }
+    // Nothing to do if `i` has no parent.
+    if p == i { return nil }
 
-      return false
+    // Is `i` the last child?
+    let children = calls[observations[p].call!].value.children
+    if let j = children.firstIndex(of: i), j < (children.count - 1) {
+      return children[j + 1]
+    } else {
+      return nil
     }
+  }
+
+  /// The index of an observation.
+  public typealias ObservationIndex = Int
+
+  /// The tagged index of an observation.
+  public struct TaggedObservationIndex<T: Observation>: Hashable, Sendable {
+
+    /// The untagged value of `self`.
+    public let untagged: ObservationIndex
+
   }
 
   /// An entry in an observation table.
-  private struct ObservationEntry<T: Observation>: Sendable {
+  public struct ObservationEntry<T: Observation>: Sendable {
 
-    /// The identity of the observation.
-    let id: Int
+    /// The index of the observation in the containing trace.
+    public let index: T.Index
 
     /// The value of the observation.
-    var value: T
+    public fileprivate(set) var value: T
 
   }
 
   /// The position of an observation in its corresponding table.
-  private struct ObservationOffset: Hashable {
+  fileprivate struct ObservationOffset: Hashable {
 
     /// The raw value of this identity.
     ///
@@ -180,17 +190,37 @@ public struct Trace: Sendable {
     private let raw: Int
 
     /// Creates an instance encoding the position of a snapshot.
-    init(snap i: Int) { self.raw = i }
+    init(snap i: ObservationIndex) { self.raw = i }
 
     /// Creates an instance encoding the position of a call.
-    init(call i: Int) { self.raw = ~i }
+    init(call i: ObservationIndex) { self.raw = ~i }
 
     /// The payload of `self` iff it encodes the position of a snapshot.
-    var snap: Int? { raw >= 0 ? raw : nil }
+    var snap: ObservationIndex? { raw >= 0 ? raw : nil }
 
     /// The payload of `self` iff it encodes the position of a call.
-    var call: Int? { raw < 0 ? ~raw : nil }
+    var call: ObservationIndex? { raw < 0 ? ~raw : nil }
 
+  }
+
+}
+
+extension Trace: Hashable {
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(identity)
+  }
+
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.identity == rhs.identity
+  }
+
+}
+
+extension Trace: Comparable {
+
+  public static func < (lhs: Self, rhs: Self) -> Bool {
+    lhs.identity < rhs.identity
   }
 
 }
@@ -250,6 +280,14 @@ extension Trace: CustomStringConvertible {
     if let c = call.value.children.last {
       write(observation: observations[c], to: &output, depth: depth + 1, isLast: true)
     }
+  }
+
+}
+
+extension Trace.TaggedObservationIndex: Comparable {
+
+  public static func < (lhs: Self, rhs: Self) -> Bool {
+    lhs.untagged < rhs.untagged
   }
 
 }

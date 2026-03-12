@@ -1,6 +1,6 @@
-# pmdbg
+# pmdb
 
-`pmdbg` is a language-agnostic "post-mortem" debugger.
+`pmdb` is a language-agnostic "post-mortem" debugger.
 It provides users with a holistic view of a program's behavior and lets them identify interesting events using queries rather than careful step-by-step forward execution.
 
 Unlike a traditional live debugger, a post-mortem debugger operates on the traces of a program's execution, after that program has finished running.
@@ -12,34 +12,34 @@ In the context of this project, a trace is not a sequence of statements having b
 These observations are structured into a tree whose nodes correspond to call frames.
 That is, each child of a node is an observation that happened within the frame of the corresponding function.
 
-`pmdbg` is a language-agnostic but it requires a way to instrument the program under study to generate a trace of its execution(s).
-A library for instrumenting Python programs is currently available.
+`pmdb` is language-agnostic but it requires a way to instrument the program under study to generate a trace of its execution(s).
+A prototype library for instrumenting Python programs is currently available.
 
 To illustrate, consider the following Python program:
 
 ```python
-import pmdgb
+import recorder as pmdb
 
-@pmdgb.main.record
+@pmdb.main.record
 def factorial(n):
   return 1 if n < 2 else n * factorial(n - 1)
 
 if __name__ == "__main__":
-  n = pmdgb.main.run(factorial, 3)
+  n = pmdb.main.run(factorial, 3)
   print(n)  # Prints 6
 
   with open("factorial.trace", "wb") as f:
-    archive = pmdgb.main.serialize()
+    archive = pmdb.main.serialize()
     f.write(archive.buffer)
 ```
 
 The decorator on `factorial` indicates that calls to this function should be traced.
-The call to `pmdgb.main.run` records the evaluation of `factorial(3)` in a trace that is then serialized and saved on disk.
+The call to `pmdb.main.run` records the evaluation of `factorial(3)` in a trace that is then serialized and saved on disk.
 
 The serialized trace contains the following tree:
 
 ```
-pmdbg --show factorial.trace
+pmdb --show factorial.trace
 * call root():
 ├─* call factorial(3):
 │ ├─* call factorial(2):
@@ -49,23 +49,139 @@ pmdbg --show factorial.trace
 └─* snap factorial.$result = 3
 ```
 
-Queries:
+Once a trace has been recorded, `pmdb` can be used to explore that trace interactively, by means of a domain specific language.
+The following session illustrates:
 
 ```
-select snap under:strict (factorial(%x) where %x > 2)
-%0 = <x results>
-
-show %0
-
-select * under factorial(_)
-%1 = <x results>
-
-select call factorial(%x) where %x > 2
-%2 = <x results>
-
-select snap x from *
-%3 = <x results>
-select snap y after %3
+pmdb factorial.trace
+(pmdb) select factorial(x) where x > 1
+$0 = <2 element(s) in 1 trace(s)>
+(pmdb) show $0
+     6 |
+     7 | if __name__ == "__main__":
+>    8 |   n = pmdb.main.run(factorial, 3)
+     9 |   print(n)  # Prints 6
+    10 |
+continue? [Y/n] n
+(pmdb) exit
 ```
 
-Idea: debug a runtime system dealing with memory (e.g., mvs-calculus).
+A more detailed description of the `pmdb`'s query language is given below.
+
+It is possible to load more than one single trace during a debugging session, to explore multiple traces at once.
+Queries will return observations from all queries at once.
+
+## Query Language
+
+> Note that the query language is still under developement and that its syntax and features may change.
+
+`pmdb` comes with a query language that can be used to find observations of interest in a trace.
+A query has the following form:
+
+```
+<pattern> [from <source>] [where <expression>]
+```
+
+Two kinds of patterns exist: snap patterns and call patterns.
+The former can match snap observations (i.e., observations of a specific value at one point of the program) and the latter can match call observations (i.e., observations of function calls).
+More details are given below.
+
+The from clause, if provided, defines the source of the query which, specifies the set of observations in which the query will be executed.
+In the absence of a from clause, a query selects from all available observations in all traces.
+
+The where clause, if provided, defines a filter that is applied on all results matching the pattern.
+This filter is given as an expression denoting a pedicate satisfied if and only if the expression evaluates to a truthy value.
+More details are given below.
+
+### Snap Patterns
+
+A snap pattern is defined as an identifier pattern, matching the label of the observed value.
+This pattern can be a simple identifier, a regular expression, of a wildcard.
+Regular expressions are enclosed in a pair of forward slashes.
+For example, the pattern `/.*\$result/` matches any snap whose label is suffixed by `$result`.
+Wildcards are written with a single underscore (i.e., `_`).
+
+### Call Patterns
+
+A call pattern has the following form:
+
+```
+<identifier-pattern>(<argument-pattern> ...)
+```
+
+The first pattern serves to match the name of the function being called whereas the argument patterns serve to match argument values.
+Argument patterns are separated by a comma and can be positional or named, to match positional or named arguments, respectively.
+
+A positional pattern can be either a wildcard (i.e., `_`) or a variable.
+Repeated occurrences ofthe same variable can be used to represent the same value during pattern matching.
+For example, the pattern `f(x, x)` matches any call to a function `f` with the same value twice (e.g., `f(1, 1)` but not `f(1, 2)`).
+
+A named pattern is expressed as an identifier followed by the equal sign (i.e., `=`) and a positional pattern.
+For example, the pattern `f(a = x, b = x)` matches any call to a function `f` with two named arguments `a` and `b` having the same value (e.g., `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`).
+
+A call pattern successfully matches a call observation if and only if each argument of the call is matched by a different argument pattern, and all argument patterns have been matched.
+Naturally, the order in which positional arguments also has to match the order in which positional patterns are laid out.
+For example, `f(x, b = _)` does **not** match `f(1, b = 2, c = 3)` because the last named argument is not matched by any argument pattern.
+Likewise, the `f(x, y)` does **not** match `f(1)` because the last argument pattern has not been matched.
+
+Both positional and named patterns can be declared variadic to match arbitrary numbers of aguments.
+A variadic positional pattern is expressed by one star (i.e., `*`) and a variadic named named pattern with two stars (i.e., `**`).
+For example, `f(*)` matches (among others) `f()`, `f(1)`, and `f(1, 2)` and `f(**)` matches (among others) `f()`, `f(a = 1)`, and `f(a = 1, b = 2)`.
+Note that a variadic positional pattern does not match any named argument, and vice versa.
+For example, `f(**)` does not match `f(1)`.
+
+Variadic patterns can be optionally prefixed by a simple identifier to bind the sequence of arguments that has been matched in query filters.
+For example, the query `f(xs*) where xs.all(x => x == 0)` matches any call to a function `f` whose all arguments equal to zero, which includes (among others) `f()` and `f(0, 0)` but not `f(0, 1)`.
+
+Finally, the universal pattern `...` can be used instead of a comma-separated list of argument pattern to match any argument list.
+For instance, `f(...)` matches (among others) `f()`, `f(1, 2)` and `f(1, b = 2)`.
+
+
+### Where Clauses
+
+> Work on the interpreter is ongoing; some features are currently unimplemented.
+
+A where clause is an expression that further filters the results of a query by excluding successful that do not satisfy some critera.
+For example, consider the query `f(x) where x != 0`, which matches calls to `f` having a single argument different from zero.
+The expression `x != 0` is evaluated for each call observation matching the pattern `f(x)`.
+
+A where clause is satisfied if it evaluates to a "truthy" value, which is any value different from zero, an empty array, or an empty table.
+It is expressed as an expression that can mentions the names bound in call patterns.
+The grammar of legal expressions is given below:
+
+```
+expr ::=
+  infix-expr
+
+infix-expr ::=
+  prefix-expr operator expr
+  prefix-expr
+
+prefix-expr ::=
+  operator compound-expr
+  compound-expr
+
+compound-expr ::=
+  identifier '=>' expr
+  primary-expr compound-expr-tail
+  primary-expr
+
+compound-expr-tail ::=
+  '(' argument-list ')'
+  '(' ')'
+  '[' expr ']'
+  '.' identifier
+
+primary-expr ::=
+  boolean-literal
+  integer-literal
+  floating-point-literal
+  string-literal
+  identifier
+  'if' expr 'then' expr 'else' expr
+  '(' expr ')'
+
+argument-list ::=
+  expr ',' argument-list
+  expr
+```

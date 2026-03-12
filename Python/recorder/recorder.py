@@ -123,7 +123,7 @@ class Recorder(object):
     self.observe(Snapshot(caller.filename, caller.lineno, label, value))
 
   def run(self, f, *args, **kwargs):
-    f(*args, **kwargs)
+    return f(*args, **kwargs)
 
   def observe(self, snap: Snapshot):
     self.observations.append(snap)

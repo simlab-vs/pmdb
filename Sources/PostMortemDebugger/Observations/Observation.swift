@@ -5,3 +5,11 @@ public protocol Observation: Sendable {
   var location: SourceLine { get }
 
 }
+
+
+extension Observation {
+
+  /// The index of an instance of `Self` relative to the trace to which it belongs.
+  public typealias Index = Trace.TaggedObservationIndex<Self>
+
+}

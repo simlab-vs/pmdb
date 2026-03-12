@@ -13,7 +13,7 @@ public struct Call: Observation {
   public let positional: [Value]
 
   /// The list of named arguments.
-  public let named: [String: Value]
+  public let named: SortedDictionary<String, Value>
 
   /// The children of this objservation.
   public private(set) var children: [Int]
@@ -34,12 +34,12 @@ public struct Call: Observation {
 
     // Parse the named arguments.
     let n = try Int(archive.readUnsignedLEB128())
-    var named: [String: Value] = .init(minimumCapacity: n)
+    var named: SortedDictionary<String, Value> = .init(minimumCapacity: n)
     for _ in 0 ..< n {
       let k = try archive.read(String.self)
       let v = try archive.read(Value.self)
-      if named.updateValue(v, forKey: k) != nil {
-        throw ArchiveError.invalidInput
+      try modify(&named[k]) { (w) in
+        if w == nil { throw ArchiveError.invalidInput } else { w = .some(v) }
       }
     }
     self.named = named

@@ -6,4 +6,10 @@ extension Array {
     self.reserveCapacity(n)
   }
 
+  /// Creates an instance containing `head` followed by the contents of `tail`.
+  public init<T: Sequence<Element>>(head: Element, tail: T) {
+    self = [head]
+    self.append(contentsOf: tail)
+  }
+
 }

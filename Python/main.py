@@ -84,14 +84,23 @@ class Sublist(object):
 
 @recorder.main.record
 def factorial(n):
+  """
+  Returns the factorial of the non-negative integer `n`.
+  """
   return 1 if n < 2 else n * factorial(n - 1)
 
 @recorder.main.record
 def gcd(a, b):
+  """
+  Returns the greatest common divisor of positive integers `a` and `b`.
+  """
   return a if b == 0 else gcd(b, a % b)
 
 @recorder.main.record
 def rho(n):
+  """
+  Returns a non-trivial factor of the positive integer `n` using Pollard's rho algorithm.
+  """
   @recorder.main.record
   def f(x, y, d):
     if d == 1:
@@ -114,7 +123,7 @@ if __name__ == "__main__":
   # recorder.main.run(ys.quicksort, lambda x, y: x < y)
 
   # recorder.main.run(factorial, 6)
-  recorder.main.run(rho, 15) # rho(10403)
+  recorder.main.run(rho, 10403) # rho(10403)
 
   a = recorder.main.serialize()
   # print([hex(b) for b in a.buffer])

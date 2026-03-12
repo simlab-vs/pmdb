@@ -5,9 +5,12 @@ let package = Package(
   name: "PostMortemDebugger",
   platforms: [.macOS(.v15)],
   products: [
-    .executable(name: "pmdbg", targets: ["pmdbg"]),
+    .executable(name: "pmdb", targets: ["pmdb"]),
   ],
   dependencies: [
+    .package(
+      url: "https://github.com/apple/swift-algorithms.git",
+      from: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-argument-parser.git",
       from: "1.7.0"),
@@ -17,7 +20,7 @@ let package = Package(
   ],
   targets: [
     .executableTarget(
-      name: "pmdbg",
+      name: "pmdb",
       dependencies: [
         .target(name: "PostMortemDebugger"),
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
@@ -26,6 +29,7 @@ let package = Package(
     .target(
       name: "PostMortemDebugger",
       dependencies: [
+        .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Archivist", package: "archivist"),
       ]
     ),
