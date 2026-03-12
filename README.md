@@ -71,6 +71,17 @@ A more detailed description of the `pmdb`'s query language is given below.
 It is possible to load more than one single trace during a debugging session, to explore multiple traces at once.
 Queries will return observations from all queries at once.
 
+## Getting started
+
+`pmdb` is written in Swift and can be built from sources using its default package manager.
+Install Swift on your system [as per instructions](https://www.swift.org/install/macos/), clone this repository, and finally build `pmdb` with the following command:
+
+```
+swift build -c release
+```
+
+A standalone executable will be written to the folder `.build/release`.
+
 ## Query Language
 
 > Note that the query language is still under developement and that its syntax and features may change.
