@@ -15,6 +15,15 @@ public struct SourceLine: Hashable, Sendable {
     self.number = number
   }
 
+  /// Creates an instance with `gnu`, which is a URL and a 1-based line index separated by a colon.
+  public init?(gnu: String) {
+    guard
+      let i = gnu.firstIndex(of: ":"),
+      let n = Int(gnu[gnu.index(after: i)...])
+    else { return nil }
+    self.init(n, in: .init(gnu[..<i]))
+  }
+
 }
 
 extension SourceLine: Archivable {

@@ -44,7 +44,7 @@ public enum Value: Hashable, Sendable {
   case function(String)
 
   /// An arbitrary object.
-  case object(ContiguousArray<UInt8>)
+  case object([UInt8])
 
   /// Creates a truthy value if `b` is `true` or a falsy value otherwise.
   public init(_ b: Bool) {
@@ -100,7 +100,7 @@ extension Value: Archivable {
 
     case ValueTag.object.rawValue:
       let n = try archive.readUnsignedLEB128()
-      var d: ContiguousArray<UInt8> = []
+      var d: [UInt8] = []
       d.reserveCapacity(Int(n))
       for _ in 0 ..< n { try d.append(archive.readByte()) }
       self = .object(d)

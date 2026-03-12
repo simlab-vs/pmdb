@@ -48,6 +48,132 @@ extension TraceHeader: Archivable {
 
 }
 
+extension Trace {
+
+  /// Creates an instance parsing the given XML contents.
+  public init?(xml: Data) {
+    guard
+      let root = try? XMLDocument(data: xml).rootElement(),
+      let uuid = root.attribute(forName: "id")?.stringValue.flatMap(UUID.init(uuidString:))
+    else { return nil }
+
+    self.identity = UInt128(uuid)
+    self.observations = []
+    self.snaps = []
+    self.calls = []
+    self.parent = []
+    if !recurse(root, parent: 0) {
+      return nil
+    }
+
+    func recurse(_ node: XMLElement, parent: Int) -> Bool {
+      // Are there observations?
+      guard let children = node
+        .elements(forLocalName: "observations", uri: Self.namespace)
+        .uniqueElement?.children
+      else { return true }
+
+      // Parse observations.
+      for n in children where n.uri == Self.namespace {
+        let i = observations.count
+
+        // The root has itself for parent.
+        self.parent.append(parent)
+        if parent != i {
+          calls[observations[parent].call!].value.append(i)
+        }
+
+        switch n.localName {
+        case .some("snap"):
+          guard let v = Self.snap(n as! XMLElement) else { return false }
+          self.observations.append(.init(snap: snaps.count))
+          self.snaps.append(.init(index: .init(untagged: i), value: v))
+
+        case .some("call"):
+          guard let v = Self.call(n as! XMLElement) else { return false }
+          self.observations.append(.init(call: calls.count))
+          self.calls.append(.init(index: .init(untagged: i), value: v))
+
+          // Parse children observations.
+          if !recurse(n as! XMLElement, parent: i) { return false }
+
+        default:
+          return false
+        }
+      }
+
+      return true
+    }
+  }
+
+  /// Returns a snap parsed from the contents of `node`.
+  private static func snap(_ node: XMLElement) -> Snap? {
+    assert(node.localName == "snap")
+    guard
+      let l = node.attribute(forName: "location")?.stringValue.flatMap(SourceLine.init(gnu:)),
+      let v = node
+        .elements(forLocalName: "value", uri: Self.namespace)
+        .uniqueElement.flatMap(Self.value(_:))
+    else { return nil }
+    return Snap(location: l, label: node.attribute(forName: "label")?.stringValue, value: v)
+  }
+
+  /// Returns a call parsed from the contents of `node`.
+  private static func call(_ node: XMLElement) -> Call? {
+    assert(node.localName == "call")
+    guard
+      let l = node.attribute(forName: "location")?.stringValue.flatMap(SourceLine.init(gnu:)),
+      let f = node
+        .elements(forLocalName: "function", uri: Self.namespace)
+        .uniqueElement?.stringValue,
+      let a = node
+        .elements(forLocalName: "arguments", uri: Self.namespace)
+        .uniqueElement
+    else { return nil }
+
+    var positional: [Value] = []
+    var named: SortedDictionary<String, Value> = [:]
+    for n in (a.children ?? []) where n.uri == Self.namespace {
+      guard let v = value(n) else { return nil }
+      if let k = (n as! XMLElement).attribute(forName: "label")?.stringValue {
+        named[k] = v
+      } else {
+        positional.append(v)
+      }
+    }
+
+    return Call(location: l, function: f, positional: positional, named: named)
+  }
+
+  /// Returns a value parsed from the contents of `node`.
+  private static func value(_ node: XMLNode) -> Value? {
+    assert(node.localName == "value")
+    guard let payload = node.child(at: 0), payload.uri == Self.namespace else { return nil }
+
+    switch payload.localName {
+    case .some("integer"):
+      return payload.stringValue.flatMap(Int64.init(_:)).map(Value.integer(_:))
+
+    case .some("float"):
+      return payload.stringValue.flatMap(Double.init(_:)).map(Value.float(_:))
+
+    case .some("string"):
+      return payload.stringValue.map(Value.string(_:))
+
+    case .some("object"):
+      return payload.stringValue.flatMap { (s) in
+        Data.init(base64Encoded: s).flatMap(Array.init(_:)).map(Value.object(_:))
+      }
+
+    default:
+      return nil
+    }
+  }
+
+  private static let namespace = "https://hevs.ch/pmdb"
+
+}
+
 /// The trace of a program's execution.
 public struct Trace: Sendable {
 
@@ -115,10 +241,15 @@ public struct Trace: Sendable {
     }
   }
 
-  /// Creates an instance with the contents of `url`.
+  /// Creates an instance with the binary or XML archive stored at `url`.
   public init(contentsOf url: URL) throws {
-    let d = try Data.init(contentsOf: url)
-    try self.init(archive: d)
+    let data = try Data.init(contentsOf: url)
+
+    if url.pathExtension == "xml" {
+      self = try Trace(xml: data) ?? RuntimeError("failed to load a trace from '\(url)'")
+    } else {
+      self = try Trace(archive: data)
+    }
   }
 
   /// Accesses the observation at index `i`.
@@ -288,6 +419,23 @@ extension Trace.TaggedObservationIndex: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
     lhs.untagged < rhs.untagged
+  }
+
+}
+
+extension UInt128 {
+
+  /// Creates an instance copying the bytes of `uuid`.
+  fileprivate init(_ uuid: UUID) {
+    self = withUnsafePointer(to: uuid.uuid) { (p) in
+      p.withMemoryRebound(to: UInt8.self, capacity: 16) { (q) in
+        var s = UInt128()
+        for i in 0 ..< 16 {
+          s |= UInt128(q[i]) << ((15 - i) << 3)
+        }
+        return s
+      }
+    }
   }
 
 }

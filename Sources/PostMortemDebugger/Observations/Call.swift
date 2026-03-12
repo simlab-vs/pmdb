@@ -18,6 +18,18 @@ public struct Call: Observation {
   /// The children of this objservation.
   public private(set) var children: [Int]
 
+  /// Creates an instance with the given properties.
+  public init(
+    location: SourceLine, function: String,
+    positional: [Value], named: SortedDictionary<String, Value>
+  ) {
+    self.location = location
+    self.function = function
+    self.positional = positional
+    self.named = named
+    self.children = []
+  }
+
   /// Reads an instance from `archive`.
   public init<T>(from archive: inout ReadableArchive<T>) throws {
     self.location = try archive.read(SourceLine.self)
