@@ -1,5 +1,8 @@
 {
     "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
     "nixEnvSelector.useFlakes": true,
-    "nixEnvSelector.flakeShell": "default"
+    "nixEnvSelector.flakeShell": "default",
+    // nixpkgs ships sourcekit-lsp as a separate package, not inside the swift toolchain dir,
+    // so resolve it from the dev shell's PATH instead.
+    "swift.sourcekit-lsp.serverPath": "sourcekit-lsp"
 }
