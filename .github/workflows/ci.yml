@@ -62,9 +62,10 @@ jobs:
       - uses: cachix/install-nix-action@v31
 
       - name: Check Swift version is 6.2.4 and fail if not
-        run: 
-          if [[ "$(swift --version | head -n 1)" != "Swift version 6.2.4" ]]; then
-            echo "Expected Swift version 6.2.4, but got $(swift --version | head -n 1)"
+        run: |
+          version="$(swift --version 2>&1)"
+          if [[ "$version" != *"Swift version 6.2.4 "* ]]; then
+            echo "Expected Swift version 6.2.4, but got: $version"
             exit 1
           fi
 
