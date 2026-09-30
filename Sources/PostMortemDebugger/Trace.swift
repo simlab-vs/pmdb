@@ -1,6 +1,10 @@
 import Archivist
 import Foundation
 
+#if canImport(FoundationXML)
+  import FoundationXML
+#endif
+
 /// Metadata about a trace archive.
 public struct TraceHeader: Sendable {
 

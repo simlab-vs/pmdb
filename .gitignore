@@ -1,3 +1,9 @@
+# Nix / direnv: .direnv holds the cached shell and its GC roots, result* are
+# build symlinks. flake.nix and flake.lock are committed on purpose.
+.direnv/
+result
+result-*
+
 .DS_Store
 /.build
 /Packages

@@ -1,0 +1,75 @@
+name: Build and Test
+on:
+  pull_request:
+  push:
+
+env:
+  ACTIONS_RUNNER_DISABLE_NODE_MAGLEV: 1 # https://github.com/SwiftyLab/setup-swift/issues/506
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: all combinations of the following will be run independently
+        os: [macos-26, ubuntu-24.04, windows-2025]
+        swift: ["6.2.4"]
+        config: [release, debug]
+
+        include:
+          # Disable exporting code coverage by default.
+          - export-coverage: false
+
+          # Enable exporting code coverage in a single configuration.
+          - os: "ubuntu-24.04"
+            config: debug
+            export-coverage: true
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+
+      - name: Set up Swift ${{ matrix.swift }} on ${{ matrix.os }}
+        uses: SwiftyLab/setup-swift@84503ffdcbb4401abf88d7e31fd6b27d00cb86de
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - name: Build Swift project
+        run: swift build --build-tests -Xswiftc -enable-testing ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }} -c ${{ matrix.config }}
+
+      - name: Run tests
+        run: swift test --skip-build -Xswiftc -enable-testing -c ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }} -c ${{ matrix.config }}
+
+  test-nix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-26, ubuntu-24.04]
+        config: [release, debug]
+
+    runs-on: ${{ matrix.os }}
+    
+    defaults:
+      run:
+        shell: nix develop -c bash -eo pipefail {0}
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Check Swift version is 6.2.4 and fail if not
+        run: 
+          if [[ "$(swift --version | head -n 1)" != "Swift version 6.2.4" ]]; then
+            echo "Expected Swift version 6.2.4, but got $(swift --version | head -n 1)"
+            exit 1
+          fi
+
+      - name: Build Swift project
+        run: swift build --build-tests -Xswiftc -enable-testing --verbose -c ${{ matrix.config }}
+
+      - name: Run tests
+        run: swift test --skip-build -Xswiftc -enable-testing --verbose -c ${{ matrix.config }}

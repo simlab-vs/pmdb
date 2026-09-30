@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:pytrace-recorder}",
+            "name": "Debug pmdb",
+            "target": "pmdb",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug pmdb"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:pytrace-recorder}",
+            "name": "Release pmdb",
+            "target": "pmdb",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release pmdb"
+        }
+    ]
+}
