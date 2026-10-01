@@ -88,7 +88,6 @@ extension Expression {
     /// Creates an instance with the given properties.
     public init<T: Sequence<Expression>>(callee: Expression, arguments: T) {
       self.children = .init(head: callee, tail: arguments)
-      assert(self.children.count >= 2, "application requires at least one argument")
     }
 
     /// The expression of the function being called.

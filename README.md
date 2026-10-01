@@ -221,4 +221,12 @@ The following operators are supported, from the loosest to the tightest binding:
 - `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
 
-A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`, and arrays have a method `all` that returns whether a lambda returns a truthy value for each of their elements, as in `xs.all(x => x == 0)`.
+A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
+Arrays have the following methods, where `p` is a lambda:
+
+- `xs.all(p)` returns whether `p` returns a truthy value for all elements of `xs`, as in `xs.all(x => x == 0)`;
+- `xs.any(p)` returns whether `p` returns a truthy value for at least one element of `xs`;
+- `xs.count(p)` returns the number of elements of `xs` for which `p` returns a truthy value;
+- `xs.len()` returns the number of elements of `xs`.
+
+Tables also have a method `len`, which returns their number of entries.
