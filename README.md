@@ -39,7 +39,7 @@ Every call to a decorated function is recorded, so evaluating `factorial(3)` (he
 Each recorded call is followed by a snap labeled `<function>.$result` holding the value returned by the call.
 If the call raises instead, the snap is labeled `<function>.$exception` and holds a table with the `type` of the exception and its `message`.
 Arguments, results, and snaps are recorded in the state they have when they are observed.
-`None` is recorded as `none`, lists and tuples as arrays, and dictionaries with string keys and named tuples as tables.
+`None` is recorded as `none`, `True` and `False` as Booleans, lists and tuples as arrays, and dictionaries with string keys and named tuples as tables.
 Members of enumerations are recorded as their names.
 A class can choose how its instances are recorded by defining a method `__pmdb__` returning the value to record instead, and `pmdb.register(cls, convert)` does the same for classes one cannot modify.
 Other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
@@ -201,7 +201,7 @@ A where clause is an expression that further filters the results of a query by e
 For example, consider the query `f(x) where x != 0`, which matches calls to `f` having a single argument different from zero.
 The expression `x != 0` is evaluated for each call observation matching the pattern `f(x)`.
 
-A where clause is satisfied if it evaluates to a "truthy" value, which is any value different from `none`, zero, an empty string, an empty array, or an empty table.
+A where clause is satisfied if it evaluates to a "truthy" value, which is any value different from `none`, `false`, zero, an empty string, an empty array, or an empty table.
 If the evaluation of a where clause fails for any of the matching observations (e.g., because it divides by zero or selects an element of a value that is not an array), the query fails and the error is reported.
 It is expressed as an expression that can mentions the names bound in call patterns.
 The grammar of legal expressions is given below:
@@ -248,10 +248,12 @@ The following operators are supported, from the loosest to the tightest binding:
 
 - `||` and `&&`, which evaluate their right operand only if the left one does not determine their result;
 - `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
-- `==` and `!=`, which also compare two strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
+- `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
 - `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
-- `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
+- `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+
+Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
 
 A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
 Arrays have the following methods, where `p` is a lambda:

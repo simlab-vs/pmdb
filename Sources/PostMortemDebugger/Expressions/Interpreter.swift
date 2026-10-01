@@ -90,11 +90,11 @@ extension Expression.Apply {
     case .identifier("/"):
       return try binary(in: &environment,) { (a, b) in try a.div(b) }
     case .identifier("&"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, &) }
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, &, { (l, r) in l && r }) }
     case .identifier("^"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, ^) }
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, ^, !=) }
     case .identifier("|"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, |) }
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, |, { (l, r) in l || r }) }
     case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
     default:
@@ -232,8 +232,8 @@ extension Expression.Apply {
         return .init(transform(result == 0))
       }
       switch (a, b) {
-      case (.null, _), (_, .null), (.string, .string), (.array, .array), (.table, .table), (.function, .function),
-        (.object, .object):
+      case (.null, _), (_, .null), (.boolean, .boolean), (.string, .string), (.array, .array),
+        (.table, .table), (.function, .function), (.object, .object):
         return .init(transform(a == b))
       default:
         throw Diagnostic.invalidBinaryOperation(callee, a, b)
@@ -391,11 +391,17 @@ extension Value {
     }
   }
 
-  /// Returns `combine` applied on the bits of `self` and `other` iff both are integers.
-  fileprivate func bitwise(_ other: Value, _ combine: (Int64, Int64) -> Int64) -> Value? {
-    if case .integer(let lhs) = self, case .integer(let rhs) = other {
-      return .integer(combine(lhs, rhs))
-    } else {
+  /// Returns `self` and `other` combined with `integers` iff both are integers, or with `booleans`
+  /// iff both are Booleans.
+  fileprivate func bitwise(
+    _ other: Value, _ integers: (Int64, Int64) -> Int64, _ booleans: (Bool, Bool) -> Bool
+  ) -> Value? {
+    switch (self, other) {
+    case (.integer(let lhs), .integer(let rhs)):
+      return .integer(integers(lhs, rhs))
+    case (.boolean(let lhs), .boolean(let rhs)):
+      return .boolean(booleans(lhs, rhs))
+    default:
       return nil
     }
   }

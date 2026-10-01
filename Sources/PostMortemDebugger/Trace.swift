@@ -165,6 +165,9 @@ extension Trace {
     case .some("none"):
       return .null
 
+    case .some("boolean"):
+      return payload.stringValue.flatMap(Bool.init(_:)).map(Value.boolean(_:))
+
     case .some("integer"):
       return payload.stringValue.flatMap(Int64.init(_:)).map(Value.integer(_:))
 
@@ -274,6 +277,8 @@ extension Trace {
     switch v {
     case .null:
       w.empty("pmdb:none")
+    case .boolean(let b):
+      try w.leaf("pmdb:boolean", b.description)
     case .integer(let n):
       try w.leaf("pmdb:integer", n.description)
     case .float(let n):

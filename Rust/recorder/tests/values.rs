@@ -22,7 +22,7 @@ fn records_scalars() {
   assert_eq!(recorded!(()), Value::Null);
   assert_eq!(recorded!(None::<i32>), Value::Null);
   assert_eq!(recorded!(Some(3u8)), Value::Integer(3));
-  assert_eq!(recorded!(true), Value::Integer(1));
+  assert_eq!(recorded!(true), Value::Boolean(true));
   assert_eq!(recorded!(-7i8), Value::Integer(-7));
   assert_eq!(recorded!(i64::MIN), Value::Integer(i64::MIN));
   assert_eq!(recorded!(i64::MAX as u64), Value::Integer(i64::MAX));

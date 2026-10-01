@@ -7,6 +7,7 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq)]
 pub enum Value {
   Null,
+  Boolean(bool),
   Integer(i64),
   Float(f64),
   String(String),
@@ -224,6 +225,11 @@ impl Reader<'_> {
         let n = self.unsigned();
         Value::Array((0..n).map(|_| self.value()).collect())
       }
+      0x06 => match self.byte() {
+        0 => Value::Boolean(false),
+        1 => Value::Boolean(true),
+        b => panic!("invalid Boolean {b:#x}"),
+      },
       0x05 => {
         let n = self.unsigned();
         let mut t = BTreeMap::new();

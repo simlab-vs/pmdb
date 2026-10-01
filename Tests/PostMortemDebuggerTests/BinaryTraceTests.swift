@@ -388,6 +388,57 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   #expect(trace.snaps[0].value.description == "snap f.$result = none")
 }
 
+@Test func readsBooleansFromBinaryTrace() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x, y=None):
+      return x
+
+    f(True, y=[False, 1])
+    """)
+
+  #expect(trace.calls[1].value.positional == [.boolean(true)])
+  #expect(trace.calls[1].value.named["y"] == .array([.boolean(false), .integer(1)]))
+  #expect(trace.snaps[0].value.description == "snap f.$result = true")
+}
+
+@Test(arguments: [(1, true), (2, false)])
+func readsOnlyZeroOrOneAsBooleans(payload: Int, isValid: Bool) async throws {
+  let program = """
+    r.snapshot("x", True)
+    r.observations[1].value = bytes([0x06, \(payload)])
+    """
+  if isValid {
+    let trace = try await record(program)
+    #expect(trace.snaps.map(\.value.value) == [.boolean(true)])
+  } else {
+    await #expect(throws: (any Error).self) { try await record(program) }
+  }
+}
+
+@Test(arguments: [
+  ("f(x) where x == true", 1),
+  ("f(x) where x == false", 1),
+  ("f(x) where x", 1),
+  ("f(x) where x & true", 1),
+])
+func selectsBooleans(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x):
+      pass
+
+    f(True)
+    f(False)
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try await engine.select(query("select \(source)")).count == count)
+}
+
 @Test(arguments: [
   ("f(x) where x == none", 1),
   ("f(x) where x != none", 3),
@@ -453,7 +504,7 @@ private func haveSameContents(_ a: Trace, _ b: Trace) -> Bool {
       f(x, y=[x])
       raise ValueError(x)
 
-    f(None, -2**63, 2**63 - 1, 2**64, 0.1, -0.0, 1e300, float("inf"), float("-inf"))
+    f(None, True, False, -2**63, 2**63 - 1, 2**64, 0.1, -0.0, 1e300, float("inf"), float("-inf"))
     f("", " a ", "x\\r\\ny", "<&>\\"'", "tab\\t", "é😀", "]]>")
     f([], [None, [1]], {}, {"a": {"b": 2}, "<": "&"}, f, Point(1), threading.Lock())
     f(**{"a b": 1, "\\n": 2, "é": 3})

@@ -15,6 +15,8 @@ public enum ValueTag: UInt8, Hashable, Sendable {
 
   case table    = 0x05
 
+  case boolean  = 0x06
+
   case function = 0xfe
 
   case object   = 0xff
@@ -29,6 +31,9 @@ public enum Value: Hashable, Sendable {
   ///
   /// This case isn't named `none` to avoid confusions with `Optional.none`.
   case null
+
+  /// A Boolean.
+  case boolean(Bool)
 
   /// A signed integer.
   case integer(Int64)
@@ -54,15 +59,16 @@ public enum Value: Hashable, Sendable {
   /// An arbitrary object.
   case object([UInt8])
 
-  /// Creates a truthy value if `b` is `true` or a falsy value otherwise.
+  /// Creates a Boolean value.
   public init(_ b: Bool) {
-    self = .integer(b ? 1 : 0)
+    self = .boolean(b)
   }
 
   /// A textual description of the type of this value.
   public var type: String {
     switch self {
     case .null: "none"
+    case .boolean: "boolean"
     case .integer: "integer"
     case .float: "float"
     case .string: "string"
@@ -77,6 +83,8 @@ public enum Value: Hashable, Sendable {
   /// Returns `true` iff `self` is interpreted as a truthy value when it appears as a condition.
   public var isTruthy: Bool {
     switch self {
+    case .boolean(let v):
+      return v
     case .integer(let v):
       return v != 0
     case .float(let v):
@@ -100,6 +108,13 @@ extension Value: Archivable {
     switch try archive.readByte() {
     case ValueTag.null.rawValue:
       self = .null
+
+    case ValueTag.boolean.rawValue:
+      switch try archive.readByte() {
+      case 0: self = .boolean(false)
+      case 1: self = .boolean(true)
+      default: throw ArchiveError.invalidInput
+      }
 
     case ValueTag.integer.rawValue:
       self = try .integer(archive.readSignedLEB128(as: Int64.self))
@@ -156,6 +171,8 @@ extension Value: CustomStringConvertible {
     switch self {
     case .null:
       return "none"
+    case .boolean(let v):
+      return v.description
     case .integer(let v):
       return v.description
     case .float(let v):

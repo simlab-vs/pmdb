@@ -40,6 +40,11 @@ struct Flattened {
 #[test]
 fn maps_the_serde_data_model() {
   use Value::{Float as F, Integer as I};
+  assert_eq!(recorded(true), Value::Boolean(true));
+  assert_eq!(
+    recorded((false, 0)),
+    Value::Array(vec![Value::Boolean(false), I(0)])
+  );
   assert_eq!(
     recorded(Point {
       x: 1,

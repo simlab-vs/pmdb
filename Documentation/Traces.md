@@ -20,16 +20,17 @@ A call additionally contains the name of the function being called, the argument
 
 ### Values
 
-`pmdb` supports 8 types of values to record snaps and call arguments, namely:
+`pmdb` supports 9 types of values to record snaps and call arguments, namely:
 
 1. the absence of a value (e.g., `None` in Python or `null` in JavaScript),
-2. integers,
-3. floating-point numbers,
-4. character strings,
-5. arrays (i.e., ordered collection of values),
-6. tables (i.e., mappings from strings to values),
-7. functions, represented by their names, and
-8. arbitrary objects, represented as raw sequence of bytes.
+2. Booleans,
+3. integers,
+4. floating-point numbers,
+5. character strings,
+6. arrays (i.e., ordered collection of values),
+7. tables (i.e., mappings from strings to values),
+8. functions, represented by their names, and
+9. arbitrary objects, represented as raw sequence of bytes.
 
 `pmdb` internally represents integers using 64 signed bits and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
 This particular choice has a couple of noteworthy consequences:
@@ -84,7 +85,7 @@ The following illustrate with an observation recording `f(42, pi = 42)`.
 
 A value is expressed by a `pmdb:value` tag containing a single element representing its contents.
 There is one element per type of value supported by `pmdb`.
-Payloads are written in plain text except for arrays which are sequences of values, tables which are sequence of labeled values, and objects whose contents are written using a base64 enoding.
+Payloads are written in plain text, Booleans being written `true` or `false`, except for arrays which are sequences of values, tables which are sequence of labeled values, and objects whose contents are written using a base64 enoding.
 For example, the following describes an array containing an integer and an object.
 
 ```xml

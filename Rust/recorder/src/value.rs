@@ -19,6 +19,7 @@ pub enum Tag {
   String = 0x03,
   Array = 0x04,
   Table = 0x05,
+  Boolean = 0x06,
   Function = 0xfe,
   Object = 0xff,
 }
@@ -87,9 +88,9 @@ impl<'a> ValueWriter<'a> {
     self.begin(Tag::Null);
   }
 
-  /// Records `b` as the integer `1` if it is `true`, or `0` otherwise.
-  pub fn bool(self, b: bool) {
-    self.integer(b as i64)
+  /// Records `b`.
+  pub fn bool(mut self, b: bool) {
+    self.begin(Tag::Boolean).push(b as u8);
   }
 
   /// Records `n`.

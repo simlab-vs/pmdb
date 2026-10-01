@@ -157,14 +157,32 @@ func query(_ source: String) throws -> Query {
   "<pmdb:array><pmdb:integer>1</pmdb:integer></pmdb:array>",
 ])
 func rejectsInvalidCollectionsInXMLTrace(value: String) {
-  let source = """
-    <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
-      <pmdb:observations>
-        <pmdb:snap location="a.py:1"><pmdb:value>\(value)</pmdb:value></pmdb:snap>
-      </pmdb:observations>
-    </pmdb:trace>
-    """
-  #expect(Trace(xml: Data(source.utf8)) == nil)
+  #expect(Trace(xml: Data(snapping(value).utf8)) == nil)
+}
+
+/// Returns a trace document with a single snap of `value`, a `pmdb:value` payload.
+private func snapping(_ value: String) -> String {
+  """
+  <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
+    <pmdb:observations>
+      <pmdb:snap location="a.py:1"><pmdb:value>\(value)</pmdb:value></pmdb:snap>
+    </pmdb:observations>
+  </pmdb:trace>
+  """
+}
+
+@Test(arguments: [("true", true), ("false", false)])
+func parsesBooleansInXMLTrace(payload: String, value: Bool) throws {
+  let trace = try #require(Trace(xml: Data(snapping("<pmdb:boolean>\(payload)</pmdb:boolean>").utf8)))
+  #expect(trace.snaps.map(\.value.value) == [.boolean(value)])
+
+  let reloaded = try #require(Trace(xml: trace.xml()))
+  #expect(reloaded.snaps.map(\.value.value) == [.boolean(value)])
+}
+
+@Test(arguments: ["1", "0", "True", ""])
+func rejectsInvalidBooleansInXMLTrace(payload: String) {
+  #expect(Trace(xml: Data(snapping("<pmdb:boolean>\(payload)</pmdb:boolean>").utf8)) == nil)
 }
 
 @Test(arguments: [
@@ -199,6 +217,15 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(x) where x | 4 ^ 1 & 3 == 6", 1),
   ("factorial(x) where x + x & 1 == 4", 1),
   ("factorial(x) where x - 1 | 1 == 1", 2),
+  ("factorial(x) where (x > 1) == true", 2),
+  ("factorial(x) where (x > 1) != (x > 2)", 1),
+  ("factorial(x) where true != false", 3),
+  ("factorial(x) where !(x > 1) == true", 1),
+  ("factorial(x) where (x > 2) | (x < 2)", 2),
+  ("factorial(x) where (x > 1) ^ (x > 2)", 1),
+  ("factorial(x) where true & (x > 1)", 2),
+  ("factorial(x) where false", 0),
+  ("factorial(x) where if x > 1 then false else true", 1),
   ("factorial(x) where \"a\" == \"a\"", 3),
   ("factorial(x) where \"a\" != \"b\"", 3),
   ("factorial(x) where \"a\\\"\" == \"a\"", 0),
@@ -243,6 +270,12 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(xs*) where xs.all(x => x.y)", "value of type 'integer' is not a table"),
   ("factorial(x) where x % 2", "unsupported operation '%'"),
   ("factorial(x) where x | 1.0", "cannot apply | on values of type 'integer' and 'float'"),
+  ("factorial(x) where true == 1", "cannot apply == on values of type 'boolean' and 'integer'"),
+  ("factorial(x) where (x > 1) + 1", "cannot apply + on values of type 'boolean' and 'integer'"),
+  ("factorial(x) where true < false", "cannot apply < on values of type 'boolean' and 'boolean'"),
+  ("factorial(x) where -true", "cannot apply - on value of type 'boolean'"),
+  ("factorial(x) where true & 1", "cannot apply & on values of type 'boolean' and 'integer'"),
+  ("factorial(x) where x > 1 & x < 3", "cannot apply < on values of type 'boolean' and 'integer'"),
   ("factorial(x) where x == \"1\"", "cannot apply == on values of type 'integer' and 'string'"),
   ("factorial(x) where \"\\q\" == \"\"", "invalid escape sequence '\\q'"),
   ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),

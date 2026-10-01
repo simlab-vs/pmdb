@@ -180,7 +180,7 @@ fn supports_various_signatures() {
     t.arguments("renamed"),
     [
       Value::Array(vec![Value::Integer(1), Value::Integer(2)]),
-      Value::Integer(1)
+      Value::Boolean(true)
     ]
   );
   assert_eq!(

@@ -13,6 +13,7 @@ class TypeIdentifier(Enum):
   String    = 0x03
   Array     = 0x04
   Table     = 0x05
+  Boolean   = 0x06
   Function  = 0xfe
   Object    = 0xff
 
@@ -72,6 +73,11 @@ class Archive(object):
     # Handle the absence of a value.
     if o is None:
       self.write_byte(TypeIdentifier.Null.value)
+
+    # Handle Booleans, which are also integers in Python.
+    elif isinstance(o, bool):
+      self.write_byte(TypeIdentifier.Boolean.value)
+      self.write_byte(int(o))
 
     # Handle signed integers whose two's complement representation requires at most 64 bits.
     elif isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
@@ -140,7 +146,7 @@ def register(cls, convert):
 
   This conversion takes precedence over the method `__pmdb__` that a class can define to the same
   effect. It does not apply to the types whose instances are recorded as values of their own,
-  i.e., `None`, integers, floating-point numbers, strings, lists, tuples, dictionaries with
+  i.e., `None`, Booleans, integers, floating-point numbers, strings, lists, tuples, dictionaries with
   string keys, and functions.
   """
   conversions[cls] = convert
