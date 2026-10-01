@@ -127,3 +127,10 @@ private func makeTrace(
   #expect(o.output == "(pmdb)")
   #expect(o.error == "")
 }
+
+@Test func reportsQueryErrors() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) from $nope\nselect f(x)\n")
+  #expect(o.succeeded)
+  #expect(o.output == "(pmdb) (pmdb) $0 = <1 element(s) in 1 trace(s)>\n(pmdb)")
+  #expect(o.error == "error: undefined symbol '$nope'")
+}

@@ -42,10 +42,14 @@ import PostMortemDebugger
         Self.load(url, assignedTo: x, into: &engine)
 
       case .select(let q):
-        let v = try await engine.select(q)
-        let k = engine.fresh()
-        engine.assign(.observations(v), for: k)
-        print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
+        do {
+          let v = try await engine.select(q)
+          let k = engine.fresh()
+          engine.assign(.observations(v), for: k)
+          print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
+        } catch let e {
+          Self.report(e)
+        }
 
       case .show(let x):
         Self.show(x, in: &engine)
