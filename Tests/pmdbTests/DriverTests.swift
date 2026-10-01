@@ -282,3 +282,10 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
   #expect(!o.succeeded)
   #expect(o.output == "")
 }
+
+@Test func reportsEvaluationErrors() async throws {
+  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) where x.y"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+  #expect(o.error == "error: value of type 'integer' is not a table")
+}

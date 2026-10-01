@@ -104,7 +104,7 @@ public struct Engine: ~Copyable {
       ) { (buffer, trace, snaps) in
         for o in snaps {
           let s = trace[at: o]
-          if let l = s.label, x.matches(l), satisfied(filter) {
+          if let l = s.label, x.matches(l), try satisfied(filter) {
             buffer[trace: trace.identity].snaps.insert(o)
           }
         }
@@ -118,7 +118,9 @@ public struct Engine: ~Copyable {
         for o in calls {
           let s = trace[at: o]
           e.removeAll(keepingCapacity: true)
-          if f.matches(s.function), xs.matches(argumentsOf: s, in: &e), satisfied(filter, in: e) {
+          if try f.matches(s.function) && xs.matches(argumentsOf: s, in: &e)
+            && satisfied(filter, in: e)
+          {
             buffer[trace: trace.identity].calls.insert(o)
           }
         }
@@ -155,11 +157,12 @@ public struct Engine: ~Copyable {
   ///     source and returns the indices of the observations belonging to `t` that should be
   ///     combined into `accumulator`.
   ///   - combine: A closure that modifies an accumulator given a trace and a set of observations
-  ///     in that trace. Call to `combine` might happen concurrently.
+  ///     in that trace. Call to `combine` might happen concurrently. The first error thrown by
+  ///     `combine` is rethrown.
   private func reduce<T: ObservationSet, U>(
     _ source: T, into accumulator: inout ObservationBuffer,
     _ indices: (T, T.Traces.Index) -> U,
-    _ combine: @escaping @Sendable (inout ObservationBuffer, Trace, U) -> Void
+    _ combine: @escaping @Sendable (inout ObservationBuffer, Trace, U) throws -> Void
   ) async throws {
     try await withThrowingTaskGroup(of: ObservationBuffer.self) { (g) in
       for i in source.traces.indices {
@@ -168,7 +171,7 @@ public struct Engine: ~Copyable {
         let u = indices(source, i)
         g.addTask {
           var b = ObservationBuffer()
-          combine(&b, t, u)
+          try combine(&b, t, u)
           return b
         }
       }
@@ -187,17 +190,12 @@ public struct Engine: ~Copyable {
 
 }
 
-/// Returns `true` if either `filter` is `nil` or it evaluates to a truthy value in `environment`.
+/// Returns `true` if either `filter` is `nil` or it evaluates to a truthy value in `environment`,
+/// throwing the error that occurred during the evaluation of `filter`, if any.
 ///
-/// The evaluation of `filter` might not terminate. The return value if `false` if an exception is
-/// thrown during the evaluation.
-private func satisfied(_ filter: Expression?, in environment: [String: Value] = [:]) -> Bool {
+/// The evaluation of `filter` might not terminate.
+private func satisfied(_ filter: Expression?, in environment: [String: Value] = [:]) throws -> Bool {
   guard let f = filter else { return true }
-
   var e = environment
-  if let v = try? f.evaluate(in: &e) {
-    return v.isTruthy
-  } else {
-    return false
-  }
+  return try f.evaluate(in: &e).isTruthy
 }
