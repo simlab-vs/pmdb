@@ -114,7 +114,8 @@ import PostMortemDebugger
       for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {
         let marker = (i == o.location.number) ? "> " : "  "
         let gutter = style.prompt("\(String(i).leftPaddedTo(4)) | ")
-        print("\(marker)\(gutter)\(s.line(i))", terminator: "")
+        let l = s.line(i)
+        print("\(marker)\(gutter)\(l.last?.isNewline ?? false ? l.dropLast() : l)")
       }
     }
   }

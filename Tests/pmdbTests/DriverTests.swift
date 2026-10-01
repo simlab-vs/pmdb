@@ -198,3 +198,16 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
   #expect(o.error == "")
 }
 
+@Test func showsLastLineWithoutLineSeparator() async throws {
+  let r = try makeTrace(source: "a\nb", callingAt: 2)
+  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  #expect(o.succeeded)
+  #expect(o.output == """
+    (pmdb) $0 = <1 element(s) in 1 trace(s)>
+    (pmdb) \(r.source):2: call f(1)
+         1 | a
+    >    2 | b
+    continue? [Y/n] (pmdb)
+    """)
+  #expect(o.error == "")
+}
