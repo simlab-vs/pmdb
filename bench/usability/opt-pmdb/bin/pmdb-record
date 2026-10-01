@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""Runs a Python program and records a pmdb trace of every call to its functions.
+
+Usage: pmdb-record [-o TRACE] SCRIPT [ARGS...]
+
+Every function and method defined in the Python files of the script's directory is recorded,
+without modifying those files. The trace is written when the program exits, even if it raises.
+"""
+
+import argparse
+import ast
+import builtins
+import importlib.abc
+import importlib.util
+import os
+import sys
+import traceback
+
+HERE = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, os.path.join(HERE, "..", "python"))
+
+import recorder  # noqa: E402
+
+
+class Instrument(ast.NodeTransformer):
+  """Adds the recording decorator to every function definition, innermost."""
+
+  def visit_FunctionDef(self, node):
+    self.generic_visit(node)
+    node.decorator_list.append(ast.Name("__pmdb_record__", ast.Load()))
+    return node
+
+  visit_AsyncFunctionDef = visit_FunctionDef
+
+
+def compile_instrumented(path):
+  with open(path, encoding="utf-8") as f:
+    tree = ast.parse(f.read(), path)
+  tree = ast.fix_missing_locations(Instrument().visit(tree))
+  return compile(tree, path, "exec", dont_inherit=True)
+
+
+class Loader(importlib.abc.Loader):
+
+  def __init__(self, path):
+    self.path = path
+
+  def create_module(self, spec):
+    return None
+
+  def exec_module(self, module):
+    exec(compile_instrumented(self.path), module.__dict__)
+
+
+class Finder(importlib.abc.MetaPathFinder):
+  """Finds the modules defined by Python files in `directory`."""
+
+  def __init__(self, directory):
+    self.directory = directory
+
+  def find_spec(self, name, path, target=None):
+    candidate = os.path.join(self.directory, *name.split(".")) + ".py"
+    if os.path.isfile(candidate):
+      return importlib.util.spec_from_file_location(name, candidate, loader=Loader(candidate))
+    return None
+
+
+def main():
+  parser = argparse.ArgumentParser(
+    prog="pmdb-record", description="Record a pmdb trace of a Python program.")
+  parser.add_argument("-o", "--output", default="trace.pmdb", help="trace file (default: trace.pmdb)")
+  parser.add_argument("script")
+  parser.add_argument("arguments", nargs=argparse.REMAINDER)
+  args = parser.parse_args()
+
+  script = os.path.abspath(args.script)
+  directory = os.path.dirname(script)
+  sys.dont_write_bytecode = True
+  sys.argv = [args.script] + args.arguments
+  sys.path[0] = directory
+  sys.meta_path.insert(0, Finder(directory))
+
+  r = recorder.Recorder()
+  builtins.__pmdb_record__ = r.record
+
+  status = 0
+  try:
+    code = compile_instrumented(script)
+    exec(code, {"__name__": "__main__", "__file__": script, "__builtins__": builtins})
+  except SystemExit as e:
+    status = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+  except BaseException:
+    traceback.print_exc()
+    status = 1
+  finally:
+    sys.stdout.flush()
+    with open(args.output, "wb") as f:
+      f.write(r.serialize().buffer)
+    print(f"pmdb-record: wrote {len(r.observations)} observations to {args.output}", file=sys.stderr)
+  sys.exit(status)
+
+
+if __name__ == "__main__":
+  main()
