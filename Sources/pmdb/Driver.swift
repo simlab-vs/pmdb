@@ -201,6 +201,15 @@ import PostMortemDebugger
     #endif
   }
 
+  /// `true` iff the standard output is a terminal.
+  private static var standardOutputIsTerminal: Bool {
+    #if os(Windows)
+      _isatty(1) != 0
+    #else
+      isatty(STDOUT_FILENO) != 0
+    #endif
+  }
+
   /// Returns the next source read from the standard input, prompting for it iff `prompting` is
   /// `true`, or returns `nil` if the input is exhausted.
   ///
@@ -310,9 +319,9 @@ import PostMortemDebugger
     FileHandle.standardError.write(m.data(using: .utf8)!)
   }
 
-  /// The style sheet of the REPL.
+  /// The style sheet of the REPL, which colors output only if it is written to a terminal.
   private static let style: TextOutputStyle =
-    ProcessInfo.ansiTerminalIsConnected ? .styled : .unstyled
+    (ProcessInfo.ansiTerminalIsConnected && standardOutputIsTerminal) ? .styled : .unstyled
 
 }
 

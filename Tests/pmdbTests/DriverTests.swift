@@ -409,6 +409,15 @@ private let resultOfF = """
   #expect(t.output == "* call root()\n└─* call f(1) -> 2")
 }
 
+@Test func doesNotColorOutputWrittenToPipes() async throws {
+  let result = try await run(
+    .path(.init(pmdbExecutable.path)), arguments: [makeTrace().trace],
+    environment: .inherit.updating(["TERM": "xterm-256color"]),
+    input: .fileDescriptor(inputFile("select f(x)\n"), closeAfterSpawningProcess: true),
+    output: .string(limit: 1 << 20), error: .string(limit: 1 << 20))
+  #expect(result.standardOutput.normalized == "$0 = <1 element(s) in 1 trace(s)>")
+}
+
 @Test func namesItselfPmdb() async throws {
   let o = try await pmdb(["--help"])
   #expect(o.succeeded)
