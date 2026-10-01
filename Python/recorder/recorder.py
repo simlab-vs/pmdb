@@ -1,11 +1,10 @@
 import functools
-import inspect
 import sys
 import typing
 import uuid
 
 from .archive import Archive
-from .utilities import first_where, orelse
+from .utilities import orelse
 
 
 class Observation(object):
@@ -102,12 +101,11 @@ class Recorder(object):
     """Decorates `f` so that each of its calls is recorded in `self`."""
     @functools.wraps(f)
     def decorated(*args, **kwargs):
-      # Get to the first frame outside of this script.
-      caller = first_where(inspect.stack(), lambda f: f.filename != __file__)
+      caller = Recorder.caller()
       callee = f.__qualname__
 
       # Attach a new call observation to the current trace node.
-      call = Call(caller.filename, caller.lineno, callee, args, kwargs)
+      call = Call(caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
       self.step_into(call)
 
       # Apply the decorated function, getting back to the original trace node if it raises.
@@ -118,15 +116,15 @@ class Recorder(object):
         raise
 
       # Get back to the original trace node.
-      snap = Snapshot(caller.filename, caller.lineno, callee + ".$result", result)
+      snap = Snapshot(caller.f_code.co_filename, caller.f_lineno, callee + ".$result", result)
       self.step_out(snap)
       return result
 
     return decorated
 
   def snapshot(self, label, value):
-    caller = first_where(inspect.stack(), lambda f: f.filename != __file__)
-    self.observe(Snapshot(caller.filename, caller.lineno, label, value))
+    caller = Recorder.caller()
+    self.observe(Snapshot(caller.f_code.co_filename, caller.f_lineno, label, value))
 
   def run(self, f, *args, **kwargs):
     return f(*args, **kwargs)
@@ -169,6 +167,18 @@ class Recorder(object):
     return a
 
   @staticmethod
+  def caller():
+    """Returns the innermost frame outside of this script."""
+    # `sys._getframe` is used rather than `inspect.stack`, which builds descriptions of all frames
+    # in the stack and reads their source, making each recorded call cost O(depth).
+    frame = sys._getframe(1)
+    while frame.f_code.co_filename == __file__:
+      frame = frame.f_back
+    return frame
+
+  @staticmethod
   def root():
-    caller = inspect.stack()[-1]
-    return Call(caller.filename, caller.lineno, "root", [], {})
+    frame = sys._getframe(0)
+    while frame.f_back is not None:
+      frame = frame.f_back
+    return Call(frame.f_code.co_filename, frame.f_lineno, "root", [], {})

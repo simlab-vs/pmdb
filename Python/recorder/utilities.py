@@ -4,10 +4,3 @@ def orelse(a, b):
     return b()
   else:
     return a
-
-def first_where(xs, predicate):
-  """Returns the first element in `xs` that satisfies `preficate`."""
-  for x in xs:
-    if predicate(x):
-      return x
-  return None
