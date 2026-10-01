@@ -66,6 +66,14 @@ continue? [Y/n] n
 (pmdb) exit
 ```
 
+Commands can also be passed on the command line with `-e` (or `--execute`), in which case `pmdb` runs them in order and exits instead of starting a session.
+Each query lists the observations it selects, `show` prints all observations without asking to continue, and the results of queries are numbered `$0`, `$1`, etc. so that later commands can refer to them.
+`pmdb` stops at the first command that fails, exiting with a non-zero status.
+
+```
+pmdb factorial.trace -e 'select factorial(x) where x > 1' -e 'select _(...) from $0' -e 'show $1'
+```
+
 A more detailed description of the `pmdb`'s query language is given below.
 
 It is possible to load more than one single trace during a debugging session, to explore multiple traces at once.

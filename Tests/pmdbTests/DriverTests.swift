@@ -225,3 +225,60 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
     """)
   #expect(o.error == "")
 }
+
+@Test func executesQuery() async throws {
+  let r = try makeTrace()
+  let o = try await pmdb([r.trace, "-e", "select f(x)"])
+  #expect(o.succeeded)
+  #expect(o.output == """
+    $0 = <1 element(s) in 1 trace(s)>
+    \(r.source):3: call f(1)
+    """)
+  #expect(o.error == "")
+}
+
+@Test func executesCommandsInOrder() async throws {
+  let r = try makeTrace()
+  let o = try await pmdb([
+    r.trace, "-e", "select f(x)", "-e", "select _(...) from $0", "-e", "show $1",
+  ])
+  #expect(o.succeeded)
+  #expect(o.output == """
+    $0 = <1 element(s) in 1 trace(s)>
+    \(r.source):3: call f(1)
+    $1 = <1 element(s) in 1 trace(s)>
+    \(r.source):3: call f(1)
+    \(r.source):3: call f(1)
+         1 | def f(x):
+         2 |   return x
+    >    3 | f(1)
+    """)
+  #expect(o.error == "")
+}
+
+@Test func stopsAtFirstFailingCommand() async throws {
+  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) from $nope", "-e", "select f(x)"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+  #expect(o.error == "error: undefined symbol '$nope'")
+}
+
+@Test func rejectsTrailingInput() async throws {
+  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) )"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+  #expect(o.error == "error: multiple commands should be separated by a newline")
+}
+
+@Test func exitStopsExecution() async throws {
+  let o = try await pmdb([makeTrace().trace, "-e", "exit", "-e", "select f(x)"])
+  #expect(o.succeeded)
+  #expect(o.output == "")
+  #expect(o.error == "")
+}
+
+@Test func failsOnUnloadableTrace() async throws {
+  let o = try await pmdb(["missing.trace", "-e", "select f(x)"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+}
