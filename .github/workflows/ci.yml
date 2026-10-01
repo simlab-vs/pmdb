@@ -11,7 +11,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Note: all combinations of the following will be run independently
         os: [macos-26, macos-26-intel, ubuntu-24.04, ubuntu-24.04-arm, windows-2025, windows-11-arm]
         swift: ["6.2.4"]
         config: [release, debug]
@@ -46,8 +45,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # No macos-26-intel: the pinned nixpkgs has dropped x86_64-darwin support.
-        os: [macos-26, ubuntu-24.04, ubuntu-24.04-arm]
+        # Swift Testing doesn't work on Nix on macOS yet.
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
         config: [release, debug]
 
     runs-on: ${{ matrix.os }}
