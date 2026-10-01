@@ -87,8 +87,48 @@ extension Expression.Apply {
       return try binary(in: &environment,) { (a, b) in try a.mul(b) }
     case .identifier("/"):
       return try binary(in: &environment,) { (a, b) in try a.div(b) }
-    default:
+    case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
+    default:
+      break
+    }
+
+    // Is the callee a method of an array?
+    let f: Value
+    if case .property(let p) = callee.syntax {
+      let receiver = try p.table.evaluate(in: &environment)
+      if case .array(let xs) = receiver {
+        return try apply(method: p.name, of: xs, in: &environment)
+      }
+      f = try p.select(in: receiver)
+    } else {
+      f = try callee.evaluate(in: &environment)
+    }
+
+    // Otherwise, the callee must be a lambda.
+    if arguments.count != 1 {
+      throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
+    }
+    return try Expression.apply(f, to: arguments.first!.evaluate(in: &environment), at: callee.site)
+  }
+
+  /// Evaluates `self` as the application of the method `m` of the array `xs`.
+  private func apply(
+    method m: Parsed<String>, of xs: [Value], in environment: inout [String: Value]
+  ) throws -> Value {
+    switch m.value {
+    case "all":
+      if arguments.count != 1 {
+        throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
+      }
+      let predicate = try arguments.first!.evaluate(in: &environment)
+      for x in xs where try !Expression.apply(predicate, to: x, at: callee.site).isTruthy {
+        return .init(false)
+      }
+      return .init(true)
+
+    default:
+      throw Diagnostic.error("value of type 'array' has no method '\(m.value)'", at: m.site)
     }
   }
 
@@ -183,6 +223,21 @@ extension Expression.Apply {
 
 }
 
+extension Expression {
+
+  /// Returns the result of applying `f` to `a`, reporting errors at `site` if `f` isn't a lambda.
+  fileprivate static func apply(
+    _ f: Value, to a: Value, at site: Range<String.Index>
+  ) throws -> Value {
+    guard case .lambda(let l, var environment) = f else {
+      throw Diagnostic.error("value of type '\(f.type)' is not a lambda", at: site)
+    }
+    environment[l.parameter.value] = a
+    return try l.body.evaluate(in: &environment)
+  }
+
+}
+
 extension Expression.Element {
 
   /// Returns the value of `self` evaluated in the specified `environment`.
@@ -209,7 +264,12 @@ extension Expression.Property {
 
   /// Returns the value of `self` evaluated in the specified `environment`.
   fileprivate func evaluate(in environement: inout [String: Value]) throws -> Value {
-    switch try table.evaluate(in: &environement) {
+    try select(in: table.evaluate(in: &environement))
+  }
+
+  /// Returns the value of the property of `receiver` selected by `self`.
+  fileprivate func select(in receiver: Value) throws -> Value {
+    switch receiver {
     case .table(let t):
       return try t[name.value] ?? Diagnostic.undefined(property: name)
     case let v:
