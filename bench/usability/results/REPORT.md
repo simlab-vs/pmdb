@@ -38,6 +38,10 @@ guessing.
 
 ## Usability findings
 
+[PMDB_FINDINGS.md](PMDB_FINDINGS.md) goes through every command agents tried. For each one it
+gives the cause (documentation, unsupported feature or error message), the current behavior with
+examples, and concrete suggestions. In short:
+
 Ranked by how often they cost agents time. The quotes are from the agents' feedback.
 
 1. **Query syntax that looks reasonable fails, with error messages that don't help.** 15 of 39

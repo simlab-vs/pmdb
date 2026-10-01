@@ -127,3 +127,53 @@ in a full benchmark. Protocol: [usability/PROTOCOL.md](usability/PROTOCOL.md). R
   `pmdb-record`)?
 - Did the Python recorder's newer features (objects recorded as tables, `3590cc2`) remove the
   `<object>` placeholders agents saw for closures and `self`?
+
+---
+
+## 2026-10-01: Detailed analysis of round 1's pmdb attempts
+
+**Context.** The round 1 report summarized usability problems. We wanted to know, for each failed
+attempt, whether pmdb broke a documented promise, whether the documentation misled, or whether
+agents wanted something unsupported, and what pmdb does today.
+
+**What we did.**
+- Extracted all 42 pmdb commands (9 runs, all Haiku) from the transcripts
+  ([pmdb_attempts.md](usability/results/pmdb_attempts.md)).
+- Re-ran the failing ones and the forms that would have worked, in the agents' sandbox on their
+  traces ([pmdb_reproduced.md](usability/results/pmdb_reproduced.md)). pmdb's sources are
+  unchanged since `a9cb57d`, so this is current behavior.
+- Classified each problem and wrote [PMDB_FINDINGS.md](usability/results/PMDB_FINDINGS.md).
+
+**Findings.**
+- **No failure was a broken documented promise.** The failures come from three sources:
+  - *Documentation that leaves the natural reading open:* how to select a `$result` label;
+    double-quoted strings only; `<source>` in `from` never defined; variables live for one
+    invocation.
+  - *Unsupported features agents reach for first:* literal values in argument patterns,
+    `and`/`or`, testing whether a key exists, scoping into a call's subtree.
+  - *Misleading errors:* "multiple commands should be separated by a newline" for most parse
+    failures, and no positions.
+- **Some queries are valid but silently return nothing:**
+  - `fastest_route(E0, A0)` binds variables, and the arity doesn't match;
+  - `"…\$result/"` in shell double quotes turns into a regex end anchor.
+- **`from $0` searches only the observations in `$0`.** It doesn't search the calls made inside
+  them or the `$result` snaps next to them, so "results of this call" can't be expressed.
+- **The objects question from the previous entry:** `3590cc2` changes nothing by default.
+  Objects are recorded as tables only when their class opts in (`__pmdb__` or
+  `recorder.register`).
+- **The study's own header** (written for the study) named the `<function>.$result` label without
+  saying how to select it. That contributed to finding 1.
+
+**Decisions.** Order of pmdb work, as recommended in the findings:
+1. results shown with calls, plus a README section of debugging recipes;
+2. errors with a position and a suggestion;
+3. literal argument patterns and arity hints;
+4. where-clause conveniences (single quotes, `and`/`or`, missing keys);
+5. `;` separators, no prompts without a terminal, `--show` as a flag, command name `pmdb`;
+6. `in` scoping, `--show` filtering, object attributes recorded by default.
+
+Each change should make the corresponding command in `pmdb_attempts.md` succeed, or fail with an
+error that names the fix.
+
+**Open questions.** Should result labels keep `$`? It clashes with both shell quoting and regex
+anchors.
