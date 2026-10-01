@@ -131,6 +131,7 @@ func query(_ source: String) throws -> Query {
                 <pmdb:table>
                   <pmdb:value label="b"><pmdb:string>s</pmdb:string></pmdb:value>
                   <pmdb:value label="a"><pmdb:array/></pmdb:value>
+                  <pmdb:value label="c"><pmdb:none/></pmdb:value>
                 </pmdb:table>
               </pmdb:value>
             </pmdb:array>
@@ -141,7 +142,7 @@ func query(_ source: String) throws -> Query {
     """
   let trace = try #require(Trace(xml: Data(source.utf8)))
   #expect(trace.snaps.map(\.value.value) == [
-    .array([.integer(42), .table(["a": .array([]), "b": .string("s")])])
+    .array([.integer(42), .table(["a": .array([]), "b": .string("s"), "c": .null])])
   ])
 }
 
@@ -193,6 +194,10 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(x) where \"a\" == \"a\"", 3),
   ("factorial(x) where \"a\" != \"b\"", 3),
   ("factorial(x) where \"a\\\"\" == \"a\"", 0),
+  ("factorial(x) where none == none", 3),
+  ("factorial(x) where x != none", 3),
+  ("factorial(x) where !none", 3),
+  ("factorial(x) where -1 == none", 0),
   ("factorial(xs*) where xs.all(x => x > 1)", 2),
   ("factorial(xs*) where xs.all(x => xs[0] == x)", 3),
   ("factorial(x) where (y => y > 1)(x)", 2),
@@ -212,6 +217,9 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(x) where ~x", "unsupported prefix operator '~'"),
   ("factorial(x) where x > 1 || y", "undefined symbol 'y'"),
   ("factorial(x) where x(1)", "value of type 'integer' is not a lambda"),
+  ("factorial(x) where x < none", "cannot apply < on values of type 'integer' and 'none'"),
+  ("factorial(x) where none + 1", "cannot apply + on values of type 'none' and 'integer'"),
+  ("factorial(x) where -none", "cannot apply - on value of type 'none'"),
   ("factorial(x) where (y => y)(1, 2)", "expected 1 argument(s), found 2"),
   ("factorial(xs*) where xs.any(x => x)", "value of type 'array' has no method 'any'"),
   ("factorial(xs*) where xs.all(1)", "value of type 'integer' is not a lambda"),

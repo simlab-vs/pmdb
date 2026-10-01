@@ -3,6 +3,8 @@ import Archivist
 /// A tag identifying the type of a value.
 public enum ValueTag: UInt8, Hashable, Sendable {
 
+  case null     = 0x00
+
   case integer  = 0x01
 
   case float    = 0x02
@@ -21,6 +23,12 @@ public enum ValueTag: UInt8, Hashable, Sendable {
 
 /// A value stored in a trace.
 public enum Value: Hashable, Sendable {
+
+  /// The absence of a value (e.g., `None` in Python or `null` in JavaScript), written `none` in
+  /// queries.
+  ///
+  /// This case isn't named `none` to avoid confusions with `Optional.none`.
+  case null
 
   /// A signed integer.
   case integer(Int64)
@@ -54,6 +62,7 @@ public enum Value: Hashable, Sendable {
   /// A textual description of the type of this value.
   public var type: String {
     switch self {
+    case .null: "none"
     case .integer: "integer"
     case .float: "float"
     case .string: "string"
@@ -78,7 +87,7 @@ public enum Value: Hashable, Sendable {
       return !v.isEmpty
     case .table(let v):
       return !v.isEmpty
-    case .lambda, .function, .object:
+    case .null, .lambda, .function, .object:
       return false
     }
   }
@@ -89,6 +98,9 @@ extension Value: Archivable {
 
   public init<T>(from archive: inout ReadableArchive<T>, in context: inout Any) throws {
     switch try archive.readByte() {
+    case ValueTag.null.rawValue:
+      self = .null
+
     case ValueTag.integer.rawValue:
       self = try .integer(archive.readSignedLEB128(as: Int64.self))
 
@@ -142,6 +154,8 @@ extension Value: CustomStringConvertible {
 
   public var description: String {
     switch self {
+    case .null:
+      return "none"
     case .integer(let v):
       return v.description
     case .float(let v):

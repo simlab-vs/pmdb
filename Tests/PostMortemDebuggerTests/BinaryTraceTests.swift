@@ -369,3 +369,51 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
     "call f()", "call f(0, 0)",
   ])
 }
+
+@Test func readsNoneFromBinaryTrace() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x, y=None):
+      pass
+
+    f(None, y=[None, 1])
+    """)
+
+  #expect(trace.calls[1].value.positional == [.null])
+  #expect(trace.calls[1].value.named["y"] == .array([.null, .integer(1)]))
+  #expect(trace.snaps.map(\.value.value) == [.null])
+  #expect(trace.snaps[0].value.description == "snap f.$result = none")
+}
+
+@Test(arguments: [
+  ("f(x) where x == none", 1),
+  ("f(x) where x != none", 3),
+  ("f(x) where !x", 2),
+  ("f(x) where x", 2),
+  ("f(x, x)", 0),
+  ("g(x, x)", 1),
+  ("/.*\\$result/", 5),
+])
+func selectsNone(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x):
+      return x
+
+    @r.record
+    def g(x, y):
+      return 0
+
+    f(None)
+    f(0)
+    f("a")
+    f([None])
+    g(None, None)
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try await engine.select(query("select \(source)")).count == count)
+}

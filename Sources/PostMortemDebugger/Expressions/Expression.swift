@@ -23,6 +23,9 @@ extension Expression {
     /// A reference to the standard library.
     case pmdb
 
+    /// The literal denoting the absence of a value.
+    case noneLiteral
+
     /// A Boolean literal.
     case boolean(Bool)
 
@@ -155,6 +158,8 @@ extension Expression: CustomStringConvertible {
     switch syntax {
     case .pmdb:
       return "pmdb"
+    case .noneLiteral:
+      return "none"
     case .boolean(let n):
       return n.description
     case .integer(let n):

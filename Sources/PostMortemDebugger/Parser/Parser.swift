@@ -325,6 +325,9 @@ public struct Parser {
     switch peek()?.tag {
     case .true, .false:
       return try parseBooleanLiteral()
+    case .noneLiteral:
+      let head = take()!
+      return .init(syntax: .noneLiteral, site: head.site)
     case .integerLiteral:
       return try parseIntegerLiteral()
     case .floatingPointLiteral:

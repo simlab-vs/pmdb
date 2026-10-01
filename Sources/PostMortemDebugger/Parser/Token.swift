@@ -12,6 +12,7 @@ public struct Token: Hashable, Sendable {
     case `false`
     case `if`
     case load
+    case noneLiteral
     case pmdb
     case select
     case show
