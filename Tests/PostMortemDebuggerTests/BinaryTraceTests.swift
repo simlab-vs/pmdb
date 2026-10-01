@@ -174,3 +174,19 @@ func rejectsInvalidParents(mutation: String) async throws {
     """
   #expect(trace.description == expected)
 }
+
+@Test func recordsNameOfRecordedFunctionArgument() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def inc(x):
+      return x + 1
+
+    @r.record
+    def ap(f, x):
+      return f(x)
+
+    ap(inc, 1)
+    """)
+  #expect(trace.calls[1].value.positional == [.function("inc"), .integer(1)])
+}
