@@ -370,11 +370,38 @@ func showsTraces(flagFirst: Bool) async throws {
   #expect(o.error == "")
 }
 
-@Test func readsStringsSpanningLines() async throws {
-  // The escaped quote doesn't end the string, which continues on the next line.
-  let o = try await pmdb([makeTrace().trace], input: "select f(x) where \"a\\\"\n\" != \"\"\n")
+@Test func ignoresQuotesInComments() async throws {
+  let input = "select f(x) # don't use \"quotes\nselect f(x)\nselect f(...)\n"
+  let o = try await pmdb([makeTrace().trace], input: input)
   #expect(o.succeeded)
-  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>")
+  #expect(o.output == """
+    $0 = <1 element(s) in 1 trace(s)>
+    $1 = <1 element(s) in 1 trace(s)>
+    $2 = <1 element(s) in 1 trace(s)>
+    """)
+}
+
+@Test func readsQuotesOnContinuedLines() async throws {
+  // The string on the continued line is closed, so the next line is a command of its own.
+  let input = "select f(x) where \\\n\"a\" == \"a\"\nselect f(x)\n"
+  let o = try await pmdb([makeTrace().trace], input: input)
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>\n$1 = <1 element(s) in 1 trace(s)>")
+  #expect(o.error == "")
+}
+
+@Test func endsCommandsInUnterminatedStrings() async throws {
+  // String literals can't span lines, so the unterminated string doesn't swallow the next line.
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) where \"a\\\"\nselect f(x)\n")
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+}
+
+@Test func continuesLinesEndingWithBackslash() async throws {
+  let input = "select f(x) \\\nwhere x == 1 \\\n# comment \\\nselect f(x)\n"
+  let o = try await pmdb([makeTrace().trace], input: input)
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>\n$1 = <1 element(s) in 1 trace(s)>")
   #expect(o.error == "")
 }
 

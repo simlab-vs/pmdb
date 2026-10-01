@@ -213,43 +213,45 @@ import PostMortemDebugger
   /// Returns the next source read from the standard input, prompting for it iff `prompting` is
   /// `true`, or returns `nil` if the input is exhausted.
   ///
-  /// A source spans several lines if they end with a line continuation or an unterminated string.
+  /// A source spans several lines if they end with a line continuation.
   private static func readSource(prompting: Bool) -> String? {
-    var line = ""
-    var inString = false
-    var escaped = false
-    var prompt = "(pmdb)"
+    var source = ""
 
     while true {
       // Read the contents of the line from the standar input.
-      if prompting { print(style.prompt(prompt), terminator: " ") }
+      if prompting { print(style.prompt("(pmdb)"), terminator: " ") }
       guard let data = readLine() else {
-        return line.isEmpty ? nil : line
-      }
-      line.write(data)
-
-      // Check for line continuations.
-      if line.last == "\\" {
-        line.removeLast()
-        continue
+        return source.isEmpty ? nil : source
       }
 
-      // Check for non-terminated string literals, which are delimited by double quotes.
+      // A line ending with a backslash continues on the next, unless the backslash is part of a
+      // string literal, which is delimited by double quotes, or of a comment, which extends from
+      // a number sign to the end of the line.
+      var inString = false
+      var escaped = false
+      var inComment = false
       for c in data {
-        if escaped {
-          escaped = false
-        } else if inString && (c == "\\") {
-          escaped = true
+        if inString {
+          if escaped {
+            escaped = false
+          } else if c == "\\" {
+            escaped = true
+          } else if c == "\"" {
+            inString = false
+          }
+        } else if c == "#" {
+          inComment = true
+          break
         } else if c == "\"" {
-          inString.toggle()
+          inString = true
         }
       }
 
-      // Prepare the next prompt if we found a non-terminated string.
-      if inString {
-        prompt = "   \" )"
+      if !inString && !inComment && (data.last == "\\") {
+        source.write(String(data.dropLast()))
       } else {
-        return line
+        source.write(data)
+        return source
       }
     }
   }
