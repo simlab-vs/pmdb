@@ -7,6 +7,13 @@ from .archive import Archive
 from .utilities import orelse
 
 
+def encode(value) -> bytes:
+  """Returns the serialization of `value` in its current state."""
+  archive = Archive()
+  archive.write_object(value)
+  return bytes(archive.buffer)
+
+
 class Observation(object):
   """A record of an event that occurred during the execution of a program."""
 
@@ -34,7 +41,9 @@ class Snapshot(Observation):
   ):
     super().__init__(source_file, line_number)
     self.label = label
-    self.value = value
+
+    # Values are encoded right away because they might be mutated later.
+    self.value = encode(value)
 
   def serialize(self, archive):
     super().serialize(archive)
@@ -47,7 +56,7 @@ class Snapshot(Observation):
       archive.write_string(self.label)
 
     # Write the value of the observation.
-    archive.write_object(self.value)
+    archive.write_bytes(self.value)
 
   @classmethod
   def tag(cls):
@@ -62,8 +71,10 @@ class Call(Observation):
   ):
     super().__init__(source_file, line_number)
     self.function = function
-    self.positional = positional
-    self.named = named
+
+    # Arguments are encoded right away because they might be mutated during the call.
+    self.positional = [encode(a) for a in positional]
+    self.named = {k: encode(a) for k, a in named.items()}
 
   def serialize(self, archive):
     super().serialize(archive)
@@ -74,13 +85,13 @@ class Call(Observation):
     # Write the number of arguments followed by their values.
     archive.write_unsigned(len(self.positional))
     for a in self.positional:
-      archive.write_object(a)
+      archive.write_bytes(a)
 
     # Write the number of arguments followed by their values.
     archive.write_unsigned(len(self.named))
     for k, a in sorted(self.named.items()):
       archive.write_string(k)
-      archive.write_object(a)
+      archive.write_bytes(a)
 
   @classmethod
   def tag(cls):
