@@ -242,6 +242,8 @@ func rejectsInvalidParents(mutation: String) async throws {
   ("f(xs, _) where xs[1][1] == \"a\"", 1),
   ("f(xs, _) where xs[1] == xs[1]", 1),
   ("f(xs, t) where xs[1] != t.b", 1),
+  ("f(xs, t) where t.len() == 2 && t.a.len() == 1 && t.b.len() == 0", 1),
+  ("f(xs, _) where xs.count(x => x == none) == 0 && xs.any(x => x != none)", 1),
 ])
 func selectsCallsByArrayAndTableContents(source: String, count: Int) async throws {
   let trace = try await record(

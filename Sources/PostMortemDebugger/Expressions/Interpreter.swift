@@ -95,12 +95,18 @@ extension Expression.Apply {
       break
     }
 
-    // Is the callee a method of an array?
+    // Is the callee a method of an array or a table? Tables can't contain lambdas, so the
+    // application of one of their properties can only denote a method.
     let f: Value
     if case .property(let p) = callee.syntax {
       let receiver = try p.table.evaluate(in: &environment)
-      if case .array(let xs) = receiver {
+      switch receiver {
+      case .array(let xs):
         return try apply(method: p.name, of: xs, in: &environment)
+      case .table(let t) where p.name.value == "len":
+        return try length(of: t)
+      default:
+        break
       }
       f = try p.select(in: receiver)
     } else {
@@ -120,18 +126,39 @@ extension Expression.Apply {
   ) throws -> Value {
     switch m.value {
     case "all":
-      if arguments.count != 1 {
-        throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
-      }
-      let predicate = try arguments.first!.evaluate(in: &environment)
-      for x in xs where try !Expression.apply(predicate, to: x, at: callee.site).isTruthy {
-        return .init(false)
-      }
-      return .init(true)
-
+      let p = try predicate(in: &environment)
+      return try .init(xs.allSatisfy(p))
+    case "any":
+      let p = try predicate(in: &environment)
+      return try .init(xs.contains(where: p))
+    case "count":
+      let p = try predicate(in: &environment)
+      return try .integer(Int64(xs.count(where: p)))
+    case "len":
+      return try length(of: xs)
     default:
       throw Diagnostic.error("value of type 'array' has no method '\(m.value)'", at: m.site)
     }
+  }
+
+  /// Evaluates `self` as the application of the method `len` of `c`.
+  private func length<T: Collection>(of c: T) throws -> Value {
+    if !arguments.isEmpty {
+      throw Diagnostic.invalidArgumentCount(expected: 0, found: arguments.count, at: callee.site)
+    }
+    return .integer(Int64(c.count))
+  }
+
+  /// Returns a function that applies the lambda passed as the only argument of `self` to a value
+  /// and returns whether the result is truthy.
+  private func predicate(
+    in environment: inout [String: Value]
+  ) throws -> (Value) throws -> Bool {
+    if arguments.count != 1 {
+      throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
+    }
+    let f = try arguments.first!.evaluate(in: &environment)
+    return { [site = callee.site] (x) in try Expression.apply(f, to: x, at: site).isTruthy }
   }
 
   /// Evaluates `self` as a unary operation on an operand evaluated in `environment`, computing its
