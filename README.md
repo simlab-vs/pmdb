@@ -34,7 +34,7 @@ if __name__ == "__main__":
 ```
 
 The decorator on `factorial` indicates that calls to this function should be traced.
-The call to `pmdb.main.run` records the evaluation of `factorial(3)` in a trace that is then serialized and saved on disk.
+Every call to a decorated function is recorded, so evaluating `factorial(3)` (here by means of `pmdb.main.run`, which simply applies a function to the given arguments) records 3 calls in a trace that is then serialized and saved on disk.
 
 Each recorded call is followed by a snap labeled `<function>.$result` holding the value returned by the call.
 If the call raises instead, the snap is labeled `<function>.$exception` and holds a table with the `type` of the exception and its `message`.
@@ -45,13 +45,13 @@ The serialized trace contains the following tree:
 
 ```
 pmdb --show factorial.trace
-* call root():
-├─* call factorial(3):
-│ ├─* call factorial(2):
-│ │ ├─* call factorial(1):
+* call root()
+├─* call factorial(3)
+│ ├─* call factorial(2)
+│ │ ├─* call factorial(1)
 │ │ └─* snap factorial.$result = 1
 │ └─* snap factorial.$result = 2
-└─* snap factorial.$result = 3
+└─* snap factorial.$result = 6
 ```
 
 Once a trace has been recorded, `pmdb` can be used to explore that trace interactively, by means of a domain specific language.
@@ -62,6 +62,7 @@ pmdb factorial.trace
 (pmdb) select factorial(x) where x > 1
 $0 = <2 element(s) in 1 trace(s)>
 (pmdb) show $0
+factorial.py:8: call factorial(3)
      6 |
      7 | if __name__ == "__main__":
 >    8 |   n = pmdb.main.run(factorial, 3)
