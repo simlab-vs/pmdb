@@ -144,3 +144,33 @@ func rejectsInvalidParents(mutation: String) async throws {
       """)
   }
 }
+
+@Test func recordsCallsAfterException() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def bad():
+      raise ValueError()
+
+    @r.record
+    def h():
+      try:
+        bad()
+      except ValueError:
+        pass
+      return 0
+
+    h()
+    r.snapshot('x', 1)
+    """)
+
+  let expected = """
+    * call root()
+    ├─* call h()
+    │ └─* call bad()
+    ├─* snap h.$result = 0
+    └─* snap x = 1
+
+    """
+  #expect(trace.description == expected)
+}
