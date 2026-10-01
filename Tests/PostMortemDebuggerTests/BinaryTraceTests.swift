@@ -345,6 +345,29 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   engine.add(trace)
   let raised = try await engine.select(query("select /.*\\$exception/"))
   #expect(raised.count == 2)
+
+  // Calls that raised don't return values.
+  let returned = try await engine.select(query("select _(...) -> _"))
+  #expect(returned.count == 0)
+}
+
+@Test func bindsResultsOfCalls() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x):
+      return [x, x * 2]
+
+    f(1)
+    f(3)
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  let large = try await engine.select(query("select f(x) -> r where r[1] > 4"))
+  #expect(large.count == 1)
+  let consistent = try await engine.select(query("select f(x) -> r where r[0] == x"))
+  #expect(consistent.count == 2)
 }
 
 @Test func selectsCallsWhoseArgumentsAllSatisfyPredicate() async throws {

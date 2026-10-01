@@ -7,8 +7,11 @@ public enum Query: Hashable, Sendable {
   /// Calls that match the given pattern.
   ///
   /// An observation is matched iff it is a call in which the name of the function being applied
-  /// matches `callee` and the arguments of the call match `arguments`.
-  case call(IdentifierPattern, ArgumentPatternList, from: FromClause, where: Expression?)
+  /// matches `callee`, the arguments of the call match `arguments`, and, if `result` is not `nil`,
+  /// the call returned a value matching `result`.
+  case call(
+    IdentifierPattern, ArgumentPatternList, result: ArgumentPattern?,
+    from: FromClause, where: Expression?)
 
   /// Snaps that match the given pattern.
   ///

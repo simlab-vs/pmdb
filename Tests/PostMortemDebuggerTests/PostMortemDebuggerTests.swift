@@ -134,6 +134,11 @@ func query(_ source: String) throws -> Query {
   #expect(trace.description == "* call root()\n├─* call f()\n└─* snap g.$result = 1\n")
 }
 
+@Test func requiresPatternAfterArrow() {
+  var parser = Parser("select f(x) ->")
+  #expect(throws: Diagnostic.self) { try parser.parseCommand() }
+}
+
 @Test func rejectsXMLTraceWithManyRoots() {
   let source = """
     <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
@@ -272,6 +277,13 @@ func rejectsInvalidBooleansInXMLTrace(payload: String) {
   ("factorial(x) where (y => y > 1)(x)", 2),
   ("factorial(x) where (y => x == y)(x)", 3),
   ("factorial(x) where (y => z => y == z)(x)(2)", 1),
+  ("factorial(x) -> r where r > x", 1),
+  ("factorial(x) -> r where r == 2", 1),
+  ("factorial(x) -> x", 2),
+  ("factorial(_) -> _", 3),
+  ("factorial(...) -> r where r == 6", 1),
+  ("_(...) -> _", 3),
+  ("root() -> _", 0),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()

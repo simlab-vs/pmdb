@@ -195,6 +195,10 @@ For example, the query `f(xs*) where xs.all(x => x == 0)` matches any call to a 
 Finally, the universal pattern `...` can be used instead of a comma-separated list of argument pattern to match any argument list.
 For instance, `f(...)` matches (among others) `f()`, `f(1, 2)` and `f(1, b = 2)`.
 
+A call pattern can be followed by an arrow (i.e., `->`) and a positional pattern matching the value returned by the call.
+For example, `f(x) -> r where r > x` matches the calls to `f` returning a value greater than their argument, and `f(x) -> x` matches those returning their argument.
+Such a pattern only matches calls whose result has been recorded, so it never matches calls that raised an exception.
+
 
 ### Where Clauses
 
