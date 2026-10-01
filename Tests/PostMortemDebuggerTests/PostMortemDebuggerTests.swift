@@ -73,7 +73,7 @@ private func loadFactorialTrace() throws -> Trace {
 }
 
 /// Returns the query parsed from `source`.
-private func query(_ source: String) throws -> Query {
+func query(_ source: String) throws -> Query {
   var parser = Parser(source)
   let command = try parser.parseCommand()
   #expect(parser.diagnostics.isEmpty)

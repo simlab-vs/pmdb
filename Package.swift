@@ -17,6 +17,9 @@ let package = Package(
     .package(
       url: "https://github.com/kyouko-taiga/archivist.git",
       branch: "main"),
+    .package(
+      url: "https://github.com/swiftlang/swift-subprocess.git",
+      revision: "b3937ab85dd32f6e9435914599c1519074769c1a"), // 1.0.0
   ],
   targets: [
     .executableTarget(
@@ -36,5 +39,8 @@ let package = Package(
 
     .testTarget(
       name: "PostMortemDebuggerTests",
-      dependencies: [.target(name: "PostMortemDebugger")]),
+      dependencies: [
+        .target(name: "PostMortemDebugger"),
+        .product(name: "Subprocess", package: "swift-subprocess"),
+      ]),
   ])
