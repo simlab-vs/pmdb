@@ -248,3 +248,23 @@ Commits `e935b9d`..`8116b20` on `ci`, one feature each, each with tests.
 - Should `pmdb-record` move into the Python recorder itself (e.g. `python -m recorder`)?
 - Does showing results with calls make `select` listings, without source excerpts, worth adding
   back for agents?
+
+---
+
+## 2026-10-02: Round 1's records stay frozen
+
+**Context.** pmdb's command line changed after round 1 (`-e` was removed). Round 1's
+description, harness and results under `bench/usability/` still refer to `-e`.
+
+**Decision.**
+- **Round 1's files stay as they are.** A finished experiment's description, harness and
+  results are never modified afterwards, because they must show exactly what the agents saw and
+  what was measured.
+- **They describe pmdb at `a9cb57d`.** Their mentions of `-e` and of the old output are correct
+  for that version.
+- **Follow-ups go in a new directory.** That includes re-running round 1's exercises with the
+  current pmdb, and updated tooling such as an agent header without `-e`, or an `assemble.py`
+  matching the README's renamed "Query language" section. They are recorded in this log.
+- **Living documentation describes current pmdb.** This means the README,
+  `Documentation/Traces.md` (which now describes the `$result`/`$exception` convention) and
+  `skills/pmdb`.
