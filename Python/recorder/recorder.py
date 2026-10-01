@@ -3,7 +3,7 @@ import sys
 import typing
 import uuid
 
-from .archive import Archive
+from .archive import Archive, describe
 from .utilities import orelse
 
 
@@ -119,11 +119,14 @@ class Recorder(object):
       call = Call(caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
       self.step_into(call)
 
-      # Apply the decorated function, getting back to the original trace node if it raises.
+      # Apply the decorated function, recording the exception it raises, if any.
       try:
         result = f(*args, **kwargs)
-      except BaseException:
-        self.active = self.parent[self.active]
+      except BaseException as e:
+        exception = {"type": type(e).__qualname__, "message": describe(e, str)}
+        snap = Snapshot(
+          caller.f_code.co_filename, caller.f_lineno, callee + ".$exception", exception)
+        self.step_out(snap)
         raise
 
       # Get back to the original trace node.

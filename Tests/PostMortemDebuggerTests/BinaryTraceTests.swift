@@ -167,7 +167,8 @@ func rejectsInvalidParents(mutation: String) async throws {
   let expected = """
     * call root()
     ├─* call h()
-    │ └─* call bad()
+    │ ├─* call bad()
+    │ └─* snap bad.$exception = {message: , type: ValueError}
     ├─* snap h.$result = 0
     └─* snap x = 1
 
@@ -310,4 +311,37 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   #expect(descriptions[1]?.hasPrefix("<unlocked _thread.lock object") ?? false)
   #expect(descriptions[2]?.hasPrefix("<coroutine object") ?? false)
   #expect(descriptions[3] == "<Opaque object>")
+}
+
+@Test func recordsExceptions() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def bad(x):
+      raise KeyError(x)
+
+    @r.record
+    def h():
+      bad("k")
+
+    try:
+      h()
+    except KeyError:
+      pass
+    """)
+
+  let expected = """
+    * call root()
+    ├─* call h()
+    │ ├─* call bad(k)
+    │ └─* snap bad.$exception = {message: 'k', type: KeyError}
+    └─* snap h.$exception = {message: 'k', type: KeyError}
+
+    """
+  #expect(trace.description == expected)
+
+  var engine = Engine()
+  engine.add(trace)
+  let raised = try await engine.select(query("select /.*\\$exception/"))
+  #expect(raised.count == 2)
 }

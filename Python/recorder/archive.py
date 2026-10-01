@@ -108,9 +108,9 @@ class Archive(object):
         self.write_bytes(bs)
 
 
-def describe(o):
-  """Returns a textual description of `o`."""
+def describe(o, convert=repr):
+  """Returns `convert(o)`, or a generic description of `o` if `convert` raises."""
   try:
-    return repr(o)
+    return convert(o)
   except Exception:
     return f"<{type(o).__qualname__} object>"
