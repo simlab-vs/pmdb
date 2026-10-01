@@ -51,7 +51,7 @@ public struct Call: Observation {
       let k = try archive.read(String.self)
       let v = try archive.read(Value.self)
       try modify(&named[k]) { (w) in
-        if w == nil { throw ArchiveError.invalidInput } else { w = .some(v) }
+        if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
       }
     }
     self.named = named
