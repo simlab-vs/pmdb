@@ -28,12 +28,6 @@ import PostMortemDebugger
   @Argument(transform: URL.init(fileURLWithPath:))
   private var inputs: [URL] = []
 
-  /// The commands to execute instead of starting the REPL.
-  @Option(
-    name: [.customShort("e"), .customLong("execute")],
-    help: "Execute the given command and exit instead of starting the REPL. Can be repeated.")
-  private var commands: [String] = []
-
   /// Creates a new instance with default options.
   public init() {}
 
@@ -73,18 +67,14 @@ import PostMortemDebugger
     try await runSession()
   }
 
-  /// Runs the commands passed with `-e` or, if there are none, those read from the standard input,
-  /// on the traces in `inputs`.
+  /// Runs the commands read from the standard input on the traces in `inputs`.
   ///
-  /// The session is interactive iff its commands are read from a terminal. An interactive session
+  /// The session is interactive iff the standard input is a terminal. An interactive session
   /// prompts for commands, pages the observations being shown, and reports errors without exiting.
   /// Other sessions exit with a failure at the first error.
   private func runSession() async throws {
-    let interactive = commands.isEmpty && Self.standardInputIsTerminal
-    var sources =
-      commands.isEmpty
-      ? AnyIterator({ Self.readSource(prompting: interactive) })
-      : AnyIterator(commands.makeIterator())
+    let interactive = Self.standardInputIsTerminal
+    var sources = AnyIterator({ Self.readSource(prompting: interactive) })
 
     /// Reports `e` and exits with a failure iff the session is not interactive.
     func handle(_ e: any Error) throws {
@@ -212,7 +202,8 @@ import PostMortemDebugger
   /// A source spans several lines if they end with a line continuation or an unterminated string.
   private static func readSource(prompting: Bool) -> String? {
     var line = ""
-    var stack: [Character] = []
+    var inString = false
+    var escaped = false
     var prompt = "(pmdb)"
 
     while true {
@@ -229,14 +220,20 @@ import PostMortemDebugger
         continue
       }
 
-      // Check for non-terminated string literals.
-      for c in data where c == "'" || c == "\"" {
-        if stack.last == c { stack.removeLast() } else { stack.append(c) }
+      // Check for non-terminated string literals, which are delimited by double quotes.
+      for c in data {
+        if escaped {
+          escaped = false
+        } else if inString && (c == "\\") {
+          escaped = true
+        } else if c == "\"" {
+          inString.toggle()
+        }
       }
 
-      // Prepare the next prompt if we found a non-terminated delimited string.
-      if let last = stack.last {
-        prompt = "   \(last) )"
+      // Prepare the next prompt if we found a non-terminated string.
+      if inString {
+        prompt = "   \" )"
       } else {
         return line
       }
@@ -252,7 +249,7 @@ import PostMortemDebugger
     // Make sure we parsed the whole input.
     let r = parser.remainder()
     if !r.isEmpty {
-      let m = "multiple commands should be supplied as separate commands"
+      let m = "expected end of command, found '\(r)'"
       throw Diagnostic(.error, m, at: r.startIndex ..< r.startIndex)
     }
 
@@ -286,6 +283,9 @@ import PostMortemDebugger
     }
 
     m.write("\n")
+
+    // Flush the standard output first so that errors appear after the output preceding them.
+    fflush(nil)
     FileHandle.standardError.write(m.data(using: .utf8)!)
   }
 

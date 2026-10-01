@@ -103,13 +103,17 @@ A trace can be converted to the human-readable XML format described in [Document
 
 The results of queries are numbered `$0`, `$1`, etc. so that later commands in the same session can refer to them.
 
-Commands can also be passed on the command line with `-e` (or `--execute`), one command per option, in which case `pmdb` runs them in order in one session and exits.
+Commands can also be piped to the standard input, one per line, in which case `pmdb` runs them in order in one session and exits.
 
 ```
-pmdb factorial.trace -e 'select factorial(x) where x > 1' -e 'select _(...) from $0' -e 'show $1'
+pmdb factorial.trace <<'EOF'
+select factorial(x) where x > 1
+select _(...) from $0
+show $1
+EOF
 ```
 
-Commands passed with `-e` or piped to the standard input behave as in an interactive session, except that `show` prints all observations without asking to continue, and that `pmdb` stops at the first command that fails, exiting with a non-zero status.
+Piped commands behave as in an interactive session, except that `pmdb` doesn't print prompts, `show` prints all observations without asking to continue, and `pmdb` stops at the first command that fails, exiting with a non-zero status.
 
 A more detailed description of the `pmdb`'s query language is given below.
 

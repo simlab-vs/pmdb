@@ -245,14 +245,6 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
   #expect(o.error == "")
 }
 
-@Test func executesQuery() async throws {
-  let r = try makeTrace()
-  let o = try await pmdb([r.trace, "-e", "select f(x)"])
-  #expect(o.succeeded)
-  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>")
-  #expect(o.error == "")
-}
-
 /// The output of the commands in `sessionCommands`.
 private func sessionOutput(_ r: Recording) -> String {
   """
@@ -268,14 +260,6 @@ private func sessionOutput(_ r: Recording) -> String {
 /// Commands that select a call, select from that selection, and show the result.
 private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"]
 
-@Test func executesCommandsInOrder() async throws {
-  let r = try makeTrace()
-  let o = try await pmdb([r.trace] + sessionCommands.flatMap({ (c) in ["-e", c] }))
-  #expect(o.succeeded)
-  #expect(o.output == sessionOutput(r))
-  #expect(o.error == "")
-}
-
 @Test func executesCommandsFromInput() async throws {
   let r = try makeTrace()
   let o = try await pmdb([r.trace], input: sessionCommands.joined(separator: "\n") + "\n")
@@ -284,22 +268,15 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   #expect(o.error == "")
 }
 
-@Test func stopsAtFirstFailingCommand() async throws {
-  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) from $nope", "-e", "select f(x)"])
-  #expect(!o.succeeded)
-  #expect(o.output == "")
-  #expect(o.error == "error: undefined symbol '$nope'")
-}
-
 @Test func rejectsTrailingInput() async throws {
-  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) )"])
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) )\n")
   #expect(!o.succeeded)
   #expect(o.output == "")
-  #expect(o.error == "error: multiple commands should be supplied as separate commands")
+  #expect(o.error == "error: expected end of command, found ')'")
 }
 
 @Test func exitStopsExecution() async throws {
-  let o = try await pmdb([makeTrace().trace, "-e", "exit", "-e", "select f(x)"])
+  let o = try await pmdb([makeTrace().trace], input: "exit\nselect f(x)\n")
   #expect(o.succeeded)
   #expect(o.output == "")
   #expect(o.error == "")
@@ -311,14 +288,8 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   #expect(o.output == "")
 }
 
-@Test func failsOnUnloadableTrace() async throws {
-  let o = try await pmdb(["missing.trace", "-e", "select f(x)"])
-  #expect(!o.succeeded)
-  #expect(o.output == "")
-}
-
 @Test func reportsEvaluationErrors() async throws {
-  let o = try await pmdb([makeTrace().trace, "-e", "select f(x) where x.y"])
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) where x.y\n")
   #expect(!o.succeeded)
   #expect(o.output == "")
   #expect(o.error == "error: value of type 'integer' is not a table")
@@ -336,7 +307,7 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   let exported = FileManager.default.temporaryDirectory
     .appendingPathComponent(UUID().uuidString + ".xml")
   try o.output.write(to: exported, atomically: true, encoding: .utf8)
-  let p = try await pmdb([exported.path, "-e", "select f(x) where x == 1"])
+  let p = try await pmdb([exported.path], input: "select f(x) where x == 1\n")
   #expect(p.succeeded)
   #expect(p.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>"))
 }
@@ -363,6 +334,35 @@ func showsTraces(flagFirst: Bool) async throws {
   let o = try await pmdb(["--show"])
   #expect(!o.succeeded)
   #expect(o.error.contains("'--show' requires at least one trace"))
+}
+
+@Test func readsApostrophesOutsideStringsAsSingleCharacters() async throws {
+  // An apostrophe doesn't start a string, so the second line is a command of its own.
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) # x's value\nselect f(x)\n")
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>\n$1 = <1 element(s) in 1 trace(s)>")
+  #expect(o.error == "")
+}
+
+@Test func readsStringsSpanningLines() async throws {
+  // The escaped quote doesn't end the string, which continues on the next line.
+  let o = try await pmdb([makeTrace().trace], input: "select f(x) where \"a\\\"\n\" != \"\"\n")
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>")
+  #expect(o.error == "")
+}
+
+@Test func reportsErrorsAfterPrecedingOutput() async throws {
+  let r = try makeTrace()
+  let result = try await run(
+    .name("sh"), arguments: ["-c", "\"$0\" \"$1\" 2>&1", pmdbExecutable.path, r.trace],
+    environment: .inherit.updating(["TERM": "dumb"]),
+    input: .string("select f(x)\nselect f(x) from $nope\n"),
+    output: .string(limit: 1 << 20), error: .discarded)
+  #expect(result.standardOutput.normalized == """
+    $0 = <1 element(s) in 1 trace(s)>
+    error: undefined symbol '$nope'
+    """)
 }
 
 @Test func namesItselfPmdb() async throws {
