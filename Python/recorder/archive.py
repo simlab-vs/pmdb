@@ -24,6 +24,9 @@ class Archive(object):
   def write_byte(self, b):
     self.buffer.append(b)
 
+  def write_bytes(self, bs):
+    self.buffer += bs
+
   def write_unsigned(self, n):
     assert n >= 0
     while True:
@@ -46,10 +49,9 @@ class Archive(object):
         self.write_byte(b | 0x80)
 
   def write_string(self, s):
-    units = bytearray(s, 'utf-8')
+    units = s.encode('utf-8')
     self.write_unsigned(len(units))
-    for u in units:
-      self.write_byte(u)
+    self.write_bytes(units)
 
   def write_object(self, o):
     # Handle signed integers whose two's complement representation requires at most 64 bits.
@@ -60,8 +62,7 @@ class Archive(object):
     # Handle floating-point numbers.
     elif isinstance(o, float):
       self.write_byte(TypeIdentifier.Float.value)
-      for b in bytearray(struct.pack("<d", o)):
-        self.write_byte(b)
+      self.write_bytes(struct.pack("<d", o))
 
     # Handle character strings.
     elif isinstance(o, str):
@@ -78,5 +79,4 @@ class Archive(object):
       self.write_byte(TypeIdentifier.Object.value)
       bs = pickle.dumps(o)
       self.write_unsigned(len(bs))
-      for b in bs:
-        self.write_byte(b)
+      self.write_bytes(bs)
