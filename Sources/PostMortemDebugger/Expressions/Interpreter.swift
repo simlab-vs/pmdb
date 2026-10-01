@@ -70,10 +70,8 @@ extension Expression.Apply {
     case .identifier("/"):
       return try binary(in: &environment,) { (a, b) in a.div(b) }
     default:
-      break
+      throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
     }
-
-    fatalError("TODO")
   }
 
   /// Evaluates `self` as a binary operation between operands evaluated in `environment`, combining
