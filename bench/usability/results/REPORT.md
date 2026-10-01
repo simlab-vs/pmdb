@@ -4,7 +4,7 @@
 models were `claude-sonnet-5` and `claude-haiku-4-5-20251001`, and pmdb was frozen at `a9cb57d`.
 The design is in [PROTOCOL.md](../PROTOCOL.md) and was not changed after the start. The full
 tables and all feedback are in [summary.md](summary.md), and the per-run records are in
-[runs.jsonl](runs.jsonl).
+[runs.jsonl](runs.jsonl), and the transcripts are in [transcripts.tar.xz](transcripts.tar.xz).
 
 ## Headline
 
