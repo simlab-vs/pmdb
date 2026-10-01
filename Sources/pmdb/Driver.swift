@@ -2,6 +2,10 @@ import ArgumentParser
 import Foundation
 import PostMortemDebugger
 
+#if os(Windows)
+  import ucrt
+#endif
+
 /// The top-level command of `pmdb`.
 @main public struct Driver: AsyncParsableCommand {
 
@@ -50,52 +54,46 @@ import PostMortemDebugger
       return
     }
 
-    if commands.isEmpty {
-      await repl()
-    } else {
-      try await executeCommands()
-    }
+    try await runSession()
   }
 
-  /// Runs a REPL on the traces in `inputs`, reporting errors without exiting.
-  private func repl() async -> Never {
+  /// Runs the commands passed with `-e` or, if there are none, those read from the standard input,
+  /// on the traces in `inputs`.
+  ///
+  /// The session is interactive iff its commands are read from a terminal. An interactive session
+  /// prompts for commands, pages the observations being shown, and reports errors without exiting.
+  /// Other sessions exit with a failure at the first error.
+  private func runSession() async throws {
+    let interactive = commands.isEmpty && Self.standardInputIsTerminal
+    var sources =
+      commands.isEmpty
+      ? AnyIterator({ Self.readSource(prompting: interactive) })
+      : AnyIterator(commands.makeIterator())
+
+    /// Reports `e` and exits with a failure iff the session is not interactive.
+    func handle(_ e: any Error) throws {
+      Self.report(e)
+      if !interactive { throw ExitCode.failure }
+    }
+
     var engine = Engine()
     for url in inputs {
-      Self.attempt({ try Self.load(url, into: &engine) })
+      do { try Self.load(url, into: &engine) } catch let e { try handle(e) }
     }
-
-    while true {
-      guard let command = Self.attempt(Self.readCommand) else { continue }
+    while let s = sources.next() {
+      if s.allSatisfy(\.isWhitespace) { continue }
       do {
-        if try await !Self.execute(command, in: &engine, interactive: true) { Self.exit() }
+        if try await !Self.execute(Self.parse(s), in: &engine, paged: interactive) { return }
       } catch let e {
-        Self.report(e)
+        try handle(e)
       }
     }
   }
 
-  /// Executes `commands` on the traces in `inputs`, exiting with a failure at the first error.
-  private func executeCommands() async throws {
-    do {
-      var engine = Engine()
-      for url in inputs {
-        try Self.load(url, into: &engine)
-      }
-      for c in commands {
-        if try await !Self.execute(Self.parse(c), in: &engine, interactive: false) { return }
-      }
-    } catch let e {
-      Self.report(e)
-      throw ExitCode.failure
-    }
-  }
-
-  /// Executes `command` on `engine` and returns `false` iff it requests to exit.
-  ///
-  /// The observations selected by a query are listed iff `interactive` is `false`. Otherwise, the
-  /// observations being shown are paged.
+  /// Executes `command` on `engine`, paging the observations being shown iff `paged` is `true`,
+  /// and returns `false` iff it requests to exit.
   private static func execute(
-    _ command: Command, in engine: inout Engine, interactive: Bool
+    _ command: Command, in engine: inout Engine, paged: Bool
   ) async throws -> Bool {
     switch command {
     case .exit:
@@ -109,12 +107,11 @@ import PostMortemDebugger
       let k = engine.fresh()
       engine.assign(.observations(v), for: k)
       print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
-      if !interactive { show(v, in: &engine, withExcerpts: false, paged: false) }
 
     case .show(let x):
       switch try engine.value(for: x) {
       case .observations(let v):
-        show(v, in: &engine, withExcerpts: true, paged: interactive)
+        show(v, in: &engine, paged: paged)
       case .trace(let v):
         print(engine.trace(v))
       }
@@ -131,11 +128,10 @@ import PostMortemDebugger
     print(trace)
   }
 
-  /// Writes a description of `source` to the standard output, with source excerpts iff
-  /// `withExcerpts` is `true`, asking whether to continue after each observation iff `paged` is
-  /// `true`.
+  /// Writes a description of `source` to the standard output, asking whether to continue after
+  /// each observation iff `paged` is `true`.
   private static func show<T: ObservationSet>(
-    _ source: T, in engine: inout Engine, withExcerpts: Bool, paged: Bool
+    _ source: T, in engine: inout Engine, paged: Bool
   ) {
     for i in source.traces.indices {
       let trace = engine.trace(source.traces[i])
@@ -145,9 +141,9 @@ import PostMortemDebugger
       // Show snaps and calls in the order in which they were observed.
       while true {
         if let c = calls.first, snaps.first.map({ (s) in c.untagged < s.untagged }) ?? true {
-          show(trace[at: calls.removeFirst()], in: &engine, withExcerpts: withExcerpts)
+          show(trace[at: calls.removeFirst()], in: &engine)
         } else if !snaps.isEmpty {
-          show(trace[at: snaps.removeFirst()], in: &engine, withExcerpts: withExcerpts)
+          show(trace[at: snaps.removeFirst()], in: &engine)
         } else {
           break
         }
@@ -158,13 +154,10 @@ import PostMortemDebugger
     }
   }
 
-  /// Writes a description of `o` to the standard output, with a source excerpt iff `withExcerpts`
-  /// is `true`.
-  private static func show<T: Observation>(
-    _ o: T, in engine: inout Engine, withExcerpts: Bool
-  ) {
+  /// Writes a description of `o` and an excerpt of its source to the standard output.
+  private static func show<T: Observation>(_ o: T, in engine: inout Engine) {
     print("\(o.location): \(o)")
-    if withExcerpts, let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
+    if let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
       let n = o.location.number
       for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {
         let marker = (i == o.location.number) ? "> " : "  "
@@ -188,18 +181,29 @@ import PostMortemDebugger
     }
   }
 
-  /// Returns a command parsed from the standard input.
-  private static func readCommand() throws -> Command {
+  /// `true` iff the standard input is a terminal.
+  private static var standardInputIsTerminal: Bool {
+    #if os(Windows)
+      _isatty(0) != 0
+    #else
+      isatty(STDIN_FILENO) != 0
+    #endif
+  }
+
+  /// Returns the next source read from the standard input, prompting for it iff `prompting` is
+  /// `true`, or returns `nil` if the input is exhausted.
+  ///
+  /// A source spans several lines if they end with a line continuation or an unterminated string.
+  private static func readSource(prompting: Bool) -> String? {
     var line = ""
     var stack: [Character] = []
     var prompt = "(pmdb)"
 
     while true {
       // Read the contents of the line from the standar input.
-      print(style.prompt(prompt), terminator: " ")
+      if prompting { print(style.prompt(prompt), terminator: " ") }
       guard let data = readLine() else {
-        if line.isEmpty { Self.exit() }
-        break
+        return line.isEmpty ? nil : line
       }
       line.write(data)
 
@@ -218,11 +222,9 @@ import PostMortemDebugger
       if let last = stack.last {
         prompt = "   \(last) )"
       } else {
-        break
+        return line
       }
     }
-
-    return try parse(line)
   }
 
   /// Returns the command parsed from `source`, reporting warnings to the standard error.
@@ -234,7 +236,7 @@ import PostMortemDebugger
     // Make sure we parsed the whole input.
     let r = parser.remainder()
     if !r.isEmpty {
-      let m = "multiple commands should be separated by a newline"
+      let m = "multiple commands should be supplied as separate commands"
       throw Diagnostic(.error, m, at: r.startIndex ..< r.startIndex)
     }
 

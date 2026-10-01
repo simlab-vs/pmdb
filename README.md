@@ -101,13 +101,15 @@ continue? [Y/n] n
 A trace can be converted to the human-readable XML format described in [Documentation/Traces.md](Documentation/Traces.md) with `pmdb --export-xml factorial.trace > factorial.xml`.
 `pmdb` loads traces whose names end with `.xml` as XML documents.
 
-Commands can also be passed on the command line with `-e` (or `--execute`), in which case `pmdb` runs them in order and exits instead of starting a session.
-Each query lists the observations it selects, `show` prints all observations without asking to continue, and the results of queries are numbered `$0`, `$1`, etc. so that later commands can refer to them.
-`pmdb` stops at the first command that fails, exiting with a non-zero status.
+The results of queries are numbered `$0`, `$1`, etc. so that later commands in the same session can refer to them.
+
+Commands can also be passed on the command line with `-e` (or `--execute`), one command per option, in which case `pmdb` runs them in order in one session and exits.
 
 ```
 pmdb factorial.trace -e 'select factorial(x) where x > 1' -e 'select _(...) from $0' -e 'show $1'
 ```
+
+Commands passed with `-e` or piped to the standard input behave as in an interactive session, except that `show` prints all observations without asking to continue, and that `pmdb` stops at the first command that fails, exiting with a non-zero status.
 
 A more detailed description of the `pmdb`'s query language is given below.
 
