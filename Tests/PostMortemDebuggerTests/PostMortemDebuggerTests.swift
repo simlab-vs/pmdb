@@ -171,9 +171,7 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(...)", 3),
   ("_(...)", 4),
   ("/.*\\$result/ where true", 3),
-  ("factorial(x) where x && x", 0),
   ("factorial(x) where x > -9223372036854775808", 3),
-  ("factorial(x) where x + 9223372036854775807 > 0", 0),
   ("factorial(x) where x > 4/x", 1),
   ("factorial(x) where x-1 > 1", 1),
   ("factorial(x) where x>-1", 3),
@@ -186,4 +184,23 @@ func selectsObservations(source: String, count: Int) async throws {
   engine.add(try loadFactorialTrace())
   let result = try await engine.select(query("select \(source)"))
   #expect(result.count == count)
+}
+
+@Test(arguments: [
+  ("factorial(x) where x && x", "unsupported operation '&&'"),
+  ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),
+  ("factorial(x) where 1 / (x - 1) > 0", "division by zero in '/'"),
+  ("factorial(x) where 1.0 / 0.0 > 0.0", "division by zero in '/'"),
+  ("factorial(x) where x + 1.0 > 0.0", "cannot apply + on values of type 'integer' and 'float'"),
+  ("factorial(x) where y", "undefined symbol 'y'"),
+  ("factorial(x) where x.y", "value of type 'integer' is not a table"),
+])
+func reportsEvaluationErrors(source: String, message: String) async throws {
+  var engine = Engine()
+  engine.add(try loadFactorialTrace())
+  await #expect {
+    try await engine.select(query("select \(source)"))
+  } throws: { (e) in
+    (e as? Diagnostic)?.message == message
+  }
 }

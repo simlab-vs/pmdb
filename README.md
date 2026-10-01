@@ -170,6 +170,7 @@ For example, consider the query `f(x) where x != 0`, which matches calls to `f` 
 The expression `x != 0` is evaluated for each call observation matching the pattern `f(x)`.
 
 A where clause is satisfied if it evaluates to a "truthy" value, which is any value different from zero, an empty array, or an empty table.
+If the evaluation of a where clause fails for any of the matching observations (e.g., because it divides by zero or selects an element of a value that is not an array), the query fails and the error is reported.
 It is expressed as an expression that can mentions the names bound in call patterns.
 The grammar of legal expressions is given below:
 

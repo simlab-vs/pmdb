@@ -62,13 +62,13 @@ extension Expression.Apply {
     case .identifier("!="):
       return try compareNumerically(in: &environment) { (r) in r != 0 }
     case .identifier("+"):
-      return try binary(in: &environment,) { (a, b) in a.add(b) }
+      return try binary(in: &environment,) { (a, b) in try a.add(b) }
     case .identifier("-"):
-      return try binary(in: &environment,) { (a, b) in a.sub(b) }
+      return try binary(in: &environment,) { (a, b) in try a.sub(b) }
     case .identifier("*"):
-      return try binary(in: &environment,) { (a, b) in a.mul(b) }
+      return try binary(in: &environment,) { (a, b) in try a.mul(b) }
     case .identifier("/"):
-      return try binary(in: &environment,) { (a, b) in a.div(b) }
+      return try binary(in: &environment,) { (a, b) in try a.div(b) }
     default:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
     }
@@ -86,7 +86,11 @@ extension Expression.Apply {
 
     let a = try arguments.first!.evaluate(in: &environment)
     let b = try arguments.last!.evaluate(in: &environment)
-    return try combine(a, b) ?? Diagnostic.invalidBinaryOperation(callee, a, b)
+    do {
+      return try combine(a, b) ?? Diagnostic.invalidBinaryOperation(callee, a, b)
+    } catch let e as ArithmeticFailure {
+      throw Diagnostic.error("\(e.reason) in '\(callee)'", at: callee.site)
+    }
   }
 
   /// Evaluates `self` as a numeric comparison between operands evaluared in `environment`, using
@@ -158,10 +162,10 @@ extension Value {
   }
 
   /// Returns the sum of `self` and `other` iff that operation is defined.
-  fileprivate func add(_ other: Value) -> Value? {
+  fileprivate func add(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return checked(lhs.addingReportingOverflow(rhs))
+      return try checked(lhs.addingReportingOverflow(rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs + rhs)
     default:
@@ -170,10 +174,10 @@ extension Value {
   }
 
   /// Returns `other` subtraced from `self` iff that operation is defined.
-  fileprivate func sub(_ other: Value) -> Value? {
+  fileprivate func sub(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return checked(lhs.subtractingReportingOverflow(rhs))
+      return try checked(lhs.subtractingReportingOverflow(rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs - rhs)
     default:
@@ -182,10 +186,10 @@ extension Value {
   }
 
   /// Returns `self` multiplied by `other` iff that operation is defined.
-  fileprivate func mul(_ other: Value) -> Value? {
+  fileprivate func mul(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return checked(lhs.multipliedReportingOverflow(by: rhs))
+      return try checked(lhs.multipliedReportingOverflow(by: rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs * rhs)
     default:
@@ -194,21 +198,32 @@ extension Value {
   }
 
   /// Returns `self` divided by `other` iff that operation is defined.
-  fileprivate func div(_ other: Value) -> Value? {
+  fileprivate func div(_ other: Value) throws -> Value? {
     switch (self, other) {
+    case (.integer, .integer(0)), (.float, .float(0)):
+      throw ArithmeticFailure(reason: "division by zero")
     case (.integer(let lhs), .integer(let rhs)):
-      return checked(lhs.dividedReportingOverflow(by: rhs))
+      return try checked(lhs.dividedReportingOverflow(by: rhs))
     case (.float(let lhs), .float(let rhs)):
-      return (rhs != 0) ? .float(lhs / rhs) : nil
+      return .float(lhs / rhs)
     default:
       return nil
     }
   }
 
-  /// Returns `r.partialValue` iff `r` did not overflow.
-  private func checked(_ r: (partialValue: Int64, overflow: Bool)) -> Value? {
-    r.overflow ? nil : .integer(r.partialValue)
+  /// Returns `r.partialValue` iff `r` did not overflow. Otherwise, throws.
+  private func checked(_ r: (partialValue: Int64, overflow: Bool)) throws -> Value {
+    if r.overflow { throw ArithmeticFailure(reason: "arithmetic overflow") }
+    return .integer(r.partialValue)
   }
+
+}
+
+/// The failure of an arithmetic operation whose operands have valid types.
+private struct ArithmeticFailure: Error {
+
+  /// A description of the failure.
+  let reason: String
 
 }
 
