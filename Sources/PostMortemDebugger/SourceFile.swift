@@ -13,9 +13,11 @@ public struct SourceFile: Sendable {
   public init?(contentsOf url: URL) {
     guard let s = try? String(contentsOf: url, encoding: .utf8) else { return nil }
     self.contents = s
-    self.lineEnds = s.indices.reduce(into: []) { (es, i) in
-      if s[i].isNewline { es.append(s.index(after: i)) }
-    }
+    var es = s.indices.filter({ (i) in s[i].isNewline }).map(s.index(after:))
+
+    // The last line may not end with a line separator.
+    if s.last.map({ (c) in !c.isNewline }) ?? false { es.append(s.endIndex) }
+    self.lineEnds = es
   }
 
   /// Returns the contents of the line at 1-based index `i`.
