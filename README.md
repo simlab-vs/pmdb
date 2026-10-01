@@ -57,6 +57,29 @@ pmdb --show factorial.trace
 └─* snap factorial.$result = 6
 ```
 
+A recorder for Rust programs is also available in [Rust](Rust).
+It records the same program as follows:
+
+```rust
+use pmdb_recorder as pmdb;
+
+#[pmdb::record]
+fn factorial(n: u64) -> u64 {
+  if n < 2 { 1 } else { n * factorial(n - 1) }
+}
+
+fn main() -> std::io::Result<()> {
+  let n = factorial(3);
+  println!("{n}"); // Prints 6
+  pmdb::main().write_to("factorial.trace")
+}
+```
+
+Values are recorded according to their implementation of the trait `pmdb::Record`, which can be derived.
+Structs with named fields are recorded as tables, enums whose variants have no fields as the names of their variants, and other enums as tables mapping `$variant` to the name of their variant and each field to its value.
+Values of types that do not implement `Record` are recorded as a string naming their type.
+See the documentation of the crate `pmdb-recorder` for details.
+
 Once a trace has been recorded, `pmdb` can be used to explore that trace interactively, by means of a domain specific language.
 The following session illustrates:
 

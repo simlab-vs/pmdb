@@ -33,6 +33,10 @@
               swift-format
               sourcekit-lsp
               python3
+              cargo
+              rustc
+              clippy
+              rustfmt
             ];
 
             # Must point to `bin`: nixpkgs patches SourceKit-LSP to always find libIndexStore, which

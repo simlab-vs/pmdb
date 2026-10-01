@@ -1,0 +1,23 @@
+[package]
+name = "pmdb-recorder"
+version = "0.1.0"
+description = "Instrumentation recording traces of Rust programs for the pmdb post-mortem debugger"
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+# Records the values of types implementing `serde::Serialize` when asked to.
+serde = ["dep:serde"]
+
+[dependencies]
+pmdb-recorder-macros = { path = "../macros", version = "0.1.0" }
+serde = { version = "1", optional = true }
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+
+[[test]]
+name = "serde"
+required-features = ["serde"]
