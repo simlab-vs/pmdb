@@ -1,3 +1,4 @@
+import functools
 import inspect
 import sys
 import typing
@@ -99,6 +100,7 @@ class Recorder(object):
 
   def record(self, f):
     """Decorates `f` so that each of its calls is recorded in `self`."""
+    @functools.wraps(f)
     def decorated(*args, **kwargs):
       # Get to the first frame outside of this script.
       caller = first_where(inspect.stack(), lambda f: f.filename != __file__)
