@@ -6,6 +6,7 @@ from enum import Enum
 
 
 class TypeIdentifier(Enum):
+  Null      = 0x00
   Integer   = 0x01
   Float     = 0x02
   String    = 0x03
@@ -59,8 +60,12 @@ class Archive(object):
     """
     Writes `o`, which is contained in the arrays and tables whose identities are in `enclosing`.
     """
+    # Handle the absence of a value.
+    if o is None:
+      self.write_byte(TypeIdentifier.Null.value)
+
     # Handle signed integers whose two's complement representation requires at most 64 bits.
-    if isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
+    elif isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
       self.write_byte(TypeIdentifier.Integer.value)
       self.write_signed(o)
 

@@ -5,6 +5,8 @@ extension Expression {
     switch syntax {
     case .pmdb:
       fatalError("TODO")
+    case .noneLiteral:
+      return .null
     case .boolean(let v):
       return .init(v)
     case .integer(let v):
@@ -187,7 +189,7 @@ extension Expression.Apply {
   /// `transform` to convert the result of the test to a Boolean.
   ///
   /// Numbers are compared numerically. Other values are equal iff they have the same type and
-  /// contents.
+  /// contents, except that `none` can be compared with any value.
   private func compareForEquality(
     in environment: inout [String: Value],
     transformingResultWith transform: (Bool) -> Bool
@@ -197,7 +199,7 @@ extension Expression.Apply {
         return .init(transform(result == 0))
       }
       switch (a, b) {
-      case (.string, .string), (.array, .array), (.table, .table), (.function, .function),
+      case (.null, _), (_, .null), (.string, .string), (.array, .array), (.table, .table), (.function, .function),
         (.object, .object):
         return .init(transform(a == b))
       default:

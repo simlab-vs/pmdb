@@ -19,14 +19,16 @@ A call additionally contains the name of the function being called, the argument
 
 ### Values
 
-`pmdb` supports 6 types of values to record snaps and call arguments, namely:
+`pmdb` supports 8 types of values to record snaps and call arguments, namely:
 
-1. integers,
-2. floating-point numbers,
-3. character strings,
-4. arrays (i.e., ordered collection of values),
-5. tables (i.e., mappings from strings to values), and
-6. arbitrary objects, represented as raw sequence of bytes.
+1. the absence of a value (e.g., `None` in Python or `null` in JavaScript),
+2. integers,
+3. floating-point numbers,
+4. character strings,
+5. arrays (i.e., ordered collection of values),
+6. tables (i.e., mappings from strings to values),
+7. functions, represented by their names, and
+8. arbitrary objects, represented as raw sequence of bytes.
 
 `pmdb` internally represents integers using 64 signed bits and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
 This particular choice has a couple of noteworthy consequences:

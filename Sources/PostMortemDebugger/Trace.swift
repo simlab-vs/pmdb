@@ -162,6 +162,9 @@ extension Trace {
     else { return nil }
 
     switch payload.localName {
+    case .some("none"):
+      return .null
+
     case .some("integer"):
       return payload.stringValue.flatMap(Int64.init(_:)).map(Value.integer(_:))
 

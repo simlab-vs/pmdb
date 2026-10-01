@@ -95,7 +95,7 @@ public struct Lexer {
     case .name:
       // Contextual keywords introduce an expression.
       return !["where", "from"].contains(source[t.site])
-    case .underscore, .false, .true, .variable, .integerLiteral, .floatingPointLiteral,
+    case .underscore, .false, .true, .noneLiteral, .variable, .integerLiteral, .floatingPointLiteral,
       .stringLiteral, .rightBracket, .rightParenthesis:
       return true
     default:
@@ -170,6 +170,7 @@ public struct Lexer {
     case "if": tag = .if
     case "false": tag = .false
     case "load": tag = .load
+    case "none": tag = .noneLiteral
     case "pmdb": tag = .pmdb
     case "select": tag = .select
     case "show": tag = .show
