@@ -53,14 +53,14 @@ class Archive(object):
 
   def write_object(self, o):
     # Handle signed integers whose two's complement representation requires at most 64 bits.
-    if isinstance(o, int) and o.bit_length() <= 64:
+    if isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
       self.write_byte(TypeIdentifier.Integer.value)
       self.write_signed(o)
 
     # Handle floating-point numbers.
     elif isinstance(o, float):
       self.write_byte(TypeIdentifier.Float.value)
-      for b in bytearray(struct.pack("d", o)):
+      for b in bytearray(struct.pack("<d", o)):
         self.write_byte(b)
 
     # Handle character strings.

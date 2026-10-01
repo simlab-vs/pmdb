@@ -92,6 +92,9 @@ extension Value: Archivable {
     case ValueTag.integer.rawValue:
       self = try .integer(archive.readSignedLEB128(as: Int64.self))
 
+    case ValueTag.float.rawValue:
+      self = try .float(archive.read(Double.self, endianness: .little))
+
     case ValueTag.string.rawValue:
       self = try .string(archive.read(String.self))
 
