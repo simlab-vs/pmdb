@@ -301,6 +301,9 @@ func rejectsInvalidBooleansInXMLTrace(payload: String) {
   ("factorial(true)", 0),
   ("factorial(none)", 0),
   ("factorial(3, x)", 0),
+  ("factorial(x) where x * 1_000 == 3_000", 1),
+  ("factorial(x) where 1_000.5 > 1_000.0", 3),
+  ("factorial(-0_1)", 0),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
@@ -346,7 +349,7 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(xs*) where xs.has(\"y\")", "cannot apply has on values of type 'array' and 'string'"),
   ("factorial(x, ys**) where ys.has(1)", "cannot apply has on values of type 'table' and 'integer'"),
   ("factorial(x, ys**) where ys.has()", "expected 1 argument(s), found 0"),
-])
+  ("factorial(x) where x == 99999999999999999999", "cannot parse '99999999999999999999' as an integer literal"),])
 func reportsEvaluationErrors(source: String, message: String) async throws {
   var engine = Engine()
   engine.add(try loadFactorialTrace())

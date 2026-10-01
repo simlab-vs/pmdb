@@ -10,9 +10,12 @@ extension Expression {
     case .boolean(let v):
       return .init(v)
     case .integer(let v):
-      return try .integer(Int64(v) ?? Diagnostic.invalidIntergerLiteral(v, at: site))
+      // Underscores separate groups of digits.
+      let digits = v.filter({ (c) in c != "_" })
+      return try .integer(Int64(digits) ?? Diagnostic.invalidIntergerLiteral(v, at: site))
     case .float(let v):
-      return try .float(Double(v) ?? Diagnostic.invalidIntergerLiteral(v, at: site))
+      let digits = v.filter({ (c) in c != "_" })
+      return try .float(Double(digits) ?? Diagnostic.invalidFloatingPointLiteral(v, at: site))
     case .string(let v):
       return .string(v)
     case .identifier(let x):
