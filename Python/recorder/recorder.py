@@ -147,14 +147,12 @@ class Recorder(object):
     a = orelse(archive, Archive)
 
     # Write the trace header, which is a magic number followed by a version number.
-    for b in "pmdb":
-      a.write_byte(ord(b))
+    a.write_bytes(b"pmdb")
     a.write_byte(1)
     a.write_byte(0)
 
     # Write the identifier of the trace.
-    for b in self.identifier.bytes:
-      a.write_byte(b)
+    a.write_bytes(self.identifier.bytes)
 
     # Write the number of observations followed by their values.
     a.write_unsigned(len(self.observations))
