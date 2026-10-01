@@ -230,18 +230,18 @@ public struct Trace: Sendable {
 
     self.parent = .init(minimumCapacity: count)
     for i in 0 ..< count {
-      let p = try ObservationIndex(archive.readUnsignedLEB128())
-      parent.append(p)
+      let p = try archive.readUnsignedLEB128()
 
       // The root has itself for parent.
-      if p == i { continue }
-
-      // The observation must be a call.
-      if let q = observations[p].call {
-        calls[q].value.append(i)
-      } else {
-        throw ArchiveError.invalidInput
+      if (i == 0) && (p == 0) {
+        parent.append(0)
+        continue
       }
+
+      // Other observations come after their parent, which must be a call.
+      guard p < i, let q = observations[Int(p)].call else { throw ArchiveError.invalidInput }
+      parent.append(Int(p))
+      calls[q].value.append(i)
     }
   }
 
