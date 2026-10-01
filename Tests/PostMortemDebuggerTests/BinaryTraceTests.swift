@@ -253,3 +253,27 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   engine.add(trace)
   #expect(try await engine.select(query("select \(source)")).count == count)
 }
+
+@Test func recordsValuesAsTheyWereWhenObserved() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def append(xs, x):
+      xs.append(x)
+      return xs
+
+    xs = []
+    append(xs, 1)
+    append(xs=xs, x=2)
+    r.snapshot('xs', xs)
+    xs.append(3)
+    """)
+
+  #expect(trace.calls[1].value.positional == [.array([]), .integer(1)])
+  #expect(trace.calls[2].value.named["xs"] == .array([.integer(1)]))
+  #expect(trace.snaps.map(\.value.value) == [
+    .array([.integer(1)]),
+    .array([.integer(1), .integer(2)]),
+    .array([.integer(1), .integer(2)]),
+  ])
+}
