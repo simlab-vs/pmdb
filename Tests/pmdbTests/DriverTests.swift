@@ -341,6 +341,12 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   #expect(p.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>"))
 }
 
+@Test func namesItselfPmdb() async throws {
+  let o = try await pmdb(["--help"])
+  #expect(o.succeeded)
+  #expect(o.output.contains("USAGE: pmdb "))
+}
+
 @Test func failsToExportUnloadableTrace() async throws {
   let o = try await pmdb(["--export-xml", "missing.trace"])
   #expect(!o.succeeded)

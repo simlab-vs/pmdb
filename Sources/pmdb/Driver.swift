@@ -9,6 +9,10 @@ import PostMortemDebugger
 /// The top-level command of `pmdb`.
 @main public struct Driver: AsyncParsableCommand {
 
+  public static let configuration = CommandConfiguration(
+    commandName: "pmdb",
+    abstract: "A post-mortem debugger that answers queries about recorded execution traces.")
+
   /// The trace that should be shown, if any.
   @Option(
     help: "Show the contents of the trace stored in the specified file and exit.",
