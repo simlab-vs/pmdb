@@ -177,3 +177,74 @@ error that names the fix.
 
 **Open questions.** Should result labels keep `$`? It clashes with both shell quoting and regex
 anchors.
+
+---
+
+## 2026-10-01: Incorporating round 1's feedback into pmdb
+
+**Context.** The user chose which recommendations from the detailed findings to implement. They
+explicitly ruled out adding many heuristic error messages, because those would complicate the code.
+Commits `e935b9d`..`8116b20` on `ci`, one feature each, each with tests.
+
+**What changed.**
+- **Results with calls** (finding 1): every printed call shows its outcome, as in
+  `call f(3) -> 6` or `call g() raised {message: …, type: KeyError}`, in `show` and in
+  `--show`. The tree no longer prints the outcome snaps separately, and its prefixes are fixed.
+- **Result binding:** `f(x) -> r where …`. The pattern after `->` is a positional pattern (a
+  name, `_` or a literal). It only matches calls whose result was recorded, never calls that
+  raised.
+- **Literal patterns** (finding 2): Booleans, integers, floats, double-quoted strings and `none`,
+  positional or named (`f(10, code = "BIG50")`), compared by equality. An integer never equals a
+  float, and `true` never equals `1`. Arrays are not supported as literals, since expressions have
+  no array literals either.
+- **`t.has("k")`** (finding 3), as a method like `len`. A receiver that isn't a table, or a key
+  that isn't a string, is a type error.
+  - Alternatives considered: an infix keyword (`t has k`), `"k" in t`, and optional selection
+    (`t.k?`).
+  - The method form needs no new grammar, works for keys that aren't identifiers (`$variant`) and
+    for computed keys, and keeps the table on the left.
+- **Command line** (findings 5–6):
+  - `-e` removed; commands are read from standard input only, one per line, so agents use a
+    heredoc;
+  - a command continues only after a trailing `\` outside strings and comments;
+  - stdout is flushed before errors, so they appear in order;
+  - output is coloured only on a terminal;
+  - `--show` is a flag usable before or after the traces;
+  - the program is named `pmdb`;
+  - the leftover-text error now reads `expected end of command, found '…'`.
+- **Numeric literals** accept `_` separators, which the lexer already allowed.
+- **Driver tests** read their input from files: writing to a pipe that pmdb had stopped reading
+  crashed the test process now and then.
+- **Documentation:**
+  - the README is reorganized for people (quick start, recording, exploring, query guide by
+    example, then the reference);
+  - [skills/pmdb](../skills/pmdb) is an agent skill: recording, one-heredoc querying, recipes
+    and pitfalls;
+  - the study's `pmdb-record`, which records a Python program without editing it, is bundled
+    with the skill.
+- **Not done:** heuristic error messages (arity hints, suggestions for `and`, single quotes) and
+  `--depth`, both by the user's decision.
+
+**Findings while doing it.**
+- An independent review of the commits confirmed outcome detection, tree printing, the lexing of
+  `->` and literals, and `has`.
+- It found two bugs in how multi-line input was read, both fixed:
+  - a continued line skipped string tracking;
+  - a `"` in a comment started a string, so later commands were silently swallowed.
+- String literals can't span lines in the lexer. Continuing a command after an unterminated string
+  therefore never produced a valid command, so that rule was dropped.
+
+**Decisions.**
+- **Round 1's material stays frozen.** `bench/usability/opt-pmdb/HEADER.md` and the harness
+  still describe and use `-e`, which no longer exists, and they build pmdb from the current
+  sources.
+- **Round 2** should:
+  - give agents the skill instead of the README section;
+  - build a fresh `/opt/pmdb` with the skill's `pmdb-record`;
+  - re-run round 1's exercises to isolate the effect of these changes, plus new, harder
+    exercises for any claim about efficiency.
+
+**Open questions.**
+- Should `pmdb-record` move into the Python recorder itself (e.g. `python -m recorder`)?
+- Does showing results with calls make `select` listings, without source excerpts, worth adding
+  back for agents?
