@@ -9,6 +9,8 @@ class TypeIdentifier(Enum):
   Integer   = 0x01
   Float     = 0x02
   String    = 0x03
+  Array     = 0x04
+  Table     = 0x05
   Function  = 0xfe
   Object    = 0xff
 
@@ -53,7 +55,10 @@ class Archive(object):
     self.write_unsigned(len(units))
     self.write_bytes(units)
 
-  def write_object(self, o):
+  def write_object(self, o, enclosing=frozenset()):
+    """
+    Writes `o`, which is contained in the arrays and tables whose identities are in `enclosing`.
+    """
     # Handle signed integers whose two's complement representation requires at most 64 bits.
     if isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
       self.write_byte(TypeIdentifier.Integer.value)
@@ -69,7 +74,22 @@ class Archive(object):
       self.write_byte(TypeIdentifier.String.value)
       self.write_string(o)
 
-    # Handle functions strings.
+    # Handle lists and tuples, unless they contain themselves.
+    elif isinstance(o, (list, tuple)) and id(o) not in enclosing:
+      self.write_byte(TypeIdentifier.Array.value)
+      self.write_unsigned(len(o))
+      for x in o:
+        self.write_object(x, enclosing | {id(o)})
+
+    # Handle dictionaries with string keys, unless they contain themselves.
+    elif isinstance(o, dict) and id(o) not in enclosing and all(isinstance(k, str) for k in o):
+      self.write_byte(TypeIdentifier.Table.value)
+      self.write_unsigned(len(o))
+      for k, x in o.items():
+        self.write_string(k)
+        self.write_object(x, enclosing | {id(o)})
+
+    # Handle functions.
     elif isinstance(o, types.LambdaType):
       self.write_byte(TypeIdentifier.Function.value)
       self.write_string(o.__qualname__)

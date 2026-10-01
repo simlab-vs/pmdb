@@ -156,7 +156,10 @@ extension Trace {
   /// Returns a value parsed from the contents of `node`.
   private static func value(_ node: XMLNode) -> Value? {
     assert(node.localName == "value")
-    guard let payload = node.child(at: 0), payload.uri == Self.namespace else { return nil }
+    guard
+      let payload = node.children?.first(where: { (n) in n.kind == .element }),
+      payload.uri == Self.namespace
+    else { return nil }
 
     switch payload.localName {
     case .some("integer"):
@@ -167,6 +170,26 @@ extension Trace {
 
     case .some("string"):
       return payload.stringValue.map(Value.string(_:))
+
+    case .some("array"):
+      var elements: [Value] = []
+      for n in (payload.children ?? []) where n.kind == .element {
+        guard n.uri == Self.namespace, n.localName == "value", let v = value(n) else { return nil }
+        elements.append(v)
+      }
+      return .array(elements)
+
+    case .some("table"):
+      var entries: SortedDictionary<String, Value> = [:]
+      for n in (payload.children ?? []) where n.kind == .element {
+        guard
+          n.uri == Self.namespace, n.localName == "value",
+          let k = (n as! XMLElement).attribute(forName: "label")?.stringValue,
+          entries[k] == nil, let v = value(n)
+        else { return nil }
+        entries[k] = v
+      }
+      return .table(entries)
 
     case .some("object"):
       return payload.stringValue.flatMap { (s) in

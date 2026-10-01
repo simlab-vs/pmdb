@@ -98,6 +98,25 @@ extension Value: Archivable {
     case ValueTag.string.rawValue:
       self = try .string(archive.read(String.self))
 
+    case ValueTag.array.rawValue:
+      let n = try Int(archive.readUnsignedLEB128())
+      var elements: [Value] = []
+      elements.reserveCapacity(n)
+      for _ in 0 ..< n { try elements.append(archive.read(Value.self)) }
+      self = .array(elements)
+
+    case ValueTag.table.rawValue:
+      let n = try Int(archive.readUnsignedLEB128())
+      var entries = SortedDictionary<String, Value>(minimumCapacity: n)
+      for _ in 0 ..< n {
+        let k = try archive.read(String.self)
+        let v = try archive.read(Value.self)
+        try modify(&entries[k]) { (w) in
+          if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
+        }
+      }
+      self = .table(entries)
+
     case ValueTag.function.rawValue:
       self = try .function(archive.read(String.self))
 
@@ -130,9 +149,9 @@ extension Value: CustomStringConvertible {
     case .string(let v):
       return v
     case .array(let v):
-      return v.description
+      return "[\(v.map(String.init(describing:)).joined(separator: ", "))]"
     case .table(let v):
-      return "{\(v.map(String.init(describing:)).joined(separator: ", "))}"
+      return "{\(v.map({ (e) in "\(e.key): \(e.value)" }).joined(separator: ", "))}"
     case .lambda(let d, _):
       return d.description
     case .function:

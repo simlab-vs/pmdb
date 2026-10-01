@@ -190,3 +190,66 @@ func rejectsInvalidParents(mutation: String) async throws {
     """)
   #expect(trace.calls[1].value.positional == [.function("inc"), .integer(1)])
 }
+
+@Test func readsArraysAndTablesFromBinaryTrace() async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(xs, t):
+      return 0
+
+    f([1, (2.5, "a")], {"b": [], "a": {"c": 3}})
+    """)
+
+  let call = trace.calls[1].value
+  #expect(call.positional == [
+    .array([.integer(1), .array([.float(2.5), .string("a")])]),
+    .table(["a": .table(["c": .integer(3)]), "b": .array([])]),
+  ])
+  #expect(call.description == "call f([1, [2.5, a]], {a: {c: 3}, b: []})")
+}
+
+@Test func readsSelfReferentialArrayAsObject() async throws {
+  let trace = try await record(
+    """
+    xs = [1]
+    xs.append(xs)
+    r.snapshot('xs', xs)
+    """)
+
+  guard case .array(let xs) = trace.snaps[0].value.value, xs.count == 2, case .object = xs[1]
+  else {
+    Issue.record("expected an array ending with an object, got \(trace.snaps[0].value.value)")
+    return
+  }
+  #expect(xs[0] == .integer(1))
+}
+
+@Test func readsTablesWithNonStringKeysAsObjects() async throws {
+  let trace = try await record("r.snapshot('t', {1: 2})")
+  guard case .object = trace.snaps[0].value.value else {
+    Issue.record("expected an object, got \(trace.snaps[0].value.value)")
+    return
+  }
+}
+
+@Test(arguments: [
+  ("f(xs, _) where xs[0] == 1", 1),
+  ("f(xs, _) where xs[1][0] > 2.0", 1),
+  ("f(_, t) where t.a.c == 3", 1),
+  ("f(_, t) where t.b", 0),
+])
+func selectsCallsByArrayAndTableContents(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(xs, t):
+      return 0
+
+    f([1, (2.5, "a")], {"b": [], "a": {"c": 3}})
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try await engine.select(query("select \(source)")).count == count)
+}
