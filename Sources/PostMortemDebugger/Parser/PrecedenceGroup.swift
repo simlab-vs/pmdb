@@ -22,15 +22,15 @@ public enum PrecedenceGroup: UInt8 {
   /// Creates the precedence group containing `op`.
   public init<T: StringProtocol>(containing op: T) {
     switch op {
-    case "*", "/", "%":
+    case "*", "/", "%", "&":
       self = .multiplication
-    case "+", "-":
+    case "+", "-", "|", "^":
       self = .addition
     case "==", "!=", "<", "<=", ">", ">=":
       self = .comparison
-    case "^", "&", "&&":
+    case "&&":
       self = .conjunction
-    case "|", "||":
+    case "||":
       self = .disjunction
     default:
       self = .addition
