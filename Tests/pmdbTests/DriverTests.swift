@@ -341,6 +341,30 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   #expect(p.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>"))
 }
 
+@Test(arguments: [true, false])
+func showsTraces(flagFirst: Bool) async throws {
+  let r = try makeTrace()
+  let o = try await pmdb(flagFirst ? ["--show", r.trace] : [r.trace, "--show"])
+  #expect(o.succeeded)
+  #expect(o.output == """
+    * call root()
+    └─* call f(1)
+    """)
+  #expect(o.error == "")
+}
+
+@Test func failsToShowUnloadableTrace() async throws {
+  let o = try await pmdb(["--show", "missing.trace"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+}
+
+@Test func requiresTraceToShow() async throws {
+  let o = try await pmdb(["--show"])
+  #expect(!o.succeeded)
+  #expect(o.error.contains("'--show' requires at least one trace"))
+}
+
 @Test func namesItselfPmdb() async throws {
   let o = try await pmdb(["--help"])
   #expect(o.succeeded)

@@ -13,11 +13,9 @@ import PostMortemDebugger
     commandName: "pmdb",
     abstract: "A post-mortem debugger that answers queries about recorded execution traces.")
 
-  /// The trace that should be shown, if any.
-  @Option(
-    help: "Show the contents of the trace stored in the specified file and exit.",
-    transform: URL.init(fileURLWithPath:))
-  private var show: URL? = nil
+  /// `true` iff the traces passed as arguments should be shown instead of starting a session.
+  @Flag(help: "Show the contents of the traces passed as arguments and exit.")
+  private var show: Bool = false
 
   /// The trace that should be printed as XML, if any.
   @Option(
@@ -39,11 +37,25 @@ import PostMortemDebugger
   /// Creates a new instance with default options.
   public init() {}
 
+  /// Checks the arguments of the command.
+  public func validate() throws {
+    if show && inputs.isEmpty {
+      throw ValidationError("'--show' requires at least one trace")
+    }
+  }
+
   /// Executes the command.
   public mutating func run() async throws {
-    // Should we just show the contents of a trace?
-    if let u = show {
-      Self.attempt({ try print(Trace(contentsOf: u)) })
+    // Should we just show the contents of the traces?
+    if show {
+      for u in inputs {
+        do {
+          try print(Trace(contentsOf: u), terminator: "")
+        } catch let e {
+          Self.report(e)
+          throw ExitCode.failure
+        }
+      }
       return
     }
 
@@ -255,18 +267,6 @@ import PostMortemDebugger
     let t = try Trace(contentsOf: trace)
     engine.add(t)
     if let n = name { engine.assign(.trace(t.identity), for: n) }
-  }
-
-  /// Returns the result of `action()` iff it does not throw. Otherwise, reports the error to the
-  /// standard error and returns `nil`.
-  @discardableResult
-  private static func attempt<T>(_ action: () throws -> T) -> T? {
-    do {
-      return try action()
-    } catch let e {
-      report(e)
-      return nil
-    }
   }
 
   /// Reports `e` to the standard error.
