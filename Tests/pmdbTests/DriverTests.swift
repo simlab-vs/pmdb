@@ -2,6 +2,12 @@ import Foundation
 import Subprocess
 import Testing
 
+#if canImport(System)
+  import System
+#else
+  import SystemPackage
+#endif
+
 /// The outcome of a run of `pmdb`.
 private struct Outcome {
 
@@ -19,18 +25,35 @@ private struct Outcome {
 /// An error indicating that `pmdb` did not exit in time.
 private struct Timeout: Error {}
 
+/// Returns a file descriptor reading `contents` from a temporary file.
+///
+/// Inputs are read from files rather than pipes because `pmdb` can exit before reading its input
+/// (e.g., if a trace can't be loaded), and writing to a pipe whose reader has exited fails.
+private func inputFile(_ contents: String) throws -> FileDescriptor {
+  let path = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  try contents.write(to: path, atomically: true, encoding: .utf8)
+  let descriptor = try FileDescriptor.open(FilePath(path.path), .readOnly)
+
+  // An open file can be removed without closing its descriptors, except on Windows.
+  #if !os(Windows)
+    try FileManager.default.removeItem(at: path)
+  #endif
+  return descriptor
+}
+
 /// Returns the outcome of running `pmdb` with `arguments`, feeding `input` to its standard input,
 /// or throws `Timeout` if it does not exit within `timeLimit`.
 ///
 /// The output and the error are normalized; see `String.normalized`.
 private func pmdb(_ arguments: [String] = [], input: String = "") async throws -> Outcome {
-  try await withThrowingTaskGroup(of: Outcome.self) { (group) in
+  let source = try inputFile(input)
+  return try await withThrowingTaskGroup(of: Outcome.self) { (group) in
     group.addTask {
       let result = try await run(
         .path(.init(pmdbExecutable.path)),
         arguments: .init(arguments),
         environment: .inherit.updating(["TERM": "dumb"]),
-        input: .string(input),
+        input: .fileDescriptor(source, closeAfterSpawningProcess: true),
         output: .string(limit: 1 << 20),
         error: .string(limit: 1 << 20))
       return Outcome(
@@ -360,7 +383,8 @@ func showsTraces(flagFirst: Bool) async throws {
   let result = try await run(
     .name("sh"), arguments: ["-c", "\"$0\" \"$1\" 2>&1", pmdbExecutable.path, r.trace],
     environment: .inherit.updating(["TERM": "dumb"]),
-    input: .string("select f(x)\nselect f(x) from $nope\n"),
+    input: .fileDescriptor(
+      inputFile("select f(x)\nselect f(x) from $nope\n"), closeAfterSpawningProcess: true),
     output: .string(limit: 1 << 20), error: .discarded)
   #expect(result.standardOutput.normalized == """
     $0 = <1 element(s) in 1 trace(s)>
