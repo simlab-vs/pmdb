@@ -6,6 +6,7 @@ The latter can be used for debugging or to help with the developement of new fea
 
 The human-readable format is based on XML.
 A schema definition is provided.
+A binary trace can be converted to XML with `pmdb --export-xml <trace>`, which prints the XML document to the standard output.
 
 ## Structure of a trace
 

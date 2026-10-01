@@ -252,3 +252,36 @@ func reportsEvaluationErrors(source: String, message: String) async throws {
     (e as? Diagnostic)?.message == message
   }
 }
+
+@Test func exportsXMLTraceToXML() throws {
+  let trace = try loadFactorialTrace()
+  let reloaded = try #require(Trace(xml: trace.xml()))
+  #expect(reloaded.identity == trace.identity)
+  #expect(reloaded.description == trace.description)
+}
+
+@Test func exportsUnlabeledSnapsAndColonsInLocationsToXML() throws {
+  let source = """
+    <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
+      <pmdb:observations>
+        <pmdb:call location="C:\\a:b.py:3">
+          <pmdb:function>root</pmdb:function>
+          <pmdb:arguments/>
+          <pmdb:observations>
+            <pmdb:snap location="C:\\a:b.py:4"><pmdb:value><pmdb:function>f</pmdb:function></pmdb:value></pmdb:snap>
+          </pmdb:observations>
+        </pmdb:call>
+      </pmdb:observations>
+    </pmdb:trace>
+    """
+  let trace = try #require(Trace(xml: Data(source.utf8)))
+  #expect(trace.calls[0].value.location == SourceLine(3, in: "C:\\a:b.py"))
+  #expect(trace.snaps[0].value.label == nil)
+  #expect(trace.snaps[0].value.value == .function("f"))
+
+  let reloaded = try #require(Trace(xml: trace.xml()))
+  #expect(reloaded.calls[0].value.location == SourceLine(3, in: "C:\\a:b.py"))
+  #expect(reloaded.snaps[0].value.location == SourceLine(4, in: "C:\\a:b.py"))
+  #expect(reloaded.snaps[0].value.label == nil)
+  #expect(reloaded.snaps[0].value.value == .function("f"))
+}

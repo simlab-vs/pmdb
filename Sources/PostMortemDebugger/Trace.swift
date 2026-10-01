@@ -174,6 +174,9 @@ extension Trace {
     case .some("string"):
       return payload.stringValue.map(Value.string(_:))
 
+    case .some("function"):
+      return payload.stringValue.map(Value.function(_:))
+
     case .some("array"):
       var elements: [Value] = []
       for n in (payload.children ?? []) where n.kind == .element {
@@ -205,6 +208,181 @@ extension Trace {
   }
 
   private static let namespace = "https://hevs.ch/pmdb"
+
+}
+
+extension Trace {
+
+  /// Returns the contents of `self` as an XML document that can be read by `init(xml:)`.
+  ///
+  /// - Throws: `RuntimeError` if `self` contains a string with characters that can't be written in
+  ///   XML 1.0 (e.g., most ASCII control characters).
+  public func xml() throws -> Data {
+    // The document is written directly rather than with `XMLDocument`, whose serialization doesn't
+    // escape whitespace in attribute values on every platform, although XML parsers replace them
+    // with spaces.
+    var w = XMLWriter()
+    w.output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+    let id = UUID(identity).uuidString
+    try w.open("pmdb:trace", [("xmlns:pmdb", Self.namespace), ("id", id)])
+    w.open("pmdb:observations")
+    if !observations.isEmpty {
+      try write(observation: 0, to: &w)
+    }
+    w.close("pmdb:observations")
+    w.close("pmdb:trace")
+    return Data(w.output.utf8)
+  }
+
+  /// Writes the XML representation of the observation at index `i` and its children to `w`.
+  private func write(observation i: ObservationIndex, to w: inout XMLWriter) throws {
+    if let s = observations[i].snap {
+      let snap = snaps[s].value
+      var attributes = [("location", snap.location.description)]
+      if let l = snap.label { attributes.append(("label", l)) }
+      try w.open("pmdb:snap", attributes)
+      try Self.write(value: snap.value, to: &w)
+      w.close("pmdb:snap")
+      return
+    }
+
+    let call = calls[observations[i].call!].value
+    try w.open("pmdb:call", [("location", call.location.description)])
+    try w.leaf("pmdb:function", call.function)
+
+    if call.positional.isEmpty && call.named.isEmpty {
+      w.empty("pmdb:arguments")
+    } else {
+      w.open("pmdb:arguments")
+      for v in call.positional { try Self.write(value: v, to: &w) }
+      for (k, v) in call.named { try Self.write(value: v, label: k, to: &w) }
+      w.close("pmdb:arguments")
+    }
+
+    if !call.children.isEmpty {
+      w.open("pmdb:observations")
+      for c in call.children { try write(observation: c, to: &w) }
+      w.close("pmdb:observations")
+    }
+    w.close("pmdb:call")
+  }
+
+  /// Writes a `pmdb:value` element representing `v` to `w`, with the given label if any.
+  private static func write(value v: Value, label: String? = nil, to w: inout XMLWriter) throws {
+    try w.open("pmdb:value", label.map({ (l) in [("label", l)] }) ?? [])
+
+    switch v {
+    case .null:
+      w.empty("pmdb:none")
+    case .integer(let n):
+      try w.leaf("pmdb:integer", n.description)
+    case .float(let n):
+      let s = n.isNaN ? "NaN" : n.isInfinite ? (n < 0 ? "-INF" : "INF") : n.description
+      try w.leaf("pmdb:float", s)
+    case .string(let s):
+      try w.leaf("pmdb:string", s)
+    case .array(let xs):
+      w.open("pmdb:array")
+      for x in xs { try write(value: x, to: &w) }
+      w.close("pmdb:array")
+    case .table(let t):
+      w.open("pmdb:table")
+      for (k, x) in t { try write(value: x, label: k, to: &w) }
+      w.close("pmdb:table")
+    case .function(let f):
+      try w.leaf("pmdb:function", f)
+    case .object(let bytes):
+      try w.leaf("pmdb:object", Data(bytes).base64EncodedString())
+    case .lambda:
+      // Lambdas are created by queries, not recorded in traces.
+      preconditionFailure("trace contains a lambda")
+    }
+
+    w.close("pmdb:value")
+  }
+
+}
+
+/// A writer of indented XML documents.
+private struct XMLWriter {
+
+  /// The text written so far.
+  var output = ""
+
+  /// The number of elements that have been opened and not closed.
+  private var depth = 0
+
+  /// Writes the start tag of an element named `name` with the given attributes.
+  mutating func open(_ name: String, _ attributes: [(String, String)]) throws {
+    let a = try Self.attributes(attributes)
+    indent()
+    output.write("<\(name)\(a)>\n")
+    depth += 1
+  }
+
+  /// Writes the start tag of an element named `name` without attributes.
+  mutating func open(_ name: String) {
+    indent()
+    output.write("<\(name)>\n")
+    depth += 1
+  }
+
+  /// Writes the end tag of an element named `name`.
+  mutating func close(_ name: String) {
+    depth -= 1
+    indent()
+    output.write("</\(name)>\n")
+  }
+
+  /// Writes an empty element named `name`.
+  mutating func empty(_ name: String) {
+    indent()
+    output.write("<\(name)/>\n")
+  }
+
+  /// Writes an element named `name` containing the text `s`.
+  mutating func leaf(_ name: String, _ s: String) throws {
+    let t = try Self.escaped(s, inAttribute: false)
+    indent()
+    output.write("<\(name)>\(t)</\(name)>\n")
+  }
+
+  /// Writes the indentation of the current line.
+  private mutating func indent() {
+    output.write(String(repeating: "  ", count: depth))
+  }
+
+  /// Returns the given attributes as they are written in a start tag.
+  private static func attributes(_ attributes: [(String, String)]) throws -> String {
+    try attributes.map({ (n, v) in " \(n)=\"\(try escaped(v, inAttribute: true))\"" }).joined()
+  }
+
+  /// Returns `s` with the characters that have a special meaning in XML replaced by references.
+  ///
+  /// Carriage returns are always replaced because XML parsers normalize line endings, and tabs
+  /// and line feeds are replaced in attribute values because XML parsers replace them with spaces.
+  ///
+  /// - Throws: `RuntimeError` if `s` contains characters that can't be written in XML 1.0.
+  private static func escaped(_ s: String, inAttribute: Bool) throws -> String {
+    var result = ""
+    for c in s.unicodeScalars {
+      switch c.value {
+      case 0x26: result.write("&amp;")
+      case 0x3c: result.write("&lt;")
+      case 0x3e: result.write("&gt;")
+      case 0x22 where inAttribute: result.write("&quot;")
+      case 0x09 where inAttribute: result.write("&#9;")
+      case 0x0a where inAttribute: result.write("&#10;")
+      case 0x0d: result.write("&#13;")
+      case 0x09, 0x0a, 0x20 ... 0xd7ff, 0xe000 ... 0xfffd, 0x10000 ... 0x10ffff:
+        result.unicodeScalars.append(c)
+      default:
+        throw RuntimeError(
+          "cannot write the character U+\(String(c.value, radix: 16, uppercase: true)) in XML")
+      }
+    }
+    return result
+  }
 
 }
 
@@ -453,6 +631,19 @@ extension Trace.TaggedObservationIndex: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
     lhs.untagged < rhs.untagged
+  }
+
+}
+
+extension UUID {
+
+  /// Creates an instance with the bytes of `identity`.
+  fileprivate init(_ identity: UInt128) {
+    var bytes: uuid_t = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    withUnsafeMutableBytes(of: &bytes) { (b) in
+      for i in 0 ..< 16 { b[i] = UInt8(truncatingIfNeeded: identity >> ((15 - i) << 3)) }
+    }
+    self.init(uuid: bytes)
   }
 
 }

@@ -16,9 +16,11 @@ public struct SourceLine: Hashable, Sendable {
   }
 
   /// Creates an instance with `gnu`, which is a URL and a 1-based line index separated by a colon.
+  ///
+  /// The URL may contain colons (e.g., `C:\a.py:1`).
   public init?(gnu: String) {
     guard
-      let i = gnu.firstIndex(of: ":"),
+      let i = gnu.lastIndex(of: ":"),
       let n = Int(gnu[gnu.index(after: i)...])
     else { return nil }
     self.init(n, in: .init(gnu[..<i]))

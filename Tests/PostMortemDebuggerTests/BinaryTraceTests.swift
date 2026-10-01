@@ -419,3 +419,72 @@ func selectsNone(source: String, count: Int) async throws {
   engine.add(trace)
   #expect(try await engine.select(query("select \(source)")).count == count)
 }
+
+/// Returns `true` iff `a` and `b` have the same identity and observations.
+private func haveSameContents(_ a: Trace, _ b: Trace) -> Bool {
+  (a.identity == b.identity)
+    && a.snaps.map(\.index) == b.snaps.map(\.index)
+    && a.calls.map(\.index) == b.calls.map(\.index)
+    && a.snaps.map(\.value.location) == b.snaps.map(\.value.location)
+    && a.snaps.map(\.value.label) == b.snaps.map(\.value.label)
+    && a.snaps.map(\.value.value) == b.snaps.map(\.value.value)
+    && a.calls.map(\.value.location) == b.calls.map(\.value.location)
+    && a.calls.map(\.value.function) == b.calls.map(\.value.function)
+    && a.calls.map(\.value.positional) == b.calls.map(\.value.positional)
+    && a.calls.map(\.value.named) == b.calls.map(\.value.named)
+    && a.calls.map(\.value.children) == b.calls.map(\.value.children)
+}
+
+@Test func exportsBinaryTraceToXML() async throws {
+  let trace = try await record(
+    """
+    import threading
+
+    class Point:
+      def __init__(self, x):
+        self.x = x
+
+    @r.record
+    def f(*args, **kwargs):
+      return None
+
+    @r.record
+    def g(x):
+      f(x, y=[x])
+      raise ValueError(x)
+
+    f(None, -2**63, 2**63 - 1, 2**64, 0.1, -0.0, 1e300, float("inf"), float("-inf"))
+    f("", " a ", "x\\r\\ny", "<&>\\"'", "tab\\t", "é😀", "]]>")
+    f([], [None, [1]], {}, {"a": {"b": 2}, "<": "&"}, f, Point(1), threading.Lock())
+    f(**{"a b": 1, "\\n": 2, "é": 3})
+    try:
+      g("x")
+    except ValueError:
+      pass
+    r.snapshot("\\t", 1)
+    """)
+
+  let xml = try trace.xml()
+  let reloaded = try #require(Trace(xml: xml), "\(String(decoding: xml, as: UTF8.self))")
+  #expect(haveSameContents(trace, reloaded))
+  #expect(reloaded.description == trace.description)
+
+  // Whitespace in attribute values is escaped, since XML parsers replace it with spaces.
+  let text = String(decoding: xml, as: UTF8.self)
+  #expect(text.contains("label=\"&#9;\"") && text.contains("label=\"&#10;\""))
+}
+
+@Test func exportsNaNToXML() async throws {
+  let trace = try await record("r.snapshot('x', float('nan'))")
+  let reloaded = try #require(Trace(xml: trace.xml()))
+  guard case .float(let v) = reloaded.snaps[0].value.value, v.isNaN else {
+    Issue.record("expected NaN, got \(reloaded.snaps[0].value.value)")
+    return
+  }
+}
+
+@Test(arguments: ["r.snapshot('x', '\\x01')", "r.snapshot('\\x00', 1)"])
+func rejectsCharactersNotRepresentableInXML(program: String) async throws {
+  let trace = try await record(program)
+  #expect(throws: RuntimeError.self) { try trace.xml() }
+}
