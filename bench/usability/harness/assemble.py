@@ -19,6 +19,8 @@ REPOSITORY = ROOT.parent.parent
 def main(binary, output):
   output = Path(output)
   if output.exists():
+    for p in [output, *output.rglob("*")]:
+      p.chmod(p.stat().st_mode | stat.S_IWUSR)
     shutil.rmtree(output)
   (output / "bin").mkdir(parents=True)
   shutil.copy2(binary, output / "bin" / "pmdb")
