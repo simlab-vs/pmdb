@@ -1,21 +1,30 @@
 # pmdb
 
-`pmdb` is a language-agnostic "post-mortem" debugger.
-It provides users with a holistic view of a program's behavior and lets them identify interesting events using queries rather than careful step-by-step forward execution.
+`pmdb` is a language-agnostic *post-mortem* debugger.
+Instead of stepping through a running program, you record a trace of its execution and then ask questions about that trace, such as "which calls to `parse` returned an empty list?" or "which orders were billed in GBP?".
 
-Unlike a traditional live debugger, a post-mortem debugger operates on the traces of a program's execution, after that program has finished running.
-This approach is related but different from [time-travel debugging](https://en.wikipedia.org/wiki/Time_travel_debugging), which extends traditional debugging with the ability to go back to a previous state.
+Unlike a traditional live debugger, a post-mortem debugger works on traces, after the program has finished running.
+This is related to, but different from, [time-travel debugging](https://en.wikipedia.org/wiki/Time_travel_debugging), which extends a live debugger with the ability to go back to a previous state.
 
-## Description
+- [Quick start](#quick-start)
+- [Recording traces](#recording-traces)
+- [Exploring traces](#exploring-traces)
+- [Query language](#query-language)
+- [Using pmdb from coding agents](#using-pmdb-from-coding-agents)
 
-In the context of this project, a trace is not a sequence of statements having been visited but rather a collection of *observations* about the program's execution.
-These observations are structured into a tree whose nodes correspond to call frames.
-That is, each child of a node is an observation that happened within the frame of the corresponding function.
+## Quick start
 
-`pmdb` is language-agnostic but it requires a way to instrument the program under study to generate a trace of its execution(s).
-A prototype library for instrumenting Python programs is currently available.
+`pmdb` is written in Swift.
+[Install Swift](https://www.swift.org/install/), clone this repository, and build `pmdb`:
 
-To illustrate, consider the following Python program:
+```
+swift build -c release
+```
+
+The executable is written to `.build/release/pmdb`.
+
+Then record a trace of a program.
+With the Python recorder (in [Python](Python)), decorate the functions you want to observe:
 
 ```python
 import recorder as pmdb
@@ -33,31 +42,69 @@ if __name__ == "__main__":
     f.write(archive.buffer)
 ```
 
-The decorator on `factorial` indicates that calls to this function should be traced.
-Every call to a decorated function is recorded, so evaluating `factorial(3)` (here by means of `pmdb.main.run`, which simply applies a function to the given arguments) records 3 calls in a trace that is then serialized and saved on disk.
-
-Each recorded call is followed by a snap labeled `<function>.$result` holding the value returned by the call.
-If the call raises instead, the snap is labeled `<function>.$exception` and holds a table with the `type` of the exception and its `message`.
-Arguments, results, and snaps are recorded in the state they have when they are observed.
-`None` is recorded as `none`, `True` and `False` as Booleans, lists and tuples as arrays, and dictionaries with string keys and named tuples as tables.
-Members of enumerations are recorded as their names.
-A class can choose how its instances are recorded by defining a method `__pmdb__` returning the value to record instead, and `pmdb.register(cls, convert)` does the same for classes one cannot modify.
-Other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
-
-The serialized trace contains the following tree:
+Every call to a decorated function is recorded, so evaluating `factorial(3)` records 3 calls (`pmdb.main.run` simply applies a function to the given arguments).
+The trace is a tree of calls, which `pmdb --show` prints with the value each call returned:
 
 ```
-pmdb --show factorial.trace
+$ pmdb --show factorial.trace
 * call root()
 └─* call factorial(3) -> 6
   └─* call factorial(2) -> 2
     └─* call factorial(1) -> 1
 ```
 
-Each call is shown with the value it returned (`-> 6`), or with the exception it raised (`raised {…}`), which are recorded as snaps labeled `<function>.$result` and `<function>.$exception`.
+Finally, query the trace in an interactive session:
 
-A recorder for Rust programs is also available in [Rust](Rust).
-It records the same program as follows:
+```
+$ pmdb factorial.trace
+(pmdb) select factorial(x) where x > 1
+$0 = <2 element(s) in 1 trace(s)>
+(pmdb) show $0
+factorial.py:8: call factorial(3) -> 6
+     6 |
+     7 | if __name__ == "__main__":
+>    8 |   n = pmdb.main.run(factorial, 3)
+     9 |   print(n)  # Prints 6
+    10 |
+continue? [Y/n] n
+(pmdb) exit
+```
+
+## Recording traces
+
+A trace is not a sequence of executed statements but a collection of *observations* about the execution, structured as a tree whose nodes are call frames: each child of a call is an observation made during that call.
+There are two kinds of observations:
+
+- a **call** records the name of the function being called, the values of its arguments when the call started, and the location of the call site;
+- a **snap** records a value with an optional label.
+
+Each recorded call is followed by a snap labeled `<function>.$result`, holding the value it returned, or `<function>.$exception`, holding a table with the `type` and the `message` of the exception it raised.
+`pmdb` shows these outcomes next to the calls (`-> 6`, or `raised {message: …, type: KeyError}`).
+Snaps can also be recorded explicitly, e.g. with `pmdb.main.snapshot("label", value)` in Python.
+
+`pmdb` is language-agnostic, but a program must be instrumented to produce a trace.
+Recorders are available for Python and Rust, and traces can also be written as XML (see [Documentation/Traces.md](Documentation/Traces.md)).
+
+### Python
+
+The recorder in [Python](Python) records calls to the functions decorated with `@pmdb.main.record`, as shown in the [quick start](#quick-start).
+Arguments, results, and snaps are recorded in the state they have when they are observed:
+
+- `None` is recorded as `none`, and `True` and `False` as Booleans;
+- lists and tuples are recorded as arrays, and dictionaries with string keys and named tuples as tables;
+- members of enumerations are recorded as their names;
+- a class can choose how its instances are recorded by defining a method `__pmdb__` returning the value to record instead, and `pmdb.register(cls, convert)` does the same for classes one cannot modify;
+- other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
+
+To record every function of a program without editing it, use [`skills/pmdb/scripts/pmdb-record`](skills/pmdb/scripts/pmdb-record):
+
+```
+PYTHONPATH=path/to/pmdb/Python skills/pmdb/scripts/pmdb-record -o trace.pmdb main.py input.json
+```
+
+### Rust
+
+The recorder in [Rust](Rust) records the functions annotated with `#[pmdb::record]`:
 
 ```rust
 use pmdb_recorder as pmdb;
@@ -79,30 +126,20 @@ Structs with named fields are recorded as tables, enums whose variants have no f
 Values of types that do not implement `Record` are recorded as a string naming their type.
 See the documentation of the crate `pmdb-recorder` for details.
 
-Once a trace has been recorded, `pmdb` can be used to explore that trace interactively, by means of a domain specific language.
-The following session illustrates:
+## Exploring traces
 
-```
-pmdb factorial.trace
-(pmdb) select factorial(x) where x > 1
-$0 = <2 element(s) in 1 trace(s)>
-(pmdb) show $0
-factorial.py:8: call factorial(3) -> 6
-     6 |
-     7 | if __name__ == "__main__":
->    8 |   n = pmdb.main.run(factorial, 3)
-     9 |   print(n)  # Prints 6
-    10 |
-continue? [Y/n] n
-(pmdb) exit
-```
+`pmdb` takes the traces to explore as arguments and reads commands from its standard input:
 
-A trace can be converted to the human-readable XML format described in [Documentation/Traces.md](Documentation/Traces.md) with `pmdb --export-xml factorial.trace > factorial.xml`.
-`pmdb` loads traces whose names end with `.xml` as XML documents.
+| Command | Effect |
+|---|---|
+| `select <query>` | Runs a [query](#query-language) and assigns its result to the next variable `$0`, `$1`, … |
+| `show $N` | Prints the observations in `$N`, with the source code around each of them. |
+| `show variables` | Lists the variables defined so far. |
+| `load <path> as $name` | Loads another trace. |
+| `exit` | Ends the session. |
 
-The results of queries are numbered `$0`, `$1`, etc. so that later commands in the same session can refer to them.
-
-Commands can also be piped to the standard input, one per line, in which case `pmdb` runs them in order in one session and exits.
+When the standard input is a terminal, the session is interactive: `pmdb` prompts for commands, asks whether to continue after each observation it shows, and reports errors without exiting.
+Otherwise, `pmdb` runs the commands it reads, one per line, and exits, which makes it easy to script:
 
 ```
 pmdb factorial.trace <<'EOF'
@@ -112,108 +149,106 @@ show $1
 EOF
 ```
 
-Piped commands behave as in an interactive session, except that `pmdb` doesn't print prompts, `show` prints all observations without asking to continue, and `pmdb` stops at the first command that fails, exiting with a non-zero status.
+In that case, `pmdb` doesn't print prompts, `show` prints all observations without asking to continue, and `pmdb` stops at the first command that fails, exiting with a non-zero status.
+A command can span several lines if each line but the last ends with a backslash.
+Comments start with `#` and extend to the end of the line.
 
-A more detailed description of the `pmdb`'s query language is given below.
+Several traces can be loaded at once, in which case queries select observations from all of them.
 
-It is possible to load more than one single trace during a debugging session, to explore multiple traces at once.
-Queries will return observations from all queries at once.
+Other options:
 
-## Getting started
+- `pmdb --show <traces>` prints traces as trees and exits;
+- `pmdb --export-xml <trace>` prints a trace in the XML format described in [Documentation/Traces.md](Documentation/Traces.md). `pmdb` loads traces whose names end with `.xml` as XML documents.
 
-`pmdb` is written in Swift and can be built from sources using its default package manager.
-Install Swift on your system [as per instructions](https://www.swift.org/install/macos/), clone this repository, and finally build `pmdb` with the following command:
+## Query language
 
-```
-swift build -c release
-```
-
-A standalone executable will be written to the folder `.build/release`.
-
-## Query Language
-
-> Note that the query language is still under developement and that its syntax and features may change.
-
-`pmdb` comes with a query language that can be used to find observations of interest in a trace.
 A query has the following form:
 
 ```
 <pattern> [from <source>] [where <expression>]
 ```
 
-Two kinds of patterns exist: snap patterns and call patterns.
-The former can match snap observations (i.e., observations of a specific value at one point of the program) and the latter can match call observations (i.e., observations of function calls).
-More details are given below.
+The pattern selects calls or snaps, the optional from clause restricts the observations the query searches, and the optional where clause filters the matches with a Boolean condition.
+Some examples:
 
-The from clause, if provided, defines the source of the query which, specifies the set of observations in which the query will be executed.
-In the absence of a from clause, a query selects from all available observations in all traces.
+| Query | Selects |
+|---|---|
+| `f(...)` | all calls to `f` |
+| `f(x) where x > 1` | calls to `f` with one argument greater than 1 |
+| `f(10, "a")` | calls to `f` whose arguments are `10` and `"a"` |
+| `f(x, *)` | calls to `f` with at least one positional argument |
+| `f(*, code = "BIG50", **)` | calls to `f` with a named argument `code` equal to `"BIG50"` |
+| `f(x) -> r where r < x` | calls to `f` that returned less than their argument |
+| `f(...) -> none` | calls to `f` that returned `none` |
+| `invoice(o) where o.has("coupon") && o.coupon == "BIG50"` | calls whose argument is a table with `coupon` equal to `"BIG50"` |
+| `/Parser\..*/(...)` | calls to the methods of `Parser` |
+| `/.*\$exception/` | snaps recording exceptions |
+| `f(x) from $0 where x == 0` | the calls in `$0` whose argument is 0 |
 
-The where clause, if provided, defines a filter that is applied on all results matching the pattern.
-This filter is given as an expression denoting a pedicate satisfied if and only if the expression evaluates to a truthy value.
-More details are given below.
+> The query language is still evolving, and its syntax and features may change.
 
-### Snap Patterns
+### Patterns
 
-A snap pattern is defined as an identifier pattern, matching the label of the observed value.
-This pattern can be a simple identifier, a regular expression, of a wildcard.
-Regular expressions are enclosed in a pair of forward slashes.
-For example, the pattern `/.*\$result/` matches any snap whose label is suffixed by `$result`.
-Wildcards are written with a single underscore (i.e., `_`).
+A **snap pattern** matches the label of snaps.
+It is an identifier, a regular expression enclosed in slashes (e.g., `/.*\$result/`), or the wildcard `_`.
 
-### Call Patterns
+A **call pattern** has the form `<identifier-pattern>(<argument patterns>)`, where the identifier pattern matches the name of the function and the argument patterns, separated by commas, match the arguments.
+Identifiers and regular expressions must match the *whole* name.
+Python methods are recorded with their qualified names (e.g., `Parser.take`), so they are matched with regular expressions such as `/Parser\.take/` or `/.*\.take/`.
 
-A call pattern has the following form:
+Argument patterns are positional or named:
 
-```
-<identifier-pattern>(<argument-pattern> ...)
-```
+- A **positional pattern** is a wildcard (`_`), a variable, or a literal.
+  A variable matches any value and binds it, and repeated occurrences of the same variable must match equal values: `f(x, x)` matches `f(1, 1)` but not `f(1, 2)`.
+  A literal is a Boolean, an integer, a floating-point number, a string in double quotes, or `none`, and matches only equal values: `f(1, "a")` matches `f(1, "a")` but not `f(1.0, "a")`, since an integer is never equal to a floating-point number.
+- A **named pattern** is a label followed by `=` and a positional pattern: `f(a = x, b = x)` matches `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`.
+- A **variadic positional pattern** (`*`) matches any number of positional arguments, and a **variadic named pattern** (`**`) any number of named arguments.
+  Either can be prefixed by a name binding the matched arguments as an array or a table, as in `f(xs*) where xs.all(x => x == 0)`.
+- The **universal pattern** `...` matches any argument list: `f(...)` matches `f()`, `f(1, 2)`, and `f(1, b = 2)`.
 
-The first pattern serves to match the name of the function being called whereas the argument patterns serve to match argument values.
-Argument patterns are separated by a comma and can be positional or named, to match positional or named arguments, respectively.
+A call pattern matches a call if and only if each argument of the call is matched by a different argument pattern and every argument pattern is matched, with positional patterns matching positional arguments in order.
+For example, `f(x, b = _)` doesn't match `f(1, b = 2, c = 3)`, because `c` isn't matched, and `f(x, y)` doesn't match `f(1)`, because `y` isn't matched.
 
-A positional pattern can be either a wildcard (i.e., `_`), a variable, or a literal.
-Repeated occurrences of the same variable can be used to represent the same value during pattern matching.
-For example, the pattern `f(x, x)` matches any call to a function `f` with the same value twice (e.g., `f(1, 1)` but not `f(1, 2)`).
-A literal is a Boolean, an integer, a floating-point number, a string (in double quotes), or `none`, and matches only arguments equal to it.
-For example, `f(1, "a")` matches `f(1, "a")` but not `f(1.0, "a")`, since an integer is never equal to a floating-point number.
-
-A named pattern is expressed as an identifier followed by the equal sign (i.e., `=`) and a positional pattern.
-For example, the pattern `f(a = x, b = x)` matches any call to a function `f` with two named arguments `a` and `b` having the same value (e.g., `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`).
-
-A call pattern successfully matches a call observation if and only if each argument of the call is matched by a different argument pattern, and all argument patterns have been matched.
-Naturally, the order in which positional arguments also has to match the order in which positional patterns are laid out.
-For example, `f(x, b = _)` does **not** match `f(1, b = 2, c = 3)` because the last named argument is not matched by any argument pattern.
-Likewise, the `f(x, y)` does **not** match `f(1)` because the last argument pattern has not been matched.
-
-Both positional and named patterns can be declared variadic to match arbitrary numbers of aguments.
-A variadic positional pattern is expressed by one star (i.e., `*`) and a variadic named named pattern with two stars (i.e., `**`).
-For example, `f(*)` matches (among others) `f()`, `f(1)`, and `f(1, 2)` and `f(**)` matches (among others) `f()`, `f(a = 1)`, and `f(a = 1, b = 2)`.
-Note that a variadic positional pattern does not match any named argument, and vice versa.
-For example, `f(**)` does not match `f(1)`.
-
-Variadic patterns can be optionally prefixed by a simple identifier to bind the sequence of arguments that has been matched in query filters.
-For example, the query `f(xs*) where xs.all(x => x == 0)` matches any call to a function `f` whose all arguments equal to zero, which includes (among others) `f()` and `f(0, 0)` but not `f(0, 1)`.
-
-Finally, the universal pattern `...` can be used instead of a comma-separated list of argument pattern to match any argument list.
-For instance, `f(...)` matches (among others) `f()`, `f(1, 2)` and `f(1, b = 2)`.
-
-A call pattern can be followed by an arrow (i.e., `->`) and a positional pattern matching the value returned by the call.
+A call pattern can be followed by an arrow (`->`) and a positional pattern matching the value returned by the call.
 For example, `f(x) -> r where r > x` matches the calls to `f` returning a value greater than their argument, and `f(x) -> x` matches those returning their argument.
 Such a pattern only matches calls whose result has been recorded, so it never matches calls that raised an exception.
 
+### Sources
 
-### Where Clauses
+A from clause restricts a query to the observations of a variable or of another query, as in `f(x) from $0` or `f(x) from select f(...) -> 0`.
+It only searches these observations, not the observations made during the calls they contain.
+Without a from clause, a query searches all observations of all loaded traces.
 
-> Work on the interpreter is ongoing; some features are currently unimplemented.
+### Where clauses
 
-A where clause is an expression that further filters the results of a query by excluding successful that do not satisfy some critera.
-For example, consider the query `f(x) where x != 0`, which matches calls to `f` having a single argument different from zero.
-The expression `x != 0` is evaluated for each call observation matching the pattern `f(x)`.
+A where clause is an expression evaluated for each match, in which the names bound by the pattern are defined.
+A match is kept if the expression evaluates to a *truthy* value, which is any value other than `none`, `false`, zero, an empty string, an empty array, or an empty table.
+If the evaluation fails for any match (e.g., because it divides by zero, selects a property that a table doesn't have, or compares an integer with a floating-point number), the query fails and the error is reported.
 
-A where clause is satisfied if it evaluates to a "truthy" value, which is any value different from `none`, `false`, zero, an empty string, an empty array, or an empty table.
-If the evaluation of a where clause fails for any of the matching observations (e.g., because it divides by zero or selects an element of a value that is not an array), the query fails and the error is reported.
-It is expressed as an expression that can mentions the names bound in call patterns.
-The grammar of legal expressions is given below:
+The operators, from the loosest to the tightest binding, are:
+
+- `||` and `&&`, which evaluate their right operand only if the left one doesn't determine their result;
+- `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
+- `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
+- `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
+- `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
+- the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+
+Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
+
+Elements of arrays are selected with `xs[i]`, and properties of tables with `t.name`.
+A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
+Arrays and tables have the following methods, where `p` is a lambda:
+
+- `xs.all(p)` returns whether `p` returns a truthy value for all elements of `xs`;
+- `xs.any(p)` returns whether `p` returns a truthy value for at least one element of `xs`;
+- `xs.count(p)` returns the number of elements of `xs` for which `p` returns a truthy value;
+- `xs.len()` and `t.len()` return the number of elements of `xs` and of entries of `t`;
+- `t.has(k)` returns whether the table `t` has an entry whose key is the string `k`. Applying `has` to a value that isn't a table, or with a key that isn't a string, is an error.
+
+`t.has` makes it possible to filter on properties that only some tables have: `o.has("coupon") && o.coupon == "BIG50"` holds for the tables whose `coupon` is `"BIG50"`, without failing on those without `coupon`.
+
+The grammar of expressions is:
 
 ```
 expr ::=
@@ -253,28 +288,10 @@ argument-list ::=
   expr
 ```
 
-The following operators are supported, from the loosest to the tightest binding:
+String literals are enclosed in double quotes and support the escape sequences `\n`, `\t`, `\\`, and `\"`.
 
-- `||` and `&&`, which evaluate their right operand only if the left one does not determine their result;
-- `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
-- `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
-- `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
-- `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
-- the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+## Using pmdb from coding agents
 
-Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
-
-A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
-Arrays have the following methods, where `p` is a lambda:
-
-- `xs.all(p)` returns whether `p` returns a truthy value for all elements of `xs`, as in `xs.all(x => x == 0)`;
-- `xs.any(p)` returns whether `p` returns a truthy value for at least one element of `xs`;
-- `xs.count(p)` returns the number of elements of `xs` for which `p` returns a truthy value;
-- `xs.len()` returns the number of elements of `xs`.
-
-Tables have the following methods:
-
-- `t.len()` returns the number of entries of `t`;
-- `t.has(k)` returns whether `t` has an entry whose key is the string `k`, as in `o.has("coupon") && o.coupon == "BIG50"`, which holds for the tables whose `coupon` is `"BIG50"`, without failing on the tables that have no `coupon`.
-
-Applying `has` on a value that isn't a table, or with a key that isn't a string, is an error.
+[skills/pmdb](skills/pmdb) is a skill for coding agents such as Claude Code.
+It explains how to record traces, how to query them in one command, recipes for common debugging questions, and the pitfalls agents ran into in our [usability study](bench/usability/results/REPORT.md).
+To install it for Claude Code, copy or link the directory into `~/.claude/skills/` (for all projects) or `.claude/skills/` (for one project).
