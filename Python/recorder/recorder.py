@@ -108,8 +108,12 @@ class Recorder(object):
       call = Call(caller.filename, caller.lineno, callee, args, kwargs)
       self.step_into(call)
 
-      # Apply the decorated function.
-      result = f(*args, **kwargs)
+      # Apply the decorated function, getting back to the original trace node if it raises.
+      try:
+        result = f(*args, **kwargs)
+      except BaseException:
+        self.active = self.parent[self.active]
+        raise
 
       # Get back to the original trace node.
       snap = Snapshot(caller.filename, caller.lineno, callee + ".$result", result)
