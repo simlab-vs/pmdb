@@ -190,6 +190,9 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(x) where x > 0 || y", 3),
   ("factorial(x) where x < 0 && y", 0),
   ("factorial(x) where x > 1 && 1 / (x - 1) == 1", 1),
+  ("factorial(x) where \"a\" == \"a\"", 3),
+  ("factorial(x) where \"a\" != \"b\"", 3),
+  ("factorial(x) where \"a\\\"\" == \"a\"", 0),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
@@ -203,6 +206,8 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(x) where -(x - 9223372036854775807 - 2)", "arithmetic overflow in '-'"),
   ("factorial(x) where ~x", "unsupported prefix operator '~'"),
   ("factorial(x) where x > 1 || y", "undefined symbol 'y'"),
+  ("factorial(x) where x == \"1\"", "cannot apply == on values of type 'integer' and 'string'"),
+  ("factorial(x) where \"\\q\" == \"\"", "invalid escape sequence '\\q'"),
   ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),
   ("factorial(x) where 1 / (x - 1) > 0", "division by zero in '/'"),
   ("factorial(x) where 1.0 / 0.0 > 0.0", "division by zero in '/'"),
