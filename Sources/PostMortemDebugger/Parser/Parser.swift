@@ -237,7 +237,7 @@ public struct Parser {
     minimumPrecedence p: PrecedenceGroup = .disjunction
   ) throws -> Expression {
     let s = nextTokenStart()
-    var l = try parseCompoundExpression()
+    var l = try parsePrefixExpression()
 
     // Can we parse an operator with enough precedence?
     while p < .max, let (o, q) = try parseOptionalInfixOperator(notTighterThan: p) {
@@ -248,6 +248,14 @@ public struct Parser {
 
     // Done.
     return l
+  }
+
+  /// Parses an expression optionally prefixed by an operator.
+  private mutating func parsePrefixExpression() throws -> Expression {
+    guard let o = take(.operator) else { return try parseCompoundExpression() }
+    let e = try parseCompoundExpression()
+    let f = Expression(syntax: .identifier(text(o)), site: o.site)
+    return .init(syntax: .apply(.init(callee: f, arguments: [e])), site: span(from: o))
   }
 
   /// Parses an expression made of one or more components.
