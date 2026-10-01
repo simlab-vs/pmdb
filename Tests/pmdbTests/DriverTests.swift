@@ -134,3 +134,67 @@ private func makeTrace(
   #expect(o.output == "(pmdb) (pmdb) $0 = <1 element(s) in 1 trace(s)>\n(pmdb)")
   #expect(o.error == "error: undefined symbol '$nope'")
 }
+
+/// A source file of seven lines.
+private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
+
+@Test(arguments: [
+  (1, """
+    >    1 | a
+         2 | b
+         3 | c
+    """),
+  (2, """
+         1 | a
+    >    2 | b
+         3 | c
+         4 | d
+    """),
+  (4, """
+         2 | b
+         3 | c
+    >    4 | d
+         5 | e
+         6 | f
+    """),
+  (6, """
+         4 | d
+         5 | e
+    >    6 | f
+         7 | g
+    """),
+  (7, """
+         5 | e
+         6 | f
+    >    7 | g
+    """),
+  (8, """
+         6 | f
+         7 | g
+    """),
+])
+func showsSourceExcerpt(line: Int, excerpt: String) async throws {
+  let r = try makeTrace(source: sevenLines, callingAt: line)
+  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  #expect(o.succeeded)
+  #expect(o.output == """
+    (pmdb) $0 = <1 element(s) in 1 trace(s)>
+    (pmdb) \(r.source):\(line): call f(1)
+    \(excerpt)
+    continue? [Y/n] (pmdb)
+    """)
+  #expect(o.error == "")
+}
+
+@Test func showsObservationPastEndOfSource() async throws {
+  let r = try makeTrace(source: sevenLines, callingAt: 10)
+  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  #expect(o.succeeded)
+  #expect(o.output == """
+    (pmdb) $0 = <1 element(s) in 1 trace(s)>
+    (pmdb) \(r.source):10: call f(1)
+    continue? [Y/n] (pmdb)
+    """)
+  #expect(o.error == "")
+}
+
