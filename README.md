@@ -218,3 +218,5 @@ The following operators are supported, from the loosest to the tightest binding:
 - `==` and `!=`, which also compare two strings, arrays, tables, functions, or objects by contents;
 - `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+
+A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`, and arrays have a method `all` that returns whether a lambda returns a truthy value for each of their elements, as in `xs.all(x => x == 0)`.

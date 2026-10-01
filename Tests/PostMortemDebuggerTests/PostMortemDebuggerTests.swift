@@ -193,6 +193,11 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(x) where \"a\" == \"a\"", 3),
   ("factorial(x) where \"a\" != \"b\"", 3),
   ("factorial(x) where \"a\\\"\" == \"a\"", 0),
+  ("factorial(xs*) where xs.all(x => x > 1)", 2),
+  ("factorial(xs*) where xs.all(x => xs[0] == x)", 3),
+  ("factorial(x) where (y => y > 1)(x)", 2),
+  ("factorial(x) where (y => x == y)(x)", 3),
+  ("factorial(x) where (y => z => y == z)(x)(2)", 1),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
@@ -206,6 +211,12 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(x) where -(x - 9223372036854775807 - 2)", "arithmetic overflow in '-'"),
   ("factorial(x) where ~x", "unsupported prefix operator '~'"),
   ("factorial(x) where x > 1 || y", "undefined symbol 'y'"),
+  ("factorial(x) where x(1)", "value of type 'integer' is not a lambda"),
+  ("factorial(x) where (y => y)(1, 2)", "expected 1 argument(s), found 2"),
+  ("factorial(xs*) where xs.any(x => x)", "value of type 'array' has no method 'any'"),
+  ("factorial(xs*) where xs.all(1)", "value of type 'integer' is not a lambda"),
+  ("factorial(xs*) where xs.all(x => x.y)", "value of type 'integer' is not a table"),
+  ("factorial(x) where x % 2", "unsupported operation '%'"),
   ("factorial(x) where x == \"1\"", "cannot apply == on values of type 'integer' and 'string'"),
   ("factorial(x) where \"\\q\" == \"\"", "invalid escape sequence '\\q'"),
   ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),

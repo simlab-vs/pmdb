@@ -348,3 +348,24 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   let raised = try await engine.select(query("select /.*\\$exception/"))
   #expect(raised.count == 2)
 }
+
+@Test func selectsCallsWhoseArgumentsAllSatisfyPredicate() async throws {
+  // The example given in the README.
+  let trace = try await record(
+    """
+    @r.record
+    def f(*xs):
+      return 0
+
+    f()
+    f(0, 0)
+    f(0, 1)
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  let result = try await engine.select(query("select f(xs*) where xs.all(x => x == 0)"))
+  #expect(result.calls(in: 0).map({ (i) in trace[at: i].description }) == [
+    "call f()", "call f(0, 0)",
+  ])
+}
