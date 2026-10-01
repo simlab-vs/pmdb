@@ -18,6 +18,11 @@ Each observation is associated with a line in a source file, describing where in
 A snap additionaly contains a recorded value with an optional label.
 A call additionally contains the name of the function being called, the arguments passed to that function, and a list of observation that occurred during the call.
 
+The outcome of a call is recorded as the snap that immediately follows it, under the same parent.
+That snap is labeled `<function>.$result` and holds the returned value if the call returned, or is labeled `<function>.$exception` and holds a table with the `type` and the `message` of the exception if the call raised one, where `<function>` is the name of the function being called.
+`pmdb` shows such snaps as the outcomes of the calls they follow (e.g., `call f(3) -> 6`), and matches them against the result patterns of queries (e.g., `f(x) -> r`).
+The recorders for Python and Rust record the outcome of every call they record.
+
 ### Values
 
 `pmdb` supports 9 types of values to record snaps and call arguments, namely:

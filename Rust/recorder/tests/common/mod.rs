@@ -107,7 +107,7 @@ impl Trace {
       .1
   }
 
-  /// Returns a textual tree of the observations, like `pmdb --show`.
+  /// Returns a textual tree of the observations, to compare traces in tests.
   pub fn tree(&self) -> String {
     let mut out = String::new();
     self.write(0, 0, &mut out);
