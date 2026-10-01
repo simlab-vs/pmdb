@@ -47,8 +47,26 @@ extension Expression.Apply {
 
   /// Returns the value of `self` evaluated in the specified `environment`.
   fileprivate func evaluate(in environment: inout [String: Value]) throws -> Value {
-    // Is the callee an infix or prefix operator?
+    // Is the callee a prefix operator?
+    if arguments.count == 1 {
+      switch callee.syntax {
+      case .identifier("!"):
+        return try .init(!arguments.first!.evaluate(in: &environment).isTruthy)
+      case .identifier("-"):
+        return try unary(in: &environment) { (a) in try a.negated() }
+      case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
+        throw Diagnostic.error("unsupported prefix operator '\(o)'", at: callee.site)
+      default:
+        break
+      }
+    }
+
+    // Is the callee an infix operator?
     switch callee.syntax {
+    case .identifier("&&"):
+      return try logical(in: &environment, shortCircuitingOn: false)
+    case .identifier("||"):
+      return try logical(in: &environment, shortCircuitingOn: true)
     case .identifier("<"):
       return try compareNumerically(in: &environment) { (r) in r < 0 }
     case .identifier("<="):
@@ -71,6 +89,38 @@ extension Expression.Apply {
       return try binary(in: &environment,) { (a, b) in try a.div(b) }
     default:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
+    }
+  }
+
+  /// Evaluates `self` as a unary operation on an operand evaluated in `environment`, computing its
+  /// result with `transform`.
+  private func unary(
+    in environment: inout [String: Value],
+    computingResultWith transform: (Value) throws -> Value?
+  ) throws -> Value {
+    let a = try arguments.first!.evaluate(in: &environment)
+    do {
+      return try transform(a)
+        ?? Diagnostic.error("cannot apply \(callee) on value of type '\(a.type)'", at: callee.site)
+    } catch let e as ArithmeticFailure {
+      throw Diagnostic.error("\(e.reason) in '\(callee)'", at: callee.site)
+    }
+  }
+
+  /// Evaluates `self` as a logical conjunction or disjunction of operands evaluated in
+  /// `environment`, evaluating its right operand iff the truthiness of its left operand isn't
+  /// `shortCircuit`.
+  private func logical(
+    in environment: inout [String: Value], shortCircuitingOn shortCircuit: Bool
+  ) throws -> Value {
+    if arguments.count != 2 {
+      throw Diagnostic.invalidArgumentCount(expected: 2, found: arguments.count, at: callee.site)
+    }
+
+    if try arguments.first!.evaluate(in: &environment).isTruthy == shortCircuit {
+      return .init(shortCircuit)
+    } else {
+      return try .init(arguments.last!.evaluate(in: &environment).isTruthy)
     }
   }
 
@@ -156,6 +206,18 @@ extension Value {
       return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
     case (.float(let lhs), .float(let rhs)):
       return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
+    default:
+      return nil
+    }
+  }
+
+  /// Returns the negation of `self` iff that operation is defined.
+  fileprivate func negated() throws -> Value? {
+    switch self {
+    case .integer(let v):
+      return try checked(Int64(0).subtractingReportingOverflow(v))
+    case .float(let v):
+      return .float(-v)
     default:
       return nil
     }

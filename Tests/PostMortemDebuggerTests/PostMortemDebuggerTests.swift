@@ -178,6 +178,18 @@ func rejectsInvalidCollectionsInXMLTrace(value: String) {
   ("factorial(x) where -1 < x", 3),
   ("factorial(x) where if x > 1 then -1 else 0", 2),
   ("factorial(x) where (x)-1 > 1", 1),
+  ("factorial(x) where -x < -1", 2),
+  ("factorial(x) where -x == 0 - 3", 1),
+  ("factorial(x) where -(x - 1) == 0", 1),
+  ("factorial(x) where !(x > 1)", 1),
+  ("factorial(x) where !x", 0),
+  ("factorial(x) where x && x", 3),
+  ("factorial(x) where x > 1 && x < 3", 1),
+  ("factorial(x) where x == 1 || x == 3", 2),
+  ("factorial(x) where x < 2 || x > 2 && x < 3", 1),
+  ("factorial(x) where x > 0 || y", 3),
+  ("factorial(x) where x < 0 && y", 0),
+  ("factorial(x) where x > 1 && 1 / (x - 1) == 1", 1),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
@@ -187,7 +199,10 @@ func selectsObservations(source: String, count: Int) async throws {
 }
 
 @Test(arguments: [
-  ("factorial(x) where x && x", "unsupported operation '&&'"),
+  ("factorial(x) where -x.y", "value of type 'integer' is not a table"),
+  ("factorial(x) where -(x - 9223372036854775807 - 2)", "arithmetic overflow in '-'"),
+  ("factorial(x) where ~x", "unsupported prefix operator '~'"),
+  ("factorial(x) where x > 1 || y", "undefined symbol 'y'"),
   ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),
   ("factorial(x) where 1 / (x - 1) > 0", "division by zero in '/'"),
   ("factorial(x) where 1.0 / 0.0 > 0.0", "division by zero in '/'"),
