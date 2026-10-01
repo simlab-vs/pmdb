@@ -130,3 +130,17 @@ func readsIntegersOutOfRangeAsObjects(value: String) async throws {
   let floats = try await engine.select(query("select f(x) where x < 1.0"))
   #expect(floats.count == 1)
 }
+
+@Test(arguments: ["r.parent[0] = 1", "r.parent[1] = 1", "r.parent[1] = 5", "r.parent[2] = 2"])
+func rejectsInvalidParents(mutation: String) async throws {
+  await #expect(throws: (any Error).self) {
+    try await record(
+      """
+      @r.record
+      def f():
+        return 0
+      f()
+      \(mutation)
+      """)
+  }
+}
