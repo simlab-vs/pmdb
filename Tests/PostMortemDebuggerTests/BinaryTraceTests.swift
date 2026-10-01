@@ -351,6 +351,34 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   #expect(returned.count == 0)
 }
 
+@Test(arguments: [
+  ("f(\"x\")", 1),
+  ("f(\"y\", b = -1)", 1),
+  ("f(\"y\", b = 1)", 0),
+  ("f(2.5, c = false)", 1),
+  ("f(2.5, c = 0)", 0),
+  ("f(_, b = none)", 1),
+  ("f(a) -> \"x\"", 1),
+  ("f(a, **) -> 2.5", 1),
+])
+func matchesLiteralPatterns(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(a, b=None, c=True):
+      return a
+
+    f("x")
+    f("y", b=-1)
+    f(2.5, c=False)
+    f("z", b=None)
+    """)
+  var engine = Engine()
+  engine.add(trace)
+  let result = try await engine.select(query("select \(source)"))
+  #expect(result.count == count)
+}
+
 @Test func bindsResultsOfCalls() async throws {
   let trace = try await record(
     """

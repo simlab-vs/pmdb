@@ -81,6 +81,10 @@ public struct ArgumentPatternList: Hashable, Sendable {
           }
         }
 
+      case .positionalLiteral(let expected):
+        // Consume one positional argument, which must be equal to the literal.
+        guard let value = remainingPositional.popFirst(), value == expected else { return false }
+
       case .positionalVariadic(let binding):
         // If there's a binding, assign it or make sure its value matches.
         if let b = binding {
@@ -111,6 +115,13 @@ public struct ArgumentPatternList: Hashable, Sendable {
             e[b] = value
           }
         }
+
+      case .namedLiteral(let label, let expected):
+        // Consume a named argument with the specified label, which must be equal to the literal.
+        guard let value = named[label], !matchedLabels.contains(label), value == expected else {
+          return false
+        }
+        matchedLabels.append(label)
 
       case .namedVariadic(let binding):
         // If there's a binding, assign it or make sure its value matches.

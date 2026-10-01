@@ -134,6 +134,14 @@ func query(_ source: String) throws -> Query {
   #expect(trace.description == "* call root()\n├─* call f()\n└─* snap g.$result = 1\n")
 }
 
+@Test func describesLiteralPatterns() {
+  let xs = ArgumentPatternList([
+    .positionalLiteral(.string("a\"b\n")), .positionalLiteral(.float(2.5)),
+    .namedLiteral(label: "k", value: .integer(-1)), .namedLiteral(label: "n", value: .null),
+  ])
+  #expect(xs.description == "\"a\\\"b\\n\", 2.5, k = -1, n = none")
+}
+
 @Test func requiresPatternAfterArrow() {
   var parser = Parser("select f(x) ->")
   #expect(throws: Diagnostic.self) { try parser.parseCommand() }
@@ -284,6 +292,15 @@ func rejectsInvalidBooleansInXMLTrace(payload: String) {
   ("factorial(...) -> r where r == 6", 1),
   ("_(...) -> _", 3),
   ("root() -> _", 0),
+  ("factorial(3)", 1),
+  ("factorial(3) -> 6", 1),
+  ("factorial(x) -> 2", 1),
+  ("factorial(-1)", 0),
+  ("factorial(3.0)", 0),
+  ("factorial(\"3\")", 0),
+  ("factorial(true)", 0),
+  ("factorial(none)", 0),
+  ("factorial(3, x)", 0),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()

@@ -193,6 +193,8 @@ public struct Parser {
           return .named(label: text(n), binding: text(v))
         } else if take(.underscore) != nil {
           return .named(label: text(n), binding: nil)
+        } else if let v = try parseOptionalLiteral() {
+          return .namedLiteral(label: text(n), value: v)
         } else {
           throw expected("identifier")
         }
@@ -209,6 +211,8 @@ public struct Parser {
       return .positionalVariadic(binding: nil)
     } else if take(operator: "**") != nil {
       return .namedVariadic(binding: nil)
+    } else if let v = try parseOptionalLiteral() {
+      return .positionalLiteral(v)
     } else {
       throw expected("identifier")
     }
@@ -220,8 +224,22 @@ public struct Parser {
       return .positional(binding: text(n))
     } else if take(.underscore) != nil {
       return .positional(binding: nil)
+    } else if let v = try parseOptionalLiteral() {
+      return .positionalLiteral(v)
     } else {
       throw expected("result pattern")
+    }
+  }
+
+  /// Parses a Boolean, numeric, or string literal, or `none`, iff the next token is one, returning
+  /// the value it denotes.
+  private mutating func parseOptionalLiteral() throws -> Value? {
+    switch peek()?.tag {
+    case .true, .false, .noneLiteral, .integerLiteral, .floatingPointLiteral, .stringLiteral:
+      var environment: [String: Value] = [:]
+      return try parsePrimaryExpression().evaluate(in: &environment)
+    default:
+      return nil
     }
   }
 

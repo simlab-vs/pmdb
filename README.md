@@ -171,9 +171,11 @@ A call pattern has the following form:
 The first pattern serves to match the name of the function being called whereas the argument patterns serve to match argument values.
 Argument patterns are separated by a comma and can be positional or named, to match positional or named arguments, respectively.
 
-A positional pattern can be either a wildcard (i.e., `_`) or a variable.
-Repeated occurrences ofthe same variable can be used to represent the same value during pattern matching.
+A positional pattern can be either a wildcard (i.e., `_`), a variable, or a literal.
+Repeated occurrences of the same variable can be used to represent the same value during pattern matching.
 For example, the pattern `f(x, x)` matches any call to a function `f` with the same value twice (e.g., `f(1, 1)` but not `f(1, 2)`).
+A literal is a Boolean, an integer, a floating-point number, a string (in double quotes), or `none`, and matches only arguments equal to it.
+For example, `f(1, "a")` matches `f(1, "a")` but not `f(1.0, "a")`, since an integer is never equal to a floating-point number.
 
 A named pattern is expressed as an identifier followed by the equal sign (i.e., `=`) and a positional pattern.
 For example, the pattern `f(a = x, b = x)` matches any call to a function `f` with two named arguments `a` and `b` having the same value (e.g., `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`).
