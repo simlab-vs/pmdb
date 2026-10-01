@@ -1,0 +1,458 @@
+{
+ "exercises": {
+  "ex01-invoicing-rare": {
+   "program": "invoicing",
+   "file": "billing.py",
+   "function": "volume_discount_rate",
+   "line": 45,
+   "operator": "compare",
+   "description": "GtE -> Gt",
+   "original": "quantity >= threshold",
+   "replacement": "quantity > threshold",
+   "site": 289,
+   "fail_rate": 0.27,
+   "crash_rate": 0.0,
+   "report_seed": 0,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "rare",
+   "id": "ex01-invoicing-rare"
+  },
+  "ex02-invoicing-subtle": {
+   "program": "invoicing",
+   "file": "billing.py",
+   "function": "spread",
+   "line": 88,
+   "operator": "const-1",
+   "description": "1 -> 0",
+   "original": "1",
+   "replacement": "0",
+   "site": 516,
+   "fail_rate": 0.43,
+   "crash_rate": 0.0,
+   "report_seed": 3,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "subtle",
+   "id": "ex02-invoicing-subtle"
+  },
+  "ex03-calc-rare": {
+   "program": "calc",
+   "file": "evaluator.py",
+   "function": "evaluate",
+   "line": 118,
+   "operator": "const-1",
+   "description": "0 -> -1",
+   "original": "0",
+   "replacement": "-1",
+   "site": 952,
+   "fail_rate": 0.016666666666666666,
+   "crash_rate": 0.0,
+   "report_seed": 22,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "rare",
+   "id": "ex03-calc-rare"
+  },
+  "ex04-calc-subtle": {
+   "program": "calc",
+   "file": "evaluator.py",
+   "function": "evaluate",
+   "line": 118,
+   "operator": "const-1",
+   "description": "3 -> 2",
+   "original": "3",
+   "replacement": "2",
+   "site": 988,
+   "fail_rate": 0.31666666666666665,
+   "crash_rate": 0.0,
+   "report_seed": 0,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "subtle",
+   "id": "ex04-calc-subtle"
+  },
+  "ex05-scheduler-rare": {
+   "program": "scheduler",
+   "file": "availability.py",
+   "function": "utilization",
+   "line": 70,
+   "operator": "const+1",
+   "description": "0 -> 1",
+   "original": "0",
+   "replacement": "1",
+   "site": 130,
+   "fail_rate": 0.02666666666666667,
+   "crash_rate": 0.0,
+   "report_seed": 4,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "rare",
+   "id": "ex05-scheduler-rare"
+  },
+  "ex06-scheduler-subtle": {
+   "program": "scheduler",
+   "file": "availability.py",
+   "function": "subtract",
+   "line": 33,
+   "operator": "const-1",
+   "description": "0 -> -1",
+   "original": "0",
+   "replacement": "-1",
+   "site": 332,
+   "fail_rate": 0.7233333333333334,
+   "crash_rate": 0.0,
+   "report_seed": 0,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "subtle",
+   "id": "ex06-scheduler-subtle"
+  },
+  "ex07-routes-rare": {
+   "program": "routes",
+   "file": "planner.py",
+   "function": "fastest_route",
+   "line": 28,
+   "operator": "compare",
+   "description": "Lt -> LtE",
+   "original": "total < best.get(state, float(\"inf\"))",
+   "replacement": "total <= best.get(state, float('inf'))",
+   "site": 149,
+   "fail_rate": 0.016666666666666666,
+   "crash_rate": 0.0,
+   "report_seed": 92,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "rare",
+   "id": "ex07-routes-rare"
+  },
+  "ex08-routes-subtle": {
+   "program": "routes",
+   "file": "network.py",
+   "function": "turn_penalty",
+   "line": 42,
+   "operator": "const+1",
+   "description": "25 -> 26",
+   "original": "25",
+   "replacement": "26",
+   "site": 138,
+   "fail_rate": 0.8666666666666667,
+   "crash_rate": 0.0,
+   "report_seed": 0,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "subtle",
+   "id": "ex08-routes-subtle"
+  },
+  "ex09-scheduler-crash": {
+   "program": "scheduler",
+   "file": "availability.py",
+   "function": "subtract",
+   "line": 33,
+   "operator": "compare",
+   "description": "Lt -> LtE",
+   "original": "i < len(busy)",
+   "replacement": "i <= len(busy)",
+   "site": 164,
+   "fail_rate": 0.63,
+   "crash_rate": 0.63,
+   "report_seed": 2,
+   "report_crashes": true,
+   "report_traceback_names_function": true,
+   "category": "crash",
+   "id": "ex09-scheduler-crash"
+  },
+  "ex10-routes-crash": {
+   "program": "routes",
+   "file": "planner.py",
+   "function": "describe",
+   "line": 52,
+   "operator": "const+1",
+   "description": "1 -> 2",
+   "original": "1",
+   "replacement": "2",
+   "site": 403,
+   "fail_rate": 0.82,
+   "crash_rate": 0.7433333333333333,
+   "report_seed": 3,
+   "report_crashes": true,
+   "report_traceback_names_function": true,
+   "category": "crash",
+   "id": "ex10-routes-crash"
+  },
+  "pilot-scheduler": {
+   "program": "scheduler",
+   "file": "calendar_model.py",
+   "function": "merge",
+   "line": 50,
+   "operator": "const-1",
+   "description": "0 -> -1",
+   "original": "0",
+   "replacement": "-1",
+   "site": 369,
+   "fail_rate": 0.84,
+   "crash_rate": 0.0,
+   "report_seed": 0,
+   "report_crashes": false,
+   "report_traceback_names_function": false,
+   "category": "pilot",
+   "id": "pilot-scheduler"
+  }
+ },
+ "runs": [
+  {
+   "exercise": "pilot-scheduler",
+   "arm": "A",
+   "model": "haiku",
+   "pilot": true,
+   "id": "00-pilot-scheduler-A-haiku"
+  },
+  {
+   "exercise": "pilot-scheduler",
+   "arm": "B",
+   "model": "haiku",
+   "pilot": true,
+   "id": "01-pilot-scheduler-B-haiku"
+  },
+  {
+   "exercise": "ex06-scheduler-subtle",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "02-ex06-scheduler-subtle-B-sonnet"
+  },
+  {
+   "exercise": "ex04-calc-subtle",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "03-ex04-calc-subtle-B-sonnet"
+  },
+  {
+   "exercise": "ex09-scheduler-crash",
+   "arm": "A",
+   "model": "haiku",
+   "id": "04-ex09-scheduler-crash-A-haiku"
+  },
+  {
+   "exercise": "ex07-routes-rare",
+   "arm": "A",
+   "model": "haiku",
+   "id": "05-ex07-routes-rare-A-haiku"
+  },
+  {
+   "exercise": "ex10-routes-crash",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "06-ex10-routes-crash-B-sonnet"
+  },
+  {
+   "exercise": "ex02-invoicing-subtle",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "07-ex02-invoicing-subtle-B-sonnet"
+  },
+  {
+   "exercise": "ex04-calc-subtle",
+   "arm": "A",
+   "model": "haiku",
+   "id": "08-ex04-calc-subtle-A-haiku"
+  },
+  {
+   "exercise": "ex09-scheduler-crash",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "09-ex09-scheduler-crash-B-sonnet"
+  },
+  {
+   "exercise": "ex02-invoicing-subtle",
+   "arm": "B",
+   "model": "haiku",
+   "id": "10-ex02-invoicing-subtle-B-haiku"
+  },
+  {
+   "exercise": "ex04-calc-subtle",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "11-ex04-calc-subtle-A-sonnet"
+  },
+  {
+   "exercise": "ex03-calc-rare",
+   "arm": "A",
+   "model": "haiku",
+   "id": "12-ex03-calc-rare-A-haiku"
+  },
+  {
+   "exercise": "ex06-scheduler-subtle",
+   "arm": "B",
+   "model": "haiku",
+   "id": "13-ex06-scheduler-subtle-B-haiku"
+  },
+  {
+   "exercise": "ex09-scheduler-crash",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "14-ex09-scheduler-crash-A-sonnet"
+  },
+  {
+   "exercise": "ex01-invoicing-rare",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "15-ex01-invoicing-rare-B-sonnet"
+  },
+  {
+   "exercise": "ex10-routes-crash",
+   "arm": "A",
+   "model": "haiku",
+   "id": "16-ex10-routes-crash-A-haiku"
+  },
+  {
+   "exercise": "ex03-calc-rare",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "17-ex03-calc-rare-B-sonnet"
+  },
+  {
+   "exercise": "ex07-routes-rare",
+   "arm": "B",
+   "model": "haiku",
+   "id": "18-ex07-routes-rare-B-haiku"
+  },
+  {
+   "exercise": "ex05-scheduler-rare",
+   "arm": "B",
+   "model": "haiku",
+   "id": "19-ex05-scheduler-rare-B-haiku"
+  },
+  {
+   "exercise": "ex05-scheduler-rare",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "20-ex05-scheduler-rare-A-sonnet"
+  },
+  {
+   "exercise": "ex08-routes-subtle",
+   "arm": "A",
+   "model": "haiku",
+   "id": "21-ex08-routes-subtle-A-haiku"
+  },
+  {
+   "exercise": "ex08-routes-subtle",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "22-ex08-routes-subtle-B-sonnet"
+  },
+  {
+   "exercise": "ex01-invoicing-rare",
+   "arm": "B",
+   "model": "haiku",
+   "id": "23-ex01-invoicing-rare-B-haiku"
+  },
+  {
+   "exercise": "ex08-routes-subtle",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "24-ex08-routes-subtle-A-sonnet"
+  },
+  {
+   "exercise": "ex06-scheduler-subtle",
+   "arm": "A",
+   "model": "haiku",
+   "id": "25-ex06-scheduler-subtle-A-haiku"
+  },
+  {
+   "exercise": "ex09-scheduler-crash",
+   "arm": "B",
+   "model": "haiku",
+   "id": "26-ex09-scheduler-crash-B-haiku"
+  },
+  {
+   "exercise": "ex05-scheduler-rare",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "27-ex05-scheduler-rare-B-sonnet"
+  },
+  {
+   "exercise": "ex02-invoicing-subtle",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "28-ex02-invoicing-subtle-A-sonnet"
+  },
+  {
+   "exercise": "ex02-invoicing-subtle",
+   "arm": "A",
+   "model": "haiku",
+   "id": "29-ex02-invoicing-subtle-A-haiku"
+  },
+  {
+   "exercise": "ex04-calc-subtle",
+   "arm": "B",
+   "model": "haiku",
+   "id": "30-ex04-calc-subtle-B-haiku"
+  },
+  {
+   "exercise": "ex10-routes-crash",
+   "arm": "B",
+   "model": "haiku",
+   "id": "31-ex10-routes-crash-B-haiku"
+  },
+  {
+   "exercise": "ex01-invoicing-rare",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "32-ex01-invoicing-rare-A-sonnet"
+  },
+  {
+   "exercise": "ex08-routes-subtle",
+   "arm": "B",
+   "model": "haiku",
+   "id": "33-ex08-routes-subtle-B-haiku"
+  },
+  {
+   "exercise": "ex03-calc-rare",
+   "arm": "B",
+   "model": "haiku",
+   "id": "34-ex03-calc-rare-B-haiku"
+  },
+  {
+   "exercise": "ex05-scheduler-rare",
+   "arm": "A",
+   "model": "haiku",
+   "id": "35-ex05-scheduler-rare-A-haiku"
+  },
+  {
+   "exercise": "ex06-scheduler-subtle",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "36-ex06-scheduler-subtle-A-sonnet"
+  },
+  {
+   "exercise": "ex10-routes-crash",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "37-ex10-routes-crash-A-sonnet"
+  },
+  {
+   "exercise": "ex07-routes-rare",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "38-ex07-routes-rare-A-sonnet"
+  },
+  {
+   "exercise": "ex01-invoicing-rare",
+   "arm": "A",
+   "model": "haiku",
+   "id": "39-ex01-invoicing-rare-A-haiku"
+  },
+  {
+   "exercise": "ex03-calc-rare",
+   "arm": "A",
+   "model": "sonnet",
+   "id": "40-ex03-calc-rare-A-sonnet"
+  },
+  {
+   "exercise": "ex07-routes-rare",
+   "arm": "B",
+   "model": "sonnet",
+   "id": "41-ex07-routes-rare-B-sonnet"
+  }
+ ]
+}
