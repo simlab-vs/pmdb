@@ -36,6 +36,11 @@ if __name__ == "__main__":
 The decorator on `factorial` indicates that calls to this function should be traced.
 The call to `pmdb.main.run` records the evaluation of `factorial(3)` in a trace that is then serialized and saved on disk.
 
+Each recorded call is followed by a snap labeled `<function>.$result` holding the value returned by the call.
+If the call raises instead, the snap is labeled `<function>.$exception` and holds a table with the `type` of the exception and its `message`.
+Arguments, results, and snaps are recorded in the state they have when they are observed.
+Lists and tuples are recorded as arrays, dictionaries with string keys as tables, and other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
+
 The serialized trace contains the following tree:
 
 ```
