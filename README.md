@@ -293,5 +293,5 @@ String literals are enclosed in double quotes and support the escape sequences `
 ## Using pmdb from coding agents
 
 [skills/pmdb](skills/pmdb) is a skill for coding agents such as Claude Code.
-It explains how to record traces, how to query them in one command, recipes for common debugging questions, and the pitfalls agents ran into in our [usability study](bench/usability/results/REPORT.md).
+It explains how to record traces, how to query them in one command, recipes for common debugging questions, and the pitfalls agents ran into in our [usability study](bench/usability/round-1/results/REPORT.md).
 To install it for Claude Code, copy or link the directory into `~/.claude/skills/` (for all projects) or `.claude/skills/` (for one project).

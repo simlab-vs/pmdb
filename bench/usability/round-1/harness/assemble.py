@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-REPOSITORY = ROOT.parent.parent
+REPOSITORY = ROOT.parent.parent.parent
 
 
 def main(binary, output):

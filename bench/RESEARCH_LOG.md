@@ -70,8 +70,8 @@ study, which is a known limitation.
 ## 2026-10-01: Usability study, round 1
 
 **Context.** We wanted feedback on how agents use pmdb and the Python recorder before investing
-in a full benchmark. Protocol: [usability/PROTOCOL.md](usability/PROTOCOL.md). Report:
-[usability/results/REPORT.md](usability/results/REPORT.md).
+in a full benchmark. Protocol: [usability/round-1/PROTOCOL.md](usability/round-1/PROTOCOL.md). Report:
+[usability/round-1/results/REPORT.md](usability/round-1/results/REPORT.md).
 
 **What we did.**
 - **Exercises:** four programs written for the study (invoicing, a calculator language, a room
@@ -138,11 +138,11 @@ agents wanted something unsupported, and what pmdb does today.
 
 **What we did.**
 - Extracted all 42 pmdb commands (9 runs, all Haiku) from the transcripts
-  ([pmdb_attempts.md](usability/results/pmdb_attempts.md)).
+  ([pmdb_attempts.md](usability/round-1/results/pmdb_attempts.md)).
 - Re-ran the failing ones and the forms that would have worked, in the agents' sandbox on their
-  traces ([pmdb_reproduced.md](usability/results/pmdb_reproduced.md)). pmdb's sources are
+  traces ([pmdb_reproduced.md](usability/round-1/results/pmdb_reproduced.md)). pmdb's sources are
   unchanged since `a9cb57d`, so this is current behavior.
-- Classified each problem and wrote [PMDB_FINDINGS.md](usability/results/PMDB_FINDINGS.md).
+- Classified each problem and wrote [PMDB_FINDINGS.md](usability/round-1/results/PMDB_FINDINGS.md).
 
 **Findings.**
 - **No failure was a broken documented promise.** The failures come from three sources:
@@ -235,7 +235,7 @@ Commits `e935b9d`..`8116b20` on `ci`, one feature each, each with tests.
   therefore never produced a valid command, so that rule was dropped.
 
 **Decisions.**
-- **Round 1's material stays frozen.** `bench/usability/opt-pmdb/HEADER.md` and the harness
+- **Round 1's material stays frozen.** `bench/usability/round-1/opt-pmdb/HEADER.md` and the harness
   still describe and use `-e`, which no longer exists, and they build pmdb from the current
   sources.
 - **Round 2** should:
@@ -254,7 +254,7 @@ Commits `e935b9d`..`8116b20` on `ci`, one feature each, each with tests.
 ## 2026-10-02: Round 1's records stay frozen
 
 **Context.** pmdb's command line changed after round 1 (`-e` was removed). Round 1's
-description, harness and results under `bench/usability/` still refer to `-e`.
+description, harness and results under `bench/usability/round-1/` still refer to `-e`.
 
 **Decision.**
 - **Round 1's files stay as they are.** A finished experiment's description, harness and
