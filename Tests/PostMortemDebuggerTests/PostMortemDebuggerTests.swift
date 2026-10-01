@@ -105,6 +105,18 @@ func query(_ source: String) throws -> Query {
   #expect(trace.description == expected)
 }
 
+@Test func rejectsXMLTraceWithManyRoots() {
+  let source = """
+    <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
+      <pmdb:observations>
+        <pmdb:snap location="a.py:1"><pmdb:value><pmdb:integer>1</pmdb:integer></pmdb:value></pmdb:snap>
+        <pmdb:snap location="a.py:2"><pmdb:value><pmdb:integer>2</pmdb:integer></pmdb:value></pmdb:snap>
+      </pmdb:observations>
+    </pmdb:trace>
+    """
+  #expect(Trace(xml: Data(source.utf8)) == nil)
+}
+
 @Test(arguments: [
   ("factorial(x) where x > 1", 2),
   ("factorial(...)", 3),

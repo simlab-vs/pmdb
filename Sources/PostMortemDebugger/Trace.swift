@@ -66,11 +66,11 @@ extension Trace {
     self.snaps = []
     self.calls = []
     self.parent = []
-    if !recurse(root, parent: 0) {
+    if !recurse(root, parent: nil) {
       return nil
     }
 
-    func recurse(_ node: XMLElement, parent: Int) -> Bool {
+    func recurse(_ node: XMLElement, parent: Int?) -> Bool {
       // Are there observations?
       guard let children = node
         .elements(forLocalName: "observations", uri: Self.namespace)
@@ -81,10 +81,14 @@ extension Trace {
       for n in children where n.uri == Self.namespace {
         let i = observations.count
 
-        // The root has itself for parent.
-        self.parent.append(parent)
-        if parent != i {
-          calls[observations[parent].call!].value.append(i)
+        // The root has itself for parent and is the only top-level observation.
+        if let p = parent {
+          self.parent.append(p)
+          calls[observations[p].call!].value.append(i)
+        } else if i == 0 {
+          self.parent.append(i)
+        } else {
+          return false
         }
 
         switch n.localName {
