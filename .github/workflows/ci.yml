@@ -36,10 +36,10 @@ jobs:
           swift-version: ${{ matrix.swift }}
 
       - name: Build Swift project
-        run: swift build --build-tests -Xswiftc -enable-testing -c ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }} -c ${{ matrix.config }}
+        run: swift build --build-tests -Xswiftc -enable-testing -c ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }}
 
       - name: Run tests
-        run: swift test --skip-build -Xswiftc -enable-testing -c ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }} -c ${{ matrix.config }}
+        run: swift test --skip-build -Xswiftc -enable-testing -c ${{ matrix.config }} --verbose ${{ matrix.export-coverage && '--enable-code-coverage' || '' }}
 
   test-nix:
     strategy:
