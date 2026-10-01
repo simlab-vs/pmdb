@@ -342,6 +342,10 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(x) where x + 1.0 > 0.0", "cannot apply + on values of type 'integer' and 'float'"),
   ("factorial(x) where y", "undefined symbol 'y'"),
   ("factorial(x) where x.y", "value of type 'integer' is not a table"),
+  ("factorial(x) where x.has(\"y\")", "cannot apply has on values of type 'integer' and 'string'"),
+  ("factorial(xs*) where xs.has(\"y\")", "cannot apply has on values of type 'array' and 'string'"),
+  ("factorial(x, ys**) where ys.has(1)", "cannot apply has on values of type 'table' and 'integer'"),
+  ("factorial(x, ys**) where ys.has()", "expected 1 argument(s), found 0"),
 ])
 func reportsEvaluationErrors(source: String, message: String) async throws {
   var engine = Engine()

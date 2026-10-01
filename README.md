@@ -272,4 +272,9 @@ Arrays have the following methods, where `p` is a lambda:
 - `xs.count(p)` returns the number of elements of `xs` for which `p` returns a truthy value;
 - `xs.len()` returns the number of elements of `xs`.
 
-Tables also have a method `len`, which returns their number of entries.
+Tables have the following methods:
+
+- `t.len()` returns the number of entries of `t`;
+- `t.has(k)` returns whether `t` has an entry whose key is the string `k`, as in `o.has("coupon") && o.coupon == "BIG50"`, which holds for the tables whose `coupon` is `"BIG50"`, without failing on the tables that have no `coupon`.
+
+Applying `has` on a value that isn't a table, or with a key that isn't a string, is an error.

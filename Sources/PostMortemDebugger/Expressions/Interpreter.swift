@@ -106,6 +106,9 @@ extension Expression.Apply {
     let f: Value
     if case .property(let p) = callee.syntax {
       let receiver = try p.table.evaluate(in: &environment)
+      if p.name.value == "has" {
+        return try hasProperty(receiver, in: &environment)
+      }
       switch receiver {
       case .array(let xs):
         return try apply(method: p.name, of: xs, in: &environment)
@@ -144,6 +147,23 @@ extension Expression.Apply {
       return try length(of: xs)
     default:
       throw Diagnostic.error("value of type 'array' has no method '\(m.value)'", at: m.site)
+    }
+  }
+
+  /// Evaluates `self` as the application of the method `has` of `receiver`, which must be a table,
+  /// to a string naming one of its properties.
+  private func hasProperty(
+    _ receiver: Value, in environment: inout [String: Value]
+  ) throws -> Value {
+    if arguments.count != 1 {
+      throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
+    }
+    let k = try arguments.first!.evaluate(in: &environment)
+    if case .table(let t) = receiver, case .string(let s) = k {
+      return .boolean(t[s] != nil)
+    } else {
+      let m = "cannot apply has on values of type '\(receiver.type)' and '\(k.type)'"
+      throw Diagnostic.error(m, at: callee.site)
     }
   }
 

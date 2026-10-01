@@ -379,6 +379,31 @@ func matchesLiteralPatterns(source: String, count: Int) async throws {
   #expect(result.count == count)
 }
 
+@Test(arguments: [
+  ("f(o) where o.has(\"coupon\")", 1),
+  ("f(o) where !o.has(\"coupon\")", 2),
+  ("f(o) where o.has(\"coupon\") && o.coupon == \"BIG50\"", 1),
+  ("f(o) where o.has(\"$variant\")", 1),
+  ("f(o) where o.has(\"len\")", 0),
+  ("f(o) where (k => o.has(k))(\"id\")", 3),
+])
+func testsWhetherTablesHaveProperties(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(order):
+      return 0
+
+    f({"id": 1, "coupon": "BIG50"})
+    f({"id": 2})
+    f({"id": 3, "$variant": "Some"})
+    """)
+  var engine = Engine()
+  engine.add(trace)
+  let result = try await engine.select(query("select \(source)"))
+  #expect(result.count == count)
+}
+
 @Test func bindsResultsOfCalls() async throws {
   let trace = try await record(
     """
