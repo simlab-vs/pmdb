@@ -89,6 +89,12 @@ extension Expression.Apply {
       return try binary(in: &environment,) { (a, b) in try a.mul(b) }
     case .identifier("/"):
       return try binary(in: &environment,) { (a, b) in try a.div(b) }
+    case .identifier("&"):
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, &) }
+    case .identifier("^"):
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, ^) }
+    case .identifier("|"):
+      return try binary(in: &environment,) { (a, b) in a.bitwise(b, |) }
     case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
     default:
@@ -381,6 +387,15 @@ extension Value {
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs / rhs)
     default:
+      return nil
+    }
+  }
+
+  /// Returns `combine` applied on the bits of `self` and `other` iff both are integers.
+  fileprivate func bitwise(_ other: Value, _ combine: (Int64, Int64) -> Int64) -> Value? {
+    if case .integer(let lhs) = self, case .integer(let rhs) = other {
+      return .integer(combine(lhs, rhs))
+    } else {
       return nil
     }
   }
