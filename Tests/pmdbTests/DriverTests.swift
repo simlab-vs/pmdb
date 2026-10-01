@@ -120,3 +120,10 @@ private func makeTrace(
   #expect(o.output == "(pmdb) $0 = <1 element(s) in 1 trace(s)>\n(pmdb)")
   #expect(o.error == "")
 }
+
+@Test func exitsAtEndOfInput() async throws {
+  let o = try await pmdb()
+  #expect(o.succeeded)
+  #expect(o.output == "(pmdb)")
+  #expect(o.error == "")
+}
