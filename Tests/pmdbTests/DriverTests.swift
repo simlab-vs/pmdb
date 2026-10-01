@@ -275,3 +275,26 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
   #expect(o.output == "")
   #expect(o.error == "error: value of type 'integer' is not a table")
 }
+
+@Test func exportsTraceToXML() async throws {
+  let r = try makeTrace()
+  let o = try await pmdb(["--export-xml", r.trace])
+  #expect(o.succeeded)
+  #expect(o.output.contains("<pmdb:function>f</pmdb:function>"))
+  #expect(o.output.contains("<pmdb:integer>1</pmdb:integer>"))
+  #expect(o.error == "")
+
+  // The output can be loaded back.
+  let exported = FileManager.default.temporaryDirectory
+    .appendingPathComponent(UUID().uuidString + ".xml")
+  try o.output.write(to: exported, atomically: true, encoding: .utf8)
+  let p = try await pmdb([exported.path, "-e", "select f(x) where x == 1"])
+  #expect(p.succeeded)
+  #expect(p.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>"))
+}
+
+@Test func failsToExportUnloadableTrace() async throws {
+  let o = try await pmdb(["--export-xml", "missing.trace"])
+  #expect(!o.succeeded)
+  #expect(o.output == "")
+}

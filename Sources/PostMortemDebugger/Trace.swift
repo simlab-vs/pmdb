@@ -174,6 +174,9 @@ extension Trace {
     case .some("string"):
       return payload.stringValue.map(Value.string(_:))
 
+    case .some("function"):
+      return payload.stringValue.map(Value.function(_:))
+
     case .some("array"):
       var elements: [Value] = []
       for n in (payload.children ?? []) where n.kind == .element {
@@ -205,6 +208,119 @@ extension Trace {
   }
 
   private static let namespace = "https://hevs.ch/pmdb"
+
+}
+
+extension Trace {
+
+  /// Returns the contents of `self` as an XML document that can be read by `init(xml:)`.
+  ///
+  /// - Throws: `RuntimeError` if `self` contains a string with characters that can't be written in
+  ///   XML 1.0 (e.g., most ASCII control characters).
+  public func xml() throws -> Data {
+    let root = XMLElement(name: "pmdb:trace")
+    root.addNamespace(XMLNode.namespace(withName: "pmdb", stringValue: Self.namespace) as! XMLNode)
+    let id = UUID(identity).uuidString
+    root.addAttribute(XMLNode.attribute(withName: "id", stringValue: id) as! XMLNode)
+
+    let o = XMLElement(name: "pmdb:observations")
+    if !observations.isEmpty {
+      try o.addChild(xml(observation: 0))
+    }
+    root.addChild(o)
+
+    let d = XMLDocument(rootElement: root)
+    d.version = "1.0"
+    d.characterEncoding = "UTF-8"
+    return d.xmlData(options: .nodePrettyPrint)
+  }
+
+  /// Returns the XML representation of the observation at index `i` and its children.
+  private func xml(observation i: ObservationIndex) throws -> XMLElement {
+    if let s = observations[i].snap {
+      let snap = snaps[s].value
+      let e = try Self.xml(element: "pmdb:snap", location: snap.location)
+      if let l = snap.label { try e.addAttribute(Self.xml(attribute: "label", l)) }
+      try e.addChild(Self.xml(value: snap.value))
+      return e
+    }
+
+    let call = calls[observations[i].call!].value
+    let e = try Self.xml(element: "pmdb:call", location: call.location)
+    try e.addChild(XMLElement(name: "pmdb:function", stringValue: Self.xml(text: call.function)))
+
+    let a = XMLElement(name: "pmdb:arguments")
+    for v in call.positional { try a.addChild(Self.xml(value: v)) }
+    for (k, v) in call.named { try a.addChild(Self.xml(value: v, label: k)) }
+    e.addChild(a)
+
+    if !call.children.isEmpty {
+      let o = XMLElement(name: "pmdb:observations")
+      for c in call.children { try o.addChild(xml(observation: c)) }
+      e.addChild(o)
+    }
+    return e
+  }
+
+  /// Returns an element named `name` with an attribute describing `location`.
+  private static func xml(element name: String, location: SourceLine) throws -> XMLElement {
+    let e = XMLElement(name: name)
+    try e.addAttribute(xml(attribute: "location", location.description))
+    return e
+  }
+
+  /// Returns a `pmdb:value` element representing `v`, with the given label if any.
+  private static func xml(value v: Value, label: String? = nil) throws -> XMLElement {
+    let e = XMLElement(name: "pmdb:value")
+    if let l = label { try e.addAttribute(xml(attribute: "label", l)) }
+
+    switch v {
+    case .null:
+      e.addChild(XMLElement(name: "pmdb:none"))
+    case .integer(let n):
+      e.addChild(XMLElement(name: "pmdb:integer", stringValue: n.description))
+    case .float(let n):
+      let s = n.isNaN ? "NaN" : n.isInfinite ? (n < 0 ? "-INF" : "INF") : n.description
+      e.addChild(XMLElement(name: "pmdb:float", stringValue: s))
+    case .string(let s):
+      try e.addChild(XMLElement(name: "pmdb:string", stringValue: xml(text: s)))
+    case .array(let xs):
+      let a = XMLElement(name: "pmdb:array")
+      for x in xs { try a.addChild(xml(value: x)) }
+      e.addChild(a)
+    case .table(let t):
+      let a = XMLElement(name: "pmdb:table")
+      for (k, x) in t { try a.addChild(xml(value: x, label: k)) }
+      e.addChild(a)
+    case .function(let f):
+      try e.addChild(XMLElement(name: "pmdb:function", stringValue: xml(text: f)))
+    case .object(let bytes):
+      e.addChild(XMLElement(name: "pmdb:object", stringValue: Data(bytes).base64EncodedString()))
+    case .lambda:
+      // Lambdas are created by queries, not recorded in traces.
+      preconditionFailure("trace contains a lambda")
+    }
+    return e
+  }
+
+  /// Returns an attribute named `name` with value `s`.
+  private static func xml(attribute name: String, _ s: String) throws -> XMLNode {
+    try XMLNode.attribute(withName: name, stringValue: xml(text: s)) as! XMLNode
+  }
+
+  /// Returns `s` iff it can be written in an XML 1.0 document. Otherwise, throws.
+  private static func xml(text s: String) throws -> String {
+    for c in s.unicodeScalars {
+      switch c.value {
+      case 0x09, 0x0a, 0x0d, 0x20 ... 0xd7ff, 0xe000 ... 0xfffd, 0x10000 ... 0x10ffff:
+        continue
+      default:
+        throw RuntimeError(
+          "cannot write the character U+\(String(c.value, radix: 16, uppercase: true)) in XML")
+      }
+    }
+    return s
+  }
 
 }
 
@@ -453,6 +569,19 @@ extension Trace.TaggedObservationIndex: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
     lhs.untagged < rhs.untagged
+  }
+
+}
+
+extension UUID {
+
+  /// Creates an instance with the bytes of `identity`.
+  fileprivate init(_ identity: UInt128) {
+    var bytes: uuid_t = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    withUnsafeMutableBytes(of: &bytes) { (b) in
+      for i in 0 ..< 16 { b[i] = UInt8(truncatingIfNeeded: identity >> ((15 - i) << 3)) }
+    }
+    self.init(uuid: bytes)
   }
 
 }

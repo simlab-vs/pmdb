@@ -11,6 +11,13 @@ import PostMortemDebugger
     transform: URL.init(fileURLWithPath:))
   private var show: URL? = nil
 
+  /// The trace that should be printed as XML, if any.
+  @Option(
+    name: .customLong("export-xml"),
+    help: "Print the trace stored in the specified file as XML and exit.",
+    transform: URL.init(fileURLWithPath:))
+  private var exportXML: URL? = nil
+
   /// The input file passed to the command.
   @Argument(transform: URL.init(fileURLWithPath:))
   private var inputs: [URL] = []
@@ -29,6 +36,17 @@ import PostMortemDebugger
     // Should we just show the contents of a trace?
     if let u = show {
       Self.attempt({ try print(Trace(contentsOf: u)) })
+      return
+    }
+
+    // Should we just print a trace as XML?
+    if let u = exportXML {
+      do {
+        try FileHandle.standardOutput.write(Trace(contentsOf: u).xml())
+      } catch let e {
+        Self.report(e)
+        throw ExitCode.failure
+      }
       return
     }
 
