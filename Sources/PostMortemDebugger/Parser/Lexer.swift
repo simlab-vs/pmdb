@@ -7,6 +7,9 @@ public struct Lexer {
   /// The current position of the lexer in `source`.
   public private(set) var position: String.Index
 
+  /// The last token returned by `next()`, if any.
+  private var previous: Token? = nil
+
   /// Creates an instance tokening `source`.
   public init(tokenizing source: String) {
     self.source = source
@@ -21,6 +24,12 @@ public struct Lexer {
 
   /// Advances to the next token and returns it, or returns `nil` if no next token exists.
   public mutating func next() -> Token? {
+    previous = scan()
+    return previous
+  }
+
+  /// Implements `next()`.
+  private mutating func scan() -> Token? {
     if let unterminated = discardWhitespacesAndComments() { return unterminated }
     guard let head = peek() else { return nil }
 
@@ -43,7 +52,9 @@ public struct Lexer {
 
   /// Consumes and returns a numeric literal iff one can be scanned from the character stream.
   private mutating func takeNumericLiteral() -> Token? {
-    let p = take("-") ?? position
+    // A minus sign right after an operand is a binary operator.
+    let p = position
+    if !previousIsOperandTail { _ = take("-") }
 
     guard let h = peek(), h.isDecimalDigit else {
       position = p
@@ -74,6 +85,21 @@ public struct Lexer {
       return .init(tag: .integerLiteral, site: p ..< position)
     } else {
       return .init(tag: .floatingPointLiteral, site: p ..< position)
+    }
+  }
+
+  /// `true` iff the last token returned by `next()` may end an operand.
+  private var previousIsOperandTail: Bool {
+    guard let t = previous else { return false }
+    switch t.tag {
+    case .name:
+      // Contextual keywords introduce an expression.
+      return !["where", "from"].contains(source[t.site])
+    case .underscore, .false, .true, .variable, .integerLiteral, .floatingPointLiteral,
+      .stringLiteral, .rightBracket, .rightParenthesis:
+      return true
+    default:
+      return false
     }
   }
 
@@ -187,7 +213,13 @@ public struct Lexer {
 
   /// Consumes and returns an operator or a regex literal.
   private mutating func takeOperator() -> Token {
-    let word = take(while: \.isOperator)
+    var word = take(while: \.isOperator)
+
+    // A trailing minus sign followed by a digit belongs to a numeric literal.
+    if word.count > 1, word.last == "-", peek()?.isDecimalDigit ?? false {
+      word = word.dropLast()
+      position = word.endIndex
+    }
 
     let tag: Token.Tag
     switch word {

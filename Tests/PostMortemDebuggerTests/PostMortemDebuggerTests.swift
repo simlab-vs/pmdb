@@ -114,6 +114,11 @@ func query(_ source: String) throws -> Query {
   ("factorial(x) where x > -9223372036854775808", 3),
   ("factorial(x) where x + 9223372036854775807 > 0", 0),
   ("factorial(x) where x > 4/x", 1),
+  ("factorial(x) where x-1 > 1", 1),
+  ("factorial(x) where x>-1", 3),
+  ("factorial(x) where -1 < x", 3),
+  ("factorial(x) where if x > 1 then -1 else 0", 2),
+  ("factorial(x) where (x)-1 > 1", 1),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
