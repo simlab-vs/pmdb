@@ -49,13 +49,12 @@ The serialized trace contains the following tree:
 ```
 pmdb --show factorial.trace
 * call root()
-├─* call factorial(3)
-│ ├─* call factorial(2)
-│ │ ├─* call factorial(1)
-│ │ └─* snap factorial.$result = 1
-│ └─* snap factorial.$result = 2
-└─* snap factorial.$result = 6
+└─* call factorial(3) -> 6
+  └─* call factorial(2) -> 2
+    └─* call factorial(1) -> 1
 ```
+
+Each call is shown with the value it returned (`-> 6`), or with the exception it raised (`raised {…}`), which are recorded as snaps labeled `<function>.$result` and `<function>.$exception`.
 
 A recorder for Rust programs is also available in [Rust](Rust).
 It records the same program as follows:
@@ -88,7 +87,7 @@ pmdb factorial.trace
 (pmdb) select factorial(x) where x > 1
 $0 = <2 element(s) in 1 trace(s)>
 (pmdb) show $0
-factorial.py:8: call factorial(3)
+factorial.py:8: call factorial(3) -> 6
      6 |
      7 | if __name__ == "__main__":
 >    8 |   n = pmdb.main.run(factorial, 3)

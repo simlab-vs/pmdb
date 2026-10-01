@@ -94,15 +94,44 @@ func query(_ source: String) throws -> Query {
 
   let expected = """
     * call root()
-    ├─* call factorial(3)
-    │ ├─* call factorial(2)
-    │ │ ├─* call factorial(1)
-    │ │ └─* snap factorial.$result = 1
-    │ └─* snap factorial.$result = 2
-    └─* snap factorial.$result = 6
+    └─* call factorial(3) -> 6
+      └─* call factorial(2) -> 2
+        └─* call factorial(1) -> 1
 
     """
   #expect(trace.description == expected)
+}
+
+@Test func findsOutcomesOfCalls() throws {
+  let trace = try loadFactorialTrace()
+  let outcomes = trace.calls.map({ (c) -> Value? in
+    if case .returned(let v) = trace.outcome(of: c.index) { v } else { nil }
+  })
+  #expect(outcomes == [nil, .integer(6), .integer(2), .integer(1)])
+  #expect(trace.description(of: trace.calls[1].index) == "call factorial(3) -> 6")
+  #expect(trace.description(of: trace.calls[0].index) == "call root()")
+}
+
+@Test func ignoresSnapsOfOtherFunctionsAsOutcomes() throws {
+  let source = """
+    <pmdb:trace xmlns:pmdb="https://hevs.ch/pmdb" id="2F1B3C8E-6A4D-4E2B-9C1D-0A7E5F3B2C11">
+      <pmdb:observations>
+        <pmdb:call location="a.py:1">
+          <pmdb:function>root</pmdb:function>
+          <pmdb:arguments/>
+          <pmdb:observations>
+            <pmdb:call location="a.py:1"><pmdb:function>f</pmdb:function><pmdb:arguments/></pmdb:call>
+            <pmdb:snap location="a.py:1" label="g.$result">
+              <pmdb:value><pmdb:integer>1</pmdb:integer></pmdb:value>
+            </pmdb:snap>
+          </pmdb:observations>
+        </pmdb:call>
+      </pmdb:observations>
+    </pmdb:trace>
+    """
+  let trace = try #require(Trace(xml: Data(source.utf8)))
+  #expect(trace.outcome(of: trace.calls[1].index) == nil)
+  #expect(trace.description == "* call root()\n├─* call f()\n└─* snap g.$result = 1\n")
 }
 
 @Test func rejectsXMLTraceWithManyRoots() {

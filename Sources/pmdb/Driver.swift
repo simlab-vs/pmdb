@@ -147,9 +147,11 @@ import PostMortemDebugger
       // Show snaps and calls in the order in which they were observed.
       while true {
         if let c = calls.first, snaps.first.map({ (s) in c.untagged < s.untagged }) ?? true {
-          show(trace[at: calls.removeFirst()], in: &engine)
+          let c = calls.removeFirst()
+          show(trace[at: c], described: trace.description(of: c), in: &engine)
         } else if !snaps.isEmpty {
-          show(trace[at: snaps.removeFirst()], in: &engine)
+          let s = trace[at: snaps.removeFirst()]
+          show(s, described: s.description, in: &engine)
         } else {
           break
         }
@@ -160,9 +162,12 @@ import PostMortemDebugger
     }
   }
 
-  /// Writes a description of `o` and an excerpt of its source to the standard output.
-  private static func show<T: Observation>(_ o: T, in engine: inout Engine) {
-    print("\(o.location): \(o)")
+  /// Writes `description`, which describes `o`, and an excerpt of the source of `o` to the
+  /// standard output.
+  private static func show<T: Observation>(
+    _ o: T, described description: String, in engine: inout Engine
+  ) {
+    print("\(o.location): \(description)")
     if let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
       let n = o.location.number
       for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {

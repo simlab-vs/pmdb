@@ -166,10 +166,8 @@ func rejectsInvalidParents(mutation: String) async throws {
 
   let expected = """
     * call root()
-    ├─* call h()
-    │ ├─* call bad()
-    │ └─* snap bad.$exception = {message: , type: ValueError}
-    ├─* snap h.$result = 0
+    ├─* call h() -> 0
+    │ └─* call bad() raised {message: , type: ValueError}
     └─* snap x = 1
 
     """
@@ -337,10 +335,8 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
 
   let expected = """
     * call root()
-    ├─* call h()
-    │ ├─* call bad(k)
-    │ └─* snap bad.$exception = {message: 'k', type: KeyError}
-    └─* snap h.$exception = {message: 'k', type: KeyError}
+    └─* call h() raised {message: 'k', type: KeyError}
+      └─* call bad(k) raised {message: 'k', type: KeyError}
 
     """
   #expect(trace.description == expected)

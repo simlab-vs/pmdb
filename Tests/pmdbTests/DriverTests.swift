@@ -97,9 +97,11 @@ private struct Recording {
 
 }
 
-/// Writes `source` and a trace with one call to `f` at `line` of `source` in a fresh directory.
+/// Writes `source` and a trace with one call to `f` at `line` of `source` in a fresh directory,
+/// followed by the observations in `following`, which are XML elements.
 private func makeTrace(
-  source: String = "def f(x):\n  return x\nf(1)\n", callingAt line: Int = 3
+  source: String = "def f(x):\n  return x\nf(1)\n", callingAt line: Int = 3,
+  following: String = ""
 ) throws -> Recording {
   let directory = FileManager.default.temporaryDirectory
     .appendingPathComponent(UUID().uuidString)
@@ -120,6 +122,7 @@ private func makeTrace(
               <pmdb:function>f</pmdb:function>
               <pmdb:arguments><pmdb:value><pmdb:integer>1</pmdb:integer></pmdb:value></pmdb:arguments>
             </pmdb:call>
+            \(following)
           </pmdb:observations>
         </pmdb:call>
       </pmdb:observations>
@@ -363,6 +366,23 @@ func showsTraces(flagFirst: Bool) async throws {
     $0 = <1 element(s) in 1 trace(s)>
     error: undefined symbol '$nope'
     """)
+}
+
+/// The snap recording that `f` returned 2.
+private let resultOfF = """
+  <pmdb:snap location="a.py:3" label="f.$result">\
+  <pmdb:value><pmdb:integer>2</pmdb:integer></pmdb:value></pmdb:snap>
+  """
+
+@Test func showsResultsOfCalls() async throws {
+  let r = try makeTrace(following: resultOfF)
+  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  #expect(o.succeeded)
+  #expect(o.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>\n\(r.source):3: call f(1) -> 2\n"))
+  #expect(o.error == "")
+
+  let t = try await pmdb(["--show", r.trace])
+  #expect(t.output == "* call root()\n└─* call f(1) -> 2")
 }
 
 @Test func namesItselfPmdb() async throws {
