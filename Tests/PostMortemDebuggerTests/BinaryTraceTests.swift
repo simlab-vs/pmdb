@@ -277,3 +277,37 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
     .array([.integer(1), .integer(2)]),
   ])
 }
+
+@Test func recordsDescriptionsOfUnpicklableValues() async throws {
+  let trace = try await record(
+    """
+    import threading
+
+    @r.record
+    def f(x):
+      return threading.Lock()
+
+    @r.record
+    async def g():
+      return 0
+
+    class Opaque:
+      def __reduce__(self):
+        raise TypeError()
+      def __repr__(self):
+        raise TypeError()
+
+    f(x for x in [])
+    g().close()
+    r.snapshot('x', Opaque())
+    """)
+
+  let values = [trace.calls[1].value.positional[0]] + trace.snaps.map(\.value.value)
+  let descriptions = values.map { (v) -> String? in
+    if case .string(let s) = v { s } else { nil }
+  }
+  #expect(descriptions[0]?.hasPrefix("<generator object") ?? false)
+  #expect(descriptions[1]?.hasPrefix("<unlocked _thread.lock object") ?? false)
+  #expect(descriptions[2]?.hasPrefix("<coroutine object") ?? false)
+  #expect(descriptions[3] == "<Opaque object>")
+}

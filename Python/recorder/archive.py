@@ -94,9 +94,23 @@ class Archive(object):
       self.write_byte(TypeIdentifier.Function.value)
       self.write_string(o.__qualname__)
 
-    # Handle arbitrary objects.
+    # Handle arbitrary objects, writing a description of those that cannot be pickled (e.g.,
+    # generators, coroutines, or locks) so that they do not prevent the trace from being written.
     else:
-      self.write_byte(TypeIdentifier.Object.value)
-      bs = pickle.dumps(o)
-      self.write_unsigned(len(bs))
-      self.write_bytes(bs)
+      try:
+        bs = pickle.dumps(o)
+      except Exception:
+        self.write_byte(TypeIdentifier.String.value)
+        self.write_string(describe(o))
+      else:
+        self.write_byte(TypeIdentifier.Object.value)
+        self.write_unsigned(len(bs))
+        self.write_bytes(bs)
+
+
+def describe(o):
+  """Returns a textual description of `o`."""
+  try:
+    return repr(o)
+  except Exception:
+    return f"<{type(o).__qualname__} object>"
