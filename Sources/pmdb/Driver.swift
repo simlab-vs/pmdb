@@ -110,7 +110,8 @@ import PostMortemDebugger
   private static func show<T: Observation>(_ o: T, in engine: inout Engine) {
     print("\(o.location): \(o)")
     if let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
-      for i in max(1, o.location.number - 2) ..< min(s.lineCount, o.location.number + 3) {
+      let n = o.location.number
+      for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {
         let marker = (i == o.location.number) ? "> " : "  "
         let gutter = style.prompt("\(String(i).leftPaddedTo(4)) | ")
         print("\(marker)\(gutter)\(s.line(i))", terminator: "")
