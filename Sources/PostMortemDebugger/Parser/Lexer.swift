@@ -180,6 +180,7 @@ public struct Lexer {
       i = source.index(after: i)
     }
 
+    if i == source.endIndex { return nil }
     position = source.index(after: i)
     return .init(tag: .regex, site: start ..< position)
   }
