@@ -136,7 +136,10 @@ import PostMortemDebugger
     while true {
       // Read the contents of the line from the standar input.
       print(style.prompt(prompt), terminator: " ")
-      guard let data = readLine() else { break }
+      guard let data = readLine() else {
+        if line.isEmpty { Self.exit() }
+        break
+      }
       line.write(data)
 
       // Check for line continuations.
