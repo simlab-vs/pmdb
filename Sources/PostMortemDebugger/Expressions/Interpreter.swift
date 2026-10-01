@@ -149,7 +149,7 @@ extension Value {
   fileprivate func compareNumerically(to other: Value) -> Int? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return Int((lhs - rhs).within(-1 ... 1))
+      return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
     case (.float(let lhs), .float(let rhs)):
       return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
     default:
@@ -161,7 +161,7 @@ extension Value {
   fileprivate func add(_ other: Value) -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs + rhs)
+      return checked(lhs.addingReportingOverflow(rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs + rhs)
     default:
@@ -173,7 +173,7 @@ extension Value {
   fileprivate func sub(_ other: Value) -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs - rhs)
+      return checked(lhs.subtractingReportingOverflow(rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs - rhs)
     default:
@@ -185,7 +185,7 @@ extension Value {
   fileprivate func mul(_ other: Value) -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs * rhs)
+      return checked(lhs.multipliedReportingOverflow(by: rhs))
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs * rhs)
     default:
@@ -197,12 +197,17 @@ extension Value {
   fileprivate func div(_ other: Value) -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return (rhs != 0) ? .integer(lhs / rhs) : nil
+      return checked(lhs.dividedReportingOverflow(by: rhs))
     case (.float(let lhs), .float(let rhs)):
       return (rhs != 0) ? .float(lhs / rhs) : nil
     default:
       return nil
     }
+  }
+
+  /// Returns `r.partialValue` iff `r` did not overflow.
+  private func checked(_ r: (partialValue: Int64, overflow: Bool)) -> Value? {
+    r.overflow ? nil : .integer(r.partialValue)
   }
 
 }

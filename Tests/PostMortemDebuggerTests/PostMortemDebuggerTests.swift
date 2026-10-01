@@ -111,6 +111,8 @@ func query(_ source: String) throws -> Query {
   ("_(...)", 4),
   ("/.*\\$result/ where true", 3),
   ("factorial(x) where x && x", 0),
+  ("factorial(x) where x > -9223372036854775808", 3),
+  ("factorial(x) where x + 9223372036854775807 > 0", 0),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
