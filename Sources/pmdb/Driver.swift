@@ -15,6 +15,12 @@ import PostMortemDebugger
   @Argument(transform: URL.init(fileURLWithPath:))
   private var inputs: [URL] = []
 
+  /// The commands to execute instead of starting the REPL.
+  @Option(
+    name: [.customShort("e"), .customLong("execute")],
+    help: "Execute the given command and exit instead of starting the REPL. Can be repeated.")
+  private var commands: [String] = []
+
   /// Creates a new instance with default options.
   public init() {}
 
@@ -26,90 +32,121 @@ import PostMortemDebugger
       return
     }
 
-    // Start the REPL.
+    if commands.isEmpty {
+      await repl()
+    } else {
+      try await executeCommands()
+    }
+  }
+
+  /// Runs a REPL on the traces in `inputs`, reporting errors without exiting.
+  private func repl() async -> Never {
     var engine = Engine()
     for url in inputs {
-      Self.load(url, into: &engine)
+      Self.attempt({ try Self.load(url, into: &engine) })
     }
 
     while true {
       guard let command = Self.attempt(Self.readCommand) else { continue }
-      switch command {
-      case .exit:
-        Self.exit()
-
-      case .load(let url, let x):
-        Self.load(url, assignedTo: x, into: &engine)
-
-      case .select(let q):
-        do {
-          let v = try await engine.select(q)
-          let k = engine.fresh()
-          engine.assign(.observations(v), for: k)
-          print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
-        } catch let e {
-          Self.report(e)
-        }
-
-      case .show(let x):
-        Self.show(x, in: &engine)
-
-      case .showConvenienceVariables:
-        for (k, v) in engine.definitions {
-          print("\(k) : \(v.type)")
-        }
+      do {
+        if try await !Self.execute(command, in: &engine, interactive: true) { Self.exit() }
+      } catch let e {
+        Self.report(e)
       }
     }
   }
 
-  /// Writes a description of the value assigned to `variable` to the standard output.
-  private static func show(_ variable: String, in engine: inout Engine) {
-    Self.attempt {
-      switch try engine.value(for: variable) {
+  /// Executes `commands` on the traces in `inputs`, exiting with a failure at the first error.
+  private func executeCommands() async throws {
+    do {
+      var engine = Engine()
+      for url in inputs {
+        try Self.load(url, into: &engine)
+      }
+      for c in commands {
+        if try await !Self.execute(Self.parse(c), in: &engine, interactive: false) { return }
+      }
+    } catch let e {
+      Self.report(e)
+      throw ExitCode.failure
+    }
+  }
+
+  /// Executes `command` on `engine` and returns `false` iff it requests to exit.
+  ///
+  /// The observations selected by a query are listed iff `interactive` is `false`. Otherwise, the
+  /// observations being shown are paged.
+  private static func execute(
+    _ command: Command, in engine: inout Engine, interactive: Bool
+  ) async throws -> Bool {
+    switch command {
+    case .exit:
+      return false
+
+    case .load(let url, let x):
+      try Self.load(url, assignedTo: x, into: &engine)
+
+    case .select(let q):
+      let v = try await engine.select(q)
+      let k = engine.fresh()
+      engine.assign(.observations(v), for: k)
+      print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
+      if !interactive { show(v, in: &engine, withExcerpts: false, paged: false) }
+
+    case .show(let x):
+      switch try engine.value(for: x) {
       case .observations(let v):
-        show(v, in: &engine)
+        show(v, in: &engine, withExcerpts: true, paged: interactive)
       case .trace(let v):
         print(engine.trace(v))
       }
+
+    case .showConvenienceVariables:
+      for (k, v) in engine.definitions {
+        print("\(k) : \(v.type)")
+      }
     }
+    return true
   }
 
   private static func show(_ trace: Trace) {
     print(trace)
   }
 
-  /// Writes a description of `source` to the standard output.
-  private static func show<T: ObservationSet>(_ source: T, in engine: inout Engine) {
+  /// Writes a description of `source` to the standard output, with source excerpts iff
+  /// `withExcerpts` is `true`, asking whether to continue after each observation iff `paged` is
+  /// `true`.
+  private static func show<T: ObservationSet>(
+    _ source: T, in engine: inout Engine, withExcerpts: Bool, paged: Bool
+  ) {
     for i in source.traces.indices {
       let trace = engine.trace(source.traces[i])
       var snaps = source.snaps(in: i)[...]
       var calls = source.calls(in: i)[...]
 
-      var loop = true
-      while loop {
-        switch (snaps.first, calls.first) {
-        case (.some(let l), .some(let r)) where r.untagged < l.untagged:
-          show(trace[at: calls.removeFirst()], in: &engine)
-        case (.some, .some):
-          show(trace[at: snaps.removeFirst()], in: &engine)
-        case (.some, _):
-          show(trace[at: snaps.removeFirst()], in: &engine)
-        case (_, .some):
-          show(trace[at: calls.removeFirst()], in: &engine)
-        case (_, _):
-          loop = false
+      // Show snaps and calls in the order in which they were observed.
+      while true {
+        if let c = calls.first, snaps.first.map({ (s) in c.untagged < s.untagged }) ?? true {
+          show(trace[at: calls.removeFirst()], in: &engine, withExcerpts: withExcerpts)
+        } else if !snaps.isEmpty {
+          show(trace[at: snaps.removeFirst()], in: &engine, withExcerpts: withExcerpts)
+        } else {
+          break
         }
 
         // Should we exit early?
-        if loop && !yesOrNo("continue?") { return }
+        if paged && !yesOrNo("continue?") { return }
       }
     }
   }
 
-  /// Writes a description of `o` to the standard output.
-  private static func show<T: Observation>(_ o: T, in engine: inout Engine) {
+  /// Writes a description of `o` to the standard output, with a source excerpt iff `withExcerpts`
+  /// is `true`.
+  private static func show<T: Observation>(
+    _ o: T, in engine: inout Engine, withExcerpts: Bool
+  ) {
     print("\(o.location): \(o)")
-    if let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
+    if withExcerpts, let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
       let n = o.location.number
       for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {
         let marker = (i == o.location.number) ? "> " : "  "
@@ -167,38 +204,38 @@ import PostMortemDebugger
       }
     }
 
-    // Parse the command.
-    var parser = Parser(line)
+    return try parse(line)
+  }
+
+  /// Returns the command parsed from `source`, reporting warnings to the standard error.
+  private static func parse(_ source: String) throws -> Command {
+    var parser = Parser(source)
     let result = try parser.parseCommand()
     parser.diagnostics.forEach(report(_:))
 
-    // Make we parsed the whole line.
+    // Make sure we parsed the whole input.
     let r = parser.remainder()
     if !r.isEmpty {
       let m = "multiple commands should be separated by a newline"
-      report(Diagnostic(.error, m, at: r.startIndex ..< r.startIndex))
+      throw Diagnostic(.error, m, at: r.startIndex ..< r.startIndex)
     }
 
     return result
   }
 
-  /// Parses a trace from the archive at the given URL and loads them into `engine`, reporting
-  /// errors to the standard error.
-  @discardableResult
+  /// Parses a trace from the archive at the given URL and loads it into `engine`, assigning it to
+  /// `name` if provided.
   private static func load(
     _ trace: URL, assignedTo name: String? = nil, into engine: inout Engine
-  ) -> Trace.ID? {
-    if let t = attempt({ try Trace(contentsOf: trace) }) {
-      engine.add(t)
-      if let n = name { engine.assign(.trace(t.identity), for: n) }
-      return t.identity
-    } else {
-      return nil
-    }
+  ) throws {
+    let t = try Trace(contentsOf: trace)
+    engine.add(t)
+    if let n = name { engine.assign(.trace(t.identity), for: n) }
   }
 
   /// Returns the result of `action()` iff it does not throw. Otherwise, reports the error to the
   /// standard error and returns `nil`.
+  @discardableResult
   private static func attempt<T>(_ action: () throws -> T) -> T? {
     do {
       return try action()
