@@ -43,4 +43,11 @@ let package = Package(
         .target(name: "PostMortemDebugger"),
         .product(name: "Subprocess", package: "swift-subprocess"),
       ]),
+
+    .testTarget(
+      name: "pmdbTests",
+      dependencies: [
+        .target(name: "pmdb"),
+        .product(name: "Subprocess", package: "swift-subprocess"),
+      ]),
   ])
