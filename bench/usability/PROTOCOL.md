@@ -99,4 +99,4 @@ returned as JSON.
 
 ## Changes after the start
 
-(none yet)
+None.
