@@ -488,3 +488,122 @@ func rejectsCharactersNotRepresentableInXML(program: String) async throws {
   let trace = try await record(program)
   #expect(throws: RuntimeError.self) { try trace.xml() }
 }
+
+@Test func readsObjectsThatDoNotOptInAsObjects() async throws {
+  let trace = try await record(
+    """
+    import dataclasses
+
+    class Point:
+      def __init__(self, x):
+        self.x = x
+
+    @dataclasses.dataclass
+    class Frozen:
+      x: int
+
+    r.snapshot('point', Point(1))
+    r.snapshot('frozen', Frozen(1))
+    """)
+
+  for s in trace.snaps {
+    guard case .object = s.value.value else {
+      Issue.record("expected an object, got \(s.value.value)")
+      return
+    }
+  }
+}
+
+@Test func readsNamedTuplesAndEnumerationsFromBinaryTrace() async throws {
+  let trace = try await record(
+    """
+    import collections, enum
+
+    Pair = collections.namedtuple("Pair", ["first", "second"])
+
+    class Color(enum.Enum):
+      RED = 1
+
+    r.snapshot('pair', Pair(1, [2]))
+    r.snapshot('color', Color.RED)
+    r.snapshot('path', __import__("pathlib").PurePosixPath("/a"))
+    """)
+
+  #expect(
+    trace.snaps[0].value.value == .table(["first": .integer(1), "second": .array([.integer(2)])]))
+  #expect(trace.snaps[1].value.value == .string("RED"))
+
+  // Objects of the standard library are pickled.
+  guard case .object = trace.snaps[2].value.value else {
+    Issue.record("expected an object, got \(trace.snaps[2].value.value)")
+    return
+  }
+}
+
+@Test func readsObjectsConvertedByTheirTypes() async throws {
+  let trace = try await record(
+    """
+    import fractions
+
+    class Celsius:
+      def __init__(self, degrees):
+        self.degrees = degrees
+      def __pmdb__(self):
+        return f"{self.degrees}°C"
+
+    class Recursive:
+      def __pmdb__(self):
+        return self
+
+    recorder.register(
+      fractions.Fraction, lambda f: {"numerator": f.numerator, "denominator": f.denominator})
+
+    r.snapshot('temperature', Celsius(20))
+    r.snapshot('fraction', fractions.Fraction(1, 3))
+    r.snapshot('recursive', Recursive())
+    """)
+
+  #expect(trace.snaps[0].value.value == .string("20°C"))
+  #expect(
+    trace.snaps[1].value.value == .table(["numerator": .integer(1), "denominator": .integer(3)]))
+  guard case .object = trace.snaps[2].value.value else {
+    Issue.record("expected an object, got \(trace.snaps[2].value.value)")
+    return
+  }
+}
+
+@Test(arguments: [
+  ("f(p) where p.x > 1", 1),
+  ("f(p) where p.y == none", 2),
+  ("g(s) where s.`$variant` == \"Circle\" && s.radius > 1", 1),
+])
+func selectsObjectsByAttributes(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    class Point:
+      def __init__(self, x):
+        self.x = x
+        self.y = None
+      def __pmdb__(self):
+        return {"x": self.x, "y": self.y}
+
+    @r.record
+    def f(p):
+      return 0
+
+    @r.record
+    def g(s):
+      return 0
+
+    f(Point(1))
+    f(Point(2))
+
+    # Enums with fields are recorded like this by the Rust recorder.
+    g({"$variant": "Circle", "radius": 2})
+    g({"$variant": "Square", "side": 3})
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try await engine.select(query("select \(source)")).count == count)
+}

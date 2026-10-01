@@ -1,4 +1,4 @@
-from .archive import Archive
+from .archive import Archive, register
 from .recorder import Recorder
 
 main = Recorder()

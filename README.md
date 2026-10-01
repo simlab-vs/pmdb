@@ -39,7 +39,10 @@ Every call to a decorated function is recorded, so evaluating `factorial(3)` (he
 Each recorded call is followed by a snap labeled `<function>.$result` holding the value returned by the call.
 If the call raises instead, the snap is labeled `<function>.$exception` and holds a table with the `type` of the exception and its `message`.
 Arguments, results, and snaps are recorded in the state they have when they are observed.
-`None` is recorded as `none`, lists and tuples as arrays, dictionaries with string keys as tables, and other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
+`None` is recorded as `none`, lists and tuples as arrays, and dictionaries with string keys and named tuples as tables.
+Members of enumerations are recorded as their names.
+A class can choose how its instances are recorded by defining a method `__pmdb__` returning the value to record instead, and `pmdb.register(cls, convert)` does the same for classes one cannot modify.
+Other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
 
 The serialized trace contains the following tree:
 
