@@ -239,6 +239,9 @@ func rejectsInvalidParents(mutation: String) async throws {
   ("f(xs, _) where xs[1][0] > 2.0", 1),
   ("f(_, t) where t.a.c == 3", 1),
   ("f(_, t) where t.b", 0),
+  ("f(xs, _) where xs[1][1] == \"a\"", 1),
+  ("f(xs, _) where xs[1] == xs[1]", 1),
+  ("f(xs, t) where xs[1] != t.b", 1),
 ])
 func selectsCallsByArrayAndTableContents(source: String, count: Int) async throws {
   let trace = try await record(

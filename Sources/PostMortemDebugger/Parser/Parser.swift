@@ -369,7 +369,27 @@ public struct Parser {
   /// Parses a string literal.
   private mutating func parseStringLiteral() throws -> Expression {
     let head = try take(.stringLiteral) ?? expected("string literal")
-    return .init(syntax: .string(text(head)), site: head.site)
+    let contents = tokens.source[head.site].dropFirst().dropLast()
+
+    var v = ""
+    var escaped = false
+    for c in contents {
+      if escaped {
+        switch c {
+        case "n": v.append("\n")
+        case "t": v.append("\t")
+        case "\\", "\"": v.append(c)
+        default:
+          throw Diagnostic(.error, "invalid escape sequence '\\\(c)'", at: head.site)
+        }
+        escaped = false
+      } else if c == "\\" {
+        escaped = true
+      } else {
+        v.append(c)
+      }
+    }
+    return .init(syntax: .string(v), site: head.site)
   }
 
   /// Parses a simple identifier.

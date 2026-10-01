@@ -214,6 +214,7 @@ argument-list ::=
 The following operators are supported, from the loosest to the tightest binding:
 
 - `||` and `&&`, which evaluate their right operand only if the left one does not determine their result;
-- `<`, `<=`, `>`, `>=`, `==`, and `!=`, which compare two integers or two floating-point numbers;
+- `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
+- `==` and `!=`, which also compare two strings, arrays, tables, functions, or objects by contents;
 - `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.

@@ -76,9 +76,9 @@ extension Expression.Apply {
     case .identifier(">="):
       return try compareNumerically(in: &environment) { (r) in r >= 0 }
     case .identifier("=="):
-      return try compareNumerically(in: &environment) { (r) in r == 0 }
+      return try compareForEquality(in: &environment) { (r) in r }
     case .identifier("!="):
-      return try compareNumerically(in: &environment) { (r) in r != 0 }
+      return try compareForEquality(in: &environment) { (r) in !r }
     case .identifier("+"):
       return try binary(in: &environment,) { (a, b) in try a.add(b) }
     case .identifier("-"):
@@ -140,6 +140,29 @@ extension Expression.Apply {
       return try combine(a, b) ?? Diagnostic.invalidBinaryOperation(callee, a, b)
     } catch let e as ArithmeticFailure {
       throw Diagnostic.error("\(e.reason) in '\(callee)'", at: callee.site)
+    }
+  }
+
+  /// Evaluates `self` as an equality test between operands evaluated in `environment`, using
+  /// `transform` to convert the result of the test to a Boolean.
+  ///
+  /// Numbers are compared numerically. Other values are equal iff they have the same type and
+  /// contents.
+  private func compareForEquality(
+    in environment: inout [String: Value],
+    transformingResultWith transform: (Bool) -> Bool
+  ) throws -> Value {
+    try binary(in: &environment) { (a, b) in
+      if let result = a.compareNumerically(to: b) {
+        return .init(transform(result == 0))
+      }
+      switch (a, b) {
+      case (.string, .string), (.array, .array), (.table, .table), (.function, .function),
+        (.object, .object):
+        return .init(transform(a == b))
+      default:
+        throw Diagnostic.invalidBinaryOperation(callee, a, b)
+      }
     }
   }
 
