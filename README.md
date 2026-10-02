@@ -264,7 +264,7 @@ Integers have arbitrary precision, so they never overflow.
 An integer is converted to a floating-point number only if it has an exact floating-point representation, and the operation fails otherwise (e.g., `9007199254740993 + 0.5` fails).
 Likewise, the bitwise operators convert a floating-point number to an integer only if it has an exact 64-bit integer representation (e.g., `2.0 | 1 == 3`, but `2.5 | 1` fails).
 
-Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
+Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail, but `int(true) + 1 == 2` holds.
 
 Elements of arrays are selected with `xs[i]`, and properties of tables with `t.name`.
 A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
@@ -277,6 +277,13 @@ Arrays and tables have the following methods, where `p` is a lambda:
 - `t.has(k)` returns whether the table `t` has an entry whose key is the string `k`. Applying `has` to a value that isn't a table, or with a key that isn't a string, is an error.
 
 `t.has` makes it possible to filter on properties that only some tables have: `o.has("coupon") && o.coupon == "BIG50"` holds for the tables whose `coupon` is `"BIG50"`, without failing on those without `coupon`.
+
+Two predefined functions convert between Booleans and numbers, which are never converted implicitly:
+
+- `int(b)` returns `1` if the Boolean `b` is `true`, and `0` otherwise;
+- `bool(n)` returns `false` if the number `n` is zero or NaN, and `true` otherwise.
+
+A variable named `int` or `bool` hides the predefined function.
 
 The grammar of expressions is:
 

@@ -21,7 +21,10 @@ extension Expression {
     case .string(let v):
       return .string(v)
     case .identifier(let x):
-      return try environment[x] ?? Diagnostic.undefined(x, at: site)
+      // Variables hide the predefined functions having the same name.
+      return try environment[x]
+        ?? Builtin(rawValue: x).map(Value.builtin)
+        ?? Diagnostic.undefined(x, at: site)
     case .conditional(let t):
       return try t.evaluate(in: &environment)
     case .apply(let t):
@@ -300,11 +303,31 @@ extension Expression {
   fileprivate static func apply(
     _ f: Value, to a: Value, at site: Range<String.Index>
   ) throws -> Value {
-    guard case .lambda(let l, var environment) = f else {
+    switch f {
+    case .lambda(let l, var environment):
+      environment[l.parameter.value] = a
+      return try l.body.evaluate(in: &environment)
+    case .builtin(let g):
+      return try apply(g, to: a, at: site)
+    default:
       throw Diagnostic.error("value of type '\(f.type)' is not a lambda", at: site)
     }
-    environment[l.parameter.value] = a
-    return try l.body.evaluate(in: &environment)
+  }
+
+  /// Returns the result of applying `f` to `a`, reporting errors at `site`.
+  private static func apply(
+    _ f: Builtin, to a: Value, at site: Range<String.Index>
+  ) throws -> Value {
+    switch (f, a) {
+    case (.int, .boolean(let b)):
+      return .integer(b ? 1 : 0)
+    case (.bool, .integer(let n)):
+      return .boolean(n != 0)
+    case (.bool, .float(let n)):
+      return .boolean(n != 0 && !n.isNaN)
+    default:
+      throw Diagnostic.error("cannot apply \(f) on value of type '\(a.type)'", at: site)
+    }
   }
 
 }

@@ -24,6 +24,17 @@ public enum ValueTag: UInt8, Hashable, Sendable {
 
 }
 
+/// A function predefined by the query language.
+public enum Builtin: String, Hashable, Sendable {
+
+  /// Converts a Boolean to `1` if it is `true` or `0` otherwise.
+  case int
+
+  /// Converts a number to `false` if it is zero or NaN, or `true` otherwise.
+  case bool
+
+}
+
 /// A value stored in a trace.
 public enum Value: Hashable, Sendable {
 
@@ -54,6 +65,9 @@ public enum Value: Hashable, Sendable {
   /// A term abstraction and its environment.
   case lambda(Expression.Lambda, [String: Value])
 
+  /// A function predefined by the query language.
+  case builtin(Builtin)
+
   /// A function.
   case function(String)
 
@@ -75,7 +89,7 @@ public enum Value: Hashable, Sendable {
     case .string: "string"
     case .array: "array"
     case .table: "table"
-    case .lambda: "lambda"
+    case .lambda, .builtin: "lambda"
     case .function: "function"
     case .object: "object"
     }
@@ -193,6 +207,8 @@ extension Value: CustomStringConvertible {
       return "{\(v.map({ (e) in "\(e.key): \(e.value)" }).joined(separator: ", "))}"
     case .lambda(let d, _):
       return d.description
+    case .builtin(let f):
+      return f.rawValue
     case .function:
       return "<function>"
     case .object:
@@ -268,7 +284,7 @@ extension Value {
     case (.table(let a), .table(let b)):
       return a.count == b.count
         && zip(a, b).allSatisfy({ (x, y) in x.key == y.key && x.value.isEqual(to: y.value) })
-    case (.lambda, _):
+    case (.lambda, _), (.builtin, _):
       return false
     default:
       return self == other

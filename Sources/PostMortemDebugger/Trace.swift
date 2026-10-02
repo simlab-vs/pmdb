@@ -300,7 +300,7 @@ extension Trace {
       try w.leaf("pmdb:function", f)
     case .object(let bytes):
       try w.leaf("pmdb:object", Data(bytes).base64EncodedString())
-    case .lambda:
+    case .lambda, .builtin:
       // Lambdas are created by queries, not recorded in traces.
       preconditionFailure("trace contains a lambda")
     }

@@ -598,6 +598,7 @@ func selectsBooleans(source: String, count: Int) async throws {
   ("f(x) where !(x < 1) && !(x >= 1)", 1),
   ("f(x) where x == x", 7),
   ("f(x) where x != x", 1),
+  ("f(x) where bool(x)", 4),
   ("f(x) where x == 9007199254740993", 1),
   ("f(x) where x > 9007199254740992.0", 2),
   ("f(9007199254740992)", 1),
