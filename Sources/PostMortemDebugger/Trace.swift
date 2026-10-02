@@ -522,7 +522,14 @@ public struct Trace: Sendable {
 
   /// Creates an instance with the binary or XML archive stored at `url`.
   public init(contentsOf url: URL) throws {
-    let data = try Data.init(contentsOf: url)
+    let data: Data
+    do {
+      data = try Data(contentsOf: url)
+    } catch let e {
+      let reason =
+        FileManager.default.fileExists(atPath: url.path) ? e.localizedDescription : "no such file"
+      throw RuntimeError("cannot read '\(url.relativePath)': \(reason)")
+    }
 
     if url.pathExtension == "xml" {
       self = try Trace(xml: data) ?? RuntimeError("failed to load a trace from '\(url)'")

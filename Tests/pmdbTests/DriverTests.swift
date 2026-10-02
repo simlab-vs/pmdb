@@ -323,6 +323,7 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
   let o = try await pmdb(["missing.trace"], input: "select f(x)\n")
   #expect(!o.succeeded)
   #expect(o.output == "")
+  #expect(o.error == "error: cannot read 'missing.trace': no such file")
 }
 
 @Test func reportsEvaluationErrors() async throws {
