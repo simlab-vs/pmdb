@@ -312,3 +312,43 @@ changed the hashes of that commit and of every later commit on `ci`.
 
 - Commit messages are unchanged, so other commits can be found by message.
 - The latest commit has the same files as before the rewrite.
+
+---
+
+## 2026-10-02: Evaluating and revising the agent skill
+
+**Context.** Round 2 gives agents the skill `skills/pmdb` instead of a README, so the skill was
+evaluated before the round, on three new Python tasks unrelated to the study's programs (a ledger
+with negative amounts, nested bundle pricing with half-cent rounding, text justification with an
+off-by-one). Sonnet subagents fixed each bug following either the original skill or the revised
+one, and reported every pmdb command and the friction they hit. An independent reviewer checked
+every claim of the skill against pmdb. The workspace isn't committed.
+
+**Results.** Every run fixed its bug. With one run per task and version, the revised skill used
+about 16% fewer tokens and 20% less time in the first iteration (57k against 68k tokens, 132 s
+against 165 s), which is suggestive at best.
+
+**Problems found and fixed in the skill.**
+- **Large arguments.** A function taking a whole catalog prints it on every line of `show` and
+  `--show` (2 MB here). The skill now has a script, `clip`, that elides the middle of long lines,
+  and it advises querying functions with small arguments.
+- **Opaque objects.** Class instances, `self` included, can't be queried. The skill now tells
+  agents to add `__pmdb__` before recording. That used to make `pmdb-record` recurse forever,
+  because it recorded `__pmdb__` itself; it no longer records the methods the recorder calls on
+  values.
+- **`pmdb-record` gaps.** It didn't record packages' `__init__.py` and made deep recursions fail.
+  It needed `PYTHONPATH` even when run from the repository.
+- **Undocumented language limits.** The skill now states them. Values of different types never
+  compare, even with `==`, and Python mixes `0` and `0.5`. There's no `%`, and integer `/`
+  truncates toward zero. There are no sums or folds, no negative indexes, and no string
+  operations. Table keys that aren't identifiers (Rust's `$variant`) can't be read. For checks
+  beyond the language, it suggests `--export-xml`.
+- **Other guidance.** Batching exploratory queries in one heredoc loses all of them after the
+  first error. Arguments are recorded as passed, with keywords as named arguments.
+
+**Open questions (pmdb itself, not changed).**
+- Should comparisons between integers and floats be allowed, since Python mixes them freely?
+- Should pmdb have `%`, sums over arrays, string operations, or a way to read keys that aren't
+  identifiers?
+- Should `show` abbreviate large arguments itself?
+- Should `pmdb-record` record class instances as tables of their fields by default?
