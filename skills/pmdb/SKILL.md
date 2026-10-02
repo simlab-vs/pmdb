@@ -5,32 +5,34 @@ description: Debug a Python program by recording a trace of its function calls (
 
 # Debugging with pmdb
 
-pmdb answers questions like "which calls of `price` returned something other than the sum of their
-parts?" over a recorded run, so you check hypotheses against every call at once instead of
-printing values and re-running. A trace is a tree of calls to the recorded functions, each with
-its arguments (as they were when the call started), its result or exception, and its call site.
+pmdb records a run of a program as a tree of calls, each with its arguments, its result or
+exception, and its call site. Queries then check a hypothesis against every call at once, e.g.
+"which calls of `line_total` returned something other than quantity × price?", instead of
+printing values and re-running. Below, `<this skill>` is the directory containing this file.
 
 ## 1. Record the failing run
 
-Record the smallest run that shows the bug: one failing input rather than a whole test suite keeps
-the trace small and the answers readable. Traces of tens of thousands of calls with big arguments
-reach tens of megabytes; queries stay fast, but their output gets long.
+Record the smallest run that shows the bug, such as one failing input rather than a whole test
+suite, so the trace stays small and the answers readable.
 
-**Python, without editing anything.** `<this skill>/scripts/pmdb-record` runs a script and records
-every function and method defined in the `.py` files of the script's directory and its packages:
+`<this skill>/scripts/pmdb-record` runs a Python script and records every function and method
+defined in the `.py` files of the script's directory and its packages, without editing them:
 
 ```
-<this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
+python3 <this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
 ```
 
-The program runs as usual (same output, same exit status) and the trace is written at exit, even
-if it raises. If `pmdb-record` can't import the recorder, add the directory containing the package
-`recorder` (the directory `Python` of the pmdb checkout or installation; ask the user if you can't
-find it) to `PYTHONPATH`. Things it doesn't record: lambdas, calls answered by a cache such as
-`functools.lru_cache`, and the bodies of generators under their call (a generator call returns at
-once, and the calls made while consuming it are attached to the consumer). To record a failing
-pytest test, record a driver script at the project root (pmdb-record records the project's
-modules; the test functions themselves aren't recorded):
+- The program runs as usual (same output, same exit status), and the trace is written when it
+  exits, even if it raises.
+- Run it with the interpreter that has the project's dependencies (e.g. `.venv/bin/python`
+  instead of `python3`).
+- If `recorder` can't be imported, add the directory `Python` of the pmdb repository to
+  `PYTHONPATH` (ask the user where it is if you can't find it).
+- Not recorded: lambdas, calls answered by a cache such as `functools.lru_cache`, and test
+  functions. A generator call returns at once; the calls made while consuming it appear under
+  the consumer.
+
+To record a failing pytest test, record a driver script placed at the project root:
 
 ```
 cat > pmdb_driver.py <<'EOF'
@@ -41,21 +43,25 @@ EOF
 python3 <this skill>/scripts/pmdb-record -o trace.pmdb pmdb_driver.py
 ```
 
-Run `pmdb-record` with the interpreter that has the project's dependencies (e.g. the
-virtual environment's `python`), as above.
+**How Python values are recorded:**
 
-Class instances (including `self`) are recorded as opaque values, which queries can't look into.
+| Python | pmdb |
+|---|---|
+| `None`, `True`, `False` | `none`, `true`, `false` |
+| `int`, `float`, `str` | integer (of any size), floating-point number, string |
+| list, tuple | array |
+| dict with string keys, named tuple | table, whose fields are read with `t.key` |
+| enum member | the string of its name |
+| anything else, including class instances, dataclasses and `self` | opaque: `<object>` or its `repr` string, which queries can't look into |
+
 If the state you care about lives in objects, add `def __pmdb__(self): return vars(self)` to
-their classes *before* recording, so that they're recorded as tables of their fields, and remove
-it when you're done.
+their classes *before* recording, so they're recorded as tables of their fields, and remove it
+when you're done.
 
-**Python, by hand:** decorate functions with `@recorder.main.record` (`import recorder`), then
-`open("trace.pmdb", "wb").write(recorder.main.serialize().buffer)` at the end.
+## 2. Run queries
 
-## 2. Query it
-
-Pipe commands to pmdb, one per line, in a quoted heredoc (`'EOF'`) so the shell leaves `$`, `\` and
-quotes alone:
+Pipe commands to pmdb in a quoted heredoc (`'EOF'`), so the shell leaves `$`, `\` and quotes
+alone:
 
 ```
 pmdb trace.pmdb <<'EOF'
@@ -64,45 +70,48 @@ show $0
 EOF
 ```
 
-- Each `select <query>` stores its matches in a new variable and prints it, as in
-  `$0 = <k element(s) in 1 trace(s)>`. Numbering starts at `$0`: the first `select` of an
-  invocation creates `$0`, the second `$1`, and so on. Other commands, `show` included, create
-  no variables, so after a single `select`, `show $0` is the only valid `show`.
-- `show $N` prints one line per match, `file:line: call f(args) -> result` (or `raised {…}`),
-  where `file:line` is the call site; read the source there for context.
-- The heredoc holds pmdb commands only; filters go after the redirection:
-  `pmdb trace.pmdb <<'EOF' | head -50`.
-- Arguments print in full, so a function taking a big structure (a catalog, a config, a parsed
-  file) prints all of it on every line. Pipe the output through `<this skill>/scripts/clip`, which
-  elides the middle of long lines and keeps the function name and the result, and through `head`
-  when you don't know how many lines to expect.
-- Variables live for one pmdb invocation only, so a `select` and the `show` or `from $N` using its
-  result go in the same heredoc. pmdb stops at the first failing command (exit status 1) and
-  skips the rest, so run independent or exploratory queries in separate invocations rather than
-  queueing them behind one that may fail.
-- `pmdb --show trace.pmdb` prints the whole call tree with results. It's the way to see what a
-  given call did inside, but it can be megabytes long, so always filter it:
-  `pmdb --show trace.pmdb | <this skill>/scripts/clip | grep -n -A 15 'call price(B07'`.
+- `select <query>` stores its matches in the next variable, `$0` first, then `$1`, and so on, and
+  prints their count. `show $N` prints one line per match:
+  `file:line: call f(args) -> result` (or `raised {…}`), where `file:line` is the call site.
+- Variables last for one pmdb invocation, so a `select` and the commands using its result go in
+  the same heredoc.
+- pmdb stops at the first failing command (exit status 1), so run independent queries in separate
+  invocations.
+- Arguments print in full, so a big argument (a catalog, a config) fills every line. Shorten long
+  lines with `clip`, which keeps the function and the result, and limit the output with `head`:
 
-## 3. Ask questions as queries
+  ```
+  pmdb trace.pmdb <<'EOF' | <this skill>/scripts/clip | head -50
+  ```
+- `pmdb --show trace.pmdb` prints the whole call tree with results, to see what a call did inside.
+  It can be megabytes long, so filter it:
 
-A query states what to look for, and can state what *should* hold, so that pmdb lists the calls
-where it doesn't.
+  ```
+  pmdb --show trace.pmdb | <this skill>/scripts/clip | grep -n -A 15 'call price(B07'
+  ```
 
-**Patterns bind variables.** In a call pattern, every name that isn't a literal binds a new
-variable to the value it matches, which the where clause can then use: in
-`select line_total(l) -> t where t != l.quantity * l.price`, `l` is bound to the argument and `t`
-to the returned value. So `f(E0)` matches *any* argument and calls it `E0`; to match the string,
-write `f("E0")`. Literals (`10`, `"B2"`, `true`, `none`) match equal values only, and `_`
-matches anything without binding it.
+## 3. Write queries
 
-**Outcome patterns** filter calls by how they ended: `f(...) -> r` matches the calls that returned,
-binding `r` to the value, and `f(...) raised e` the calls that raised, binding `e` to a table with
-the exception's `type` and `message`.
+A query is a pattern, optionally followed by `from $N` (to search earlier matches only) and
+`where <condition>`.
+
+**Patterns.** In `f(x, "B2", _)`:
+- A name (`x`) matches any value and binds it for the where clause. So `f(E0)` matches *any*
+  argument; to match the string, write `f("E0")`.
+- A literal (`10`, `2.5`, `"B2"`, `true`, `none`) matches equal values only, and never fails.
+- `_` matches any value without binding it.
+- `*` matches any number of positional arguments, `**` any number of named ones, and `f(...)` any
+  arguments at all. Every argument the call passed must be matched: `f(x)` doesn't match a call
+  with two arguments.
+
+After the arguments, `-> r` matches calls that returned, binding `r` to the result, and
+`raised e` calls that raised, binding `e` to a table with the exception's `type` and `message`
+(`str(exception)`, so a `KeyError`'s message keeps its quotes: `'b'`).
 
 | Question | Query |
 |---|---|
 | every call of `f` | `select f(...)` |
+| every call (including the recorder's own `root()`) | `select _(...)` |
 | calls with given arguments | `select rate(10)`, `select f(_, "B2", *)` |
 | calls by named argument | `select f(*, code = "BIG50", **)` |
 | calls breaking an invariant | `select f(x) -> r where r > x` |
@@ -110,78 +119,76 @@ the exception's `type` and `message`.
 | calls that raised | `select f(...) raised e`, `select _(...) raised e where e.type == "KeyError"` |
 | calls on tables (dicts, named tuples) | `select invoice(o) where o.currency == "GBP"` |
 | … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
+| … with a default value | `select invoice(o) where (if o.has("rate") then o.rate else 0) > 0.2` |
 | calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
-| methods (named `Class.method`, `self` first) | `select /Parser\.take/(...)`, `select /.*\.take/(...)` |
+| methods (`Class.method`, `self` first) | `select /Parser\.take/(...)`, `select /.*\.take/(...)` |
 | nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
 | the last positional argument | `select f(*, last)` |
 | a subset of earlier matches | `select f(x) from $0 where x > 1` |
 
-Matches of functions whose arguments are small (`discounted(amount, percent)` rather than
-`price(catalog, sku)`) are shorter to read.
+Function names match exactly, and a regex (`/…/`) must match the whole name.
 
-**Snaps** hold single values. Their labels are strings, of three forms:
-- `<function>.$result`: the value returned by a call to `<function>` (`total.$result`, or
-  `Cart.add.$result` for a method);
-- `<function>.$exception`: the exception raised by a call, a table with `type` and `message`;
-- any label the program chose when recording a snap explicitly
-  (`recorder.main.snapshot("total", t)` gives `total`).
+To compare floating-point results with a tolerance, write both differences, since there is no
+`abs`: `select total(q, p) -> t where t - q * p > 0.005 || q * p - t > 0.005`.
 
-A snap pattern must match the whole label, and `.` and `$` need a regular expression:
-`select /total\.\$result/`, `select /.*\$exception/`. To find calls by outcome, outcome
-patterns are simpler.
+**Expressions.** `+ - * /`, `< <= > >=`, `== !=`, `&& || !`, `if c then a else b`, `t.key`,
+`xs[i]` (no negative indexes: `xs[xs.len() - 1]`), lambdas `x => …`, and the methods `xs.len()`,
+`t.len()`, `xs.all(p)`, `xs.any(p)`, `xs.count(p)` and `t.has("key")`. `&&`, `||` and `if`
+evaluate only the operands they need, so `o.has("k") && o.k > 0` never reads a missing `k`.
+Strings use double quotes. There is no `%`, `//` or `abs`, no `and`/`or`/`not`, no lookup by a
+computed key (`t[k]`, `t["key"]`), no chained comparisons (`a < b < c`), no string operations
+besides `==`, no array or table literals, and no sums over arrays.
 
-**The query language in brief.** Besides the patterns above: `+ - * /` (integer `/` truncates
-toward zero, unlike Python's `//`; there is no `%`), `< <= > >=` on numbers, `== !=`, `&& || !`,
-`x.field`, `xs[i]` (no negative indexes: `xs[xs.len() - 1]`), and the methods `len()`, `all(p)`,
-`any(p)`, `count(p)` (with a lambda `x => …`) and `t.has("key")`. There are no array or table
-literals, no string operations besides equality, and no sums or folds over arrays.
+**Values are never converted implicitly, except that integers and floating-point numbers compare
+by value:**
+- `0 == 0.0` and `1 < 1.5` hold, and `f(...) -> 0` also matches calls returning `0.0`.
+- `/` always gives a floating-point number: `7 / 2 == 3.5`.
+- NaN is unequal to everything, itself included, so `x != x` finds NaNs.
+- Nothing tells an integer from a floating-point number of the same value; use `--export-xml`
+  when the distinction matters.
+- A condition (the where clause, the operands of `&& || !`, the condition of `if`, the result of
+  a lambda given to `all`, `any` or `count`) must be a Boolean: `where r` fails when `r` is a
+  number. Write `r != 0`, `r != none`, `s != ""` or `xs.len() > 0`.
+- `< <= > >=` and arithmetic take numbers only. `==` and `!=` compare two values of the same
+  type, two numbers, or anything with `none`: `"1" == 1`, `true == 1` and `true + 1` fail.
+- To convert explicitly, `int(b)` turns a Boolean into `1` or `0`, and `bool(n)` a number into
+  `false` if it is zero or NaN (unlike Python, where NaN is true), and `true` otherwise.
+
+**One failing evaluation fails the whole query**, so a where clause must work for every call the
+pattern matches. Typical failures:
+- a key missing from one table (`o.coupon`): guard with `o.has("coupon") && …`, knowing that
+  `has` itself fails on values that aren't tables;
+- a value whose type varies across calls, e.g. `x == "B2"` or `x > 0` when `x` is sometimes a
+  string and sometimes a number: put the literal in the pattern instead (`f("B2")`), or narrow
+  the pattern first and filter `from $N`;
+- `none` where a number is expected (`r > 0`): write `r != none && r > 0`;
+- a division by zero, or arithmetic mixing a floating-point number with an integer too large to
+  convert exactly (above 2^53).
+
+**Snaps.** A call's result is also stored as a snap labeled `<function>.$result`, matched by
+`select /f\.\$result/`; outcome patterns (`-> r`) are simpler.
 
 **When a check is beyond the query language**, export the trace and finish in Python:
-`pmdb --export-xml trace.pmdb > trace.xml` gives every call with typed arguments and results
-(`pmdb:call` elements with a `pmdb:function`, `pmdb:arguments` and nested `pmdb:observations`, and
-the outcome in the `pmdb:snap` labeled `<function>.$result` that follows the call), which
-`xml.etree.ElementTree` reads unambiguously. `show` output is easier to skim but ambiguous to
-parse: the string `"1"` and the integer `1` both print as `1`, and `"a, b"` prints like two
-arguments.
+`pmdb --export-xml trace.pmdb > trace.xml` gives every call with typed values (`pmdb:call`
+elements holding a `pmdb:function`, `pmdb:arguments` and nested `pmdb:observations`, followed by
+a `pmdb:snap` labeled `<function>.$result`), which `xml.etree.ElementTree` reads unambiguously.
 
-## 4. What trips queries up
+## 4. What else trips queries up
 
-- **Values of different types never compare, not even with `==`.** `r > 0` and `r != 0` fail the
-  *whole query* as soon as one `r` is a float (`cannot apply > on values of type 'float' and
-  'integer'`), and Python code often returns `0` in one branch and `0.5` in another; a string
-  compared with an integer fails the same way. Only `x == none` works on any value. A literal of
-  the right type (`r > 0.0`) only helps if every value has that type. Otherwise use truthiness
-  (`where r` holds for non-zero numbers and non-empty strings, `where !r` for zero), or literals in
-  the pattern, which never fail: `f(x) -> 0` matches only the integer 0, `f(x) -> 0.0` only the
-  float.
-- **One failing evaluation fails the whole query**, e.g. `o.coupon` on a table without `coupon`.
-  Guard with `has`, or narrow the pattern first and filter `from $N`.
-- **Arguments are recorded as passed.** `f(1, y=2)` is recorded with a positional argument and a
-  named one (shown as `y: 2`), and omitted defaults are absent, so `f(x, y)` doesn't match it.
-  Start with `f(...)` or `f(x, *, **)` and look at how calls were actually recorded.
-- **Patterns must account for every argument.** `f(x)` silently matches nothing when `f` takes two
-  arguments; use `f(x, *)`, `f(*, x)`, `f(_, y, **)` or `f(...)`. `*` matches any number of
-  positional arguments wherever it is. Methods count `self` as the first argument.
-- **Names match exactly, and a regex must match the whole name.** `take(...)` doesn't match the
-  method `Parser.take`; write `/.*\.take/(...)`.
-- **Instances of classes are opaque**, dataclasses included. Only dicts with string keys and named
-  tuples become tables, and lists and tuples arrays. Other values (class instances, sets,
-  `Decimal`, dicts with non-string keys) are recorded as `<object>` or as
-  their `repr`, a string such as `<shop.Cart object at 0x…>`, so `self.items` can't be queried and
-  fails with `value of type 'string' is not a table`. To see an object's fields, give its class a
-  method `def __pmdb__(self): return vars(self)` while you debug; the recorder records what it
-  returns instead.
-- **Keys that aren't identifiers can't be read**: a dict key such as `"unit price"` or `"0"`
-  has no `t.…` form. Use `t.has("…")` and `show`.
-- **Syntax:** strings in double quotes only; `true`, `false`, `none`; `&&`, `||`, `!` (not
-  `and`, `or`, `not`); `_` only in patterns (name an argument to use it in `where`); `t.k`, not
-  `t["k"]`.
-- **`from $N` searches the matched calls only**, not the calls made inside them. Use
-  `pmdb --show` with `grep -A` to look inside a call.
-- **An exception is recorded for every recorded call it passes through**: if `f` calls `g` and
-  `g` raises, both `g(...) raised e` and `f(...) raised e` match. `show` points at the line
-  calling the raising function, not at the `raise`.
-- **Values print without quotes**: `call f(B2)` is the string `"B2"`, and `f()` may be a call with
-  an empty string.
-- **Arguments are recorded when the call starts**, results when it returns: a list mutated by the
-  call shows its old contents in the arguments.
+- **Arguments are recorded as passed.** `f(1, y=2)` has one positional argument and one named
+  one (shown as `y: 2`), and omitted defaults are absent, so `f(x, y)` doesn't match it. Start
+  with `select f(...)` and `show $0` to see how calls were recorded.
+- **Methods count `self` as their first argument**, and their names include the class (see the
+  table).
+- **Arguments are recorded when the call starts**, results when it returns: a list the call
+  mutates shows its old contents in the arguments.
+- **Keys that aren't identifiers can't be read**: a key such as `"unit price"` or `"0"` has no
+  `t.…` form. Use `t.has("…")` and `show`.
+- **`from $N` searches the matched calls only**, not the calls made inside them. To look inside a
+  call, use `pmdb --show` (§2).
+- **An exception matches every recorded call it passes through**: if `f` calls `g` and `g`
+  raises, both `g(...) raised e` and `f(...) raised e` match. `show` points at the line calling
+  the raising function, not at the `raise`.
+- **Values print without quotes**: `call f(B2)` is a call with the string `"B2"`, `1` may be the
+  string `"1"`, `f()` may be a call with an empty string, and `"a, b"` looks like two arguments.
+  Use `--export-xml` when it matters.
