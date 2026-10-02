@@ -208,12 +208,12 @@ private func matches(
   }
 }
 
-/// Returns `true` if either `filter` is `nil` or it evaluates to a truthy value in `environment`,
+/// Returns `true` if either `filter` is `nil` or it evaluates to `true` in `environment`,
 /// throwing the error that occurred during the evaluation of `filter`, if any.
 ///
 /// The evaluation of `filter` might not terminate.
 private func satisfied(_ filter: Expression?, in environment: [String: Value] = [:]) throws -> Bool {
   guard let f = filter else { return true }
   var e = environment
-  return try f.evaluate(in: &e).isTruthy
+  return try f.evaluateCondition(in: &e)
 }

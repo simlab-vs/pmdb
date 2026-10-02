@@ -243,7 +243,6 @@ func rejectsInvalidParents(mutation: String) async throws {
   ("f(xs, _) where xs[0] == 1", 1),
   ("f(xs, _) where xs[1][0] > 2.0", 1),
   ("f(_, t) where t.a.c == 3", 1),
-  ("f(_, t) where t.b", 0),
   ("f(xs, _) where xs[1][1] == \"a\"", 1),
   ("f(xs, _) where xs[1] == xs[1]", 1),
   ("f(xs, t) where xs[1] != t.b", 1),
@@ -635,8 +634,6 @@ func comparesNumbersByValue(source: String, count: Int) async throws {
 @Test(arguments: [
   ("f(x) where x == none", 1),
   ("f(x) where x != none", 3),
-  ("f(x) where !x", 2),
-  ("f(x) where x", 2),
   ("f(x, x)", 0),
   ("g(x, x)", 1),
   ("/.*\\$result/", 5),

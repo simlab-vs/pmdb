@@ -244,17 +244,18 @@ Without a from clause, a query searches all observations of all loaded traces.
 
 A where clause is an expression evaluated for each match, in which the names bound by the pattern are defined: the variables of its argument patterns (`x` in `f(x)`), of its outcome pattern (`r` in `-> r`, `e` in `raised e`), and of its variadic patterns (`xs` in `xs*`).
 A snap pattern binds no name.
-A match is kept if the expression evaluates to a *truthy* value, which is any value other than `none`, `false`, zero, an empty string, an empty array, or an empty table.
+A match is kept if the expression evaluates to `true`.
+The expression, like every condition (the operands of `!`, `&&`, and `||`, the condition of `if`, and the results of the lambdas passed to `all`, `any`, and `count`), must evaluate to a Boolean: `where x` fails if `x` is a number, whereas `where x != 0` doesn't.
 If the evaluation fails for any match (e.g., because it divides by zero, selects a property that a table doesn't have, or compares a number with a string), the query fails and the error is reported.
 
 The operators, from the loosest to the tightest binding, are:
 
-- `||` and `&&`, which evaluate their right operand only if the left one doesn't determine their result;
+- `||` and `&&`, which compute the disjunction and conjunction of two Booleans, evaluating their right operand only if the left one doesn't determine their result;
 - `<`, `<=`, `>`, and `>=`, which compare two numbers;
 - `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
 - `+`, `-`, `*`, and `/`, which compute on two numbers, failing on divisions by zero;
 - `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two numbers with integral values, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
-- the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+- the prefix operators `!`, which negates a Boolean, and `-`, which negates a number.
 
 Integers and floating-point numbers are both numbers, compared by value: `0 == 0.0` and `1 < 1.5` hold, but `9007199254740993 == 9007199254740992.0` doesn't.
 Floating-point numbers follow IEEE 754, so NaN is neither less than, equal to, nor greater than any number, itself included.
@@ -269,9 +270,9 @@ Elements of arrays are selected with `xs[i]`, and properties of tables with `t.n
 A lambda `x => e` can be applied to one argument, as in `(x => x > 0)(y)`.
 Arrays and tables have the following methods, where `p` is a lambda:
 
-- `xs.all(p)` returns whether `p` returns a truthy value for all elements of `xs`;
-- `xs.any(p)` returns whether `p` returns a truthy value for at least one element of `xs`;
-- `xs.count(p)` returns the number of elements of `xs` for which `p` returns a truthy value;
+- `xs.all(p)` returns whether `p` returns `true` for all elements of `xs`;
+- `xs.any(p)` returns whether `p` returns `true` for at least one element of `xs`;
+- `xs.count(p)` returns the number of elements of `xs` for which `p` returns `true`;
 - `xs.len()` and `t.len()` return the number of elements of `xs` and of entries of `t`;
 - `t.has(k)` returns whether the table `t` has an entry whose key is the string `k`. Applying `has` to a value that isn't a table, or with a key that isn't a string, is an error.
 

@@ -81,26 +81,6 @@ public enum Value: Hashable, Sendable {
     }
   }
 
-  /// Returns `true` iff `self` is interpreted as a truthy value when it appears as a condition.
-  public var isTruthy: Bool {
-    switch self {
-    case .boolean(let v):
-      return v
-    case .integer(let v):
-      return v != 0
-    case .float(let v):
-      return v != 0.0
-    case .string(let v):
-      return !v.isEmpty
-    case .array(let v):
-      return !v.isEmpty
-    case .table(let v):
-      return !v.isEmpty
-    case .null, .lambda, .function, .object:
-      return false
-    }
-  }
-
 }
 
 extension Value: Archivable {

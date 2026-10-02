@@ -35,13 +35,25 @@ extension Expression {
     }
   }
 
+  /// Returns the value of `self`, which is a condition, evaluated in `environment`, throwing if it
+  /// isn't a Boolean.
+  public func evaluateCondition(in environment: inout [String: Value]) throws -> Bool {
+    try Expression.condition(evaluate(in: &environment), at: site)
+  }
+
+  /// Returns `v`, which is the value of a condition at `site`, throwing if it isn't a Boolean.
+  fileprivate static func condition(_ v: Value, at site: Range<String.Index>) throws -> Bool {
+    if case .boolean(let b) = v { return b }
+    throw Diagnostic.error("condition of type '\(v.type)' is not a Boolean", at: site)
+  }
+
 }
 
 extension Expression.Conditional {
 
   /// Returns the value of `self` evaluated in the specified `environment`.
   fileprivate func evaluate(in environement: inout [String: Value]) throws -> Value {
-    if try condition.evaluate(in: &environement).isTruthy {
+    if try condition.evaluateCondition(in: &environement) {
       return try success.evaluate(in: &environement)
     } else {
       return try failure.evaluate(in: &environement)
@@ -58,7 +70,7 @@ extension Expression.Apply {
     if arguments.count == 1 {
       switch callee.syntax {
       case .identifier("!"):
-        return try .init(!arguments.first!.evaluate(in: &environment).isTruthy)
+        return try .init(!arguments.first!.evaluateCondition(in: &environment))
       case .identifier("-"):
         return try unary(in: &environment) { (a) in try a.negated() }
       case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
@@ -181,7 +193,7 @@ extension Expression.Apply {
   }
 
   /// Returns a function that applies the lambda passed as the only argument of `self` to a value
-  /// and returns whether the result is truthy.
+  /// and returns the result, which must be a Boolean.
   private func predicate(
     in environment: inout [String: Value]
   ) throws -> (Value) throws -> Bool {
@@ -189,7 +201,9 @@ extension Expression.Apply {
       throw Diagnostic.invalidArgumentCount(expected: 1, found: arguments.count, at: callee.site)
     }
     let f = try arguments.first!.evaluate(in: &environment)
-    return { [site = callee.site] (x) in try Expression.apply(f, to: x, at: site).isTruthy }
+    return { [site = callee.site] (x) in
+      try Expression.condition(Expression.apply(f, to: x, at: site), at: site)
+    }
   }
 
   /// Evaluates `self` as a unary operation on an operand evaluated in `environment`, computing its
@@ -208,8 +222,7 @@ extension Expression.Apply {
   }
 
   /// Evaluates `self` as a logical conjunction or disjunction of operands evaluated in
-  /// `environment`, evaluating its right operand iff the truthiness of its left operand isn't
-  /// `shortCircuit`.
+  /// `environment`, evaluating its right operand iff its left operand isn't `shortCircuit`.
   private func logical(
     in environment: inout [String: Value], shortCircuitingOn shortCircuit: Bool
   ) throws -> Value {
@@ -217,10 +230,10 @@ extension Expression.Apply {
       throw Diagnostic.invalidArgumentCount(expected: 2, found: arguments.count, at: callee.site)
     }
 
-    if try arguments.first!.evaluate(in: &environment).isTruthy == shortCircuit {
+    if try arguments.first!.evaluateCondition(in: &environment) == shortCircuit {
       return .init(shortCircuit)
     } else {
-      return try .init(arguments.last!.evaluate(in: &environment).isTruthy)
+      return try .init(arguments.last!.evaluateCondition(in: &environment))
     }
   }
 
