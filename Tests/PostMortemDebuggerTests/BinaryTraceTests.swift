@@ -322,6 +322,41 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   #expect(descriptions[3] == "<Opaque object>")
 }
 
+@Test func doesNotRecordCallsMadeWhileEncodingValues() async throws {
+  // `isinstance` reads `__class__`, and describing an unpicklable object calls `__repr__`: if
+  // these calls were recorded, recording them would encode the same objects again, forever.
+  let trace = try await record(
+    """
+    import threading
+
+    class Proxy:
+      def __init__(self):
+        self.lock = threading.Lock()
+
+      @property
+      @r.record
+      def __class__(self):
+        return Proxy
+
+      @r.record
+      def __repr__(self):
+        return "proxy"
+
+    @r.record
+    def f(x):
+      return 1
+
+    f(Proxy())
+    """)
+
+  let expected = """
+    * call root()
+    └─* call f(proxy) -> 1
+
+    """
+  #expect(trace.description == expected)
+}
+
 @Test func recordsExceptions() async throws {
   let trace = try await record(
     """

@@ -108,29 +108,38 @@ class Recorder(object):
     self.parent = [0]
     self.active = 0
 
+    # The number of observations being created. Calls made while values are encoded (e.g., to
+    # `__repr__`, `__pmdb__`, or a property read by `isinstance`) aren't recorded, since recording
+    # them would encode the same values again.
+    self.encoding = 0
+
   def record(self, f):
     """Decorates `f` so that each of its calls is recorded in `self`."""
     @functools.wraps(f)
     def decorated(*args, **kwargs):
+      if self.encoding:
+        return f(*args, **kwargs)
       caller = Recorder.caller()
       callee = f.__qualname__
 
       # Attach a new call observation to the current trace node.
-      call = Call(caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
+      call = self.encoded(Call, caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
       self.step_into(call)
 
       # Apply the decorated function, recording the exception it raises, if any.
       try:
         result = f(*args, **kwargs)
       except BaseException as e:
-        exception = {"type": type(e).__qualname__, "message": describe(e, str)}
-        snap = Snapshot(
-          caller.f_code.co_filename, caller.f_lineno, callee + ".$exception", exception)
+        exception = self.encoded(
+          lambda: {"type": type(e).__qualname__, "message": describe(e, str)})
+        snap = self.encoded(
+          Snapshot, caller.f_code.co_filename, caller.f_lineno, callee + ".$exception", exception)
         self.step_out(snap)
         raise
 
       # Get back to the original trace node.
-      snap = Snapshot(caller.f_code.co_filename, caller.f_lineno, callee + ".$result", result)
+      snap = self.encoded(
+        Snapshot, caller.f_code.co_filename, caller.f_lineno, callee + ".$result", result)
       self.step_out(snap)
       return result
 
@@ -138,7 +147,15 @@ class Recorder(object):
 
   def snapshot(self, label, value):
     caller = Recorder.caller()
-    self.observe(Snapshot(caller.f_code.co_filename, caller.f_lineno, label, value))
+    self.observe(self.encoded(Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value))
+
+  def encoded(self, make, *args):
+    """Returns `make(*args)`, which encodes values, without recording the calls it makes."""
+    self.encoding += 1
+    try:
+      return make(*args)
+    finally:
+      self.encoding -= 1
 
   def run(self, f, *args, **kwargs):
     return f(*args, **kwargs)
