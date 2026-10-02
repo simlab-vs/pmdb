@@ -404,3 +404,30 @@ ones were re-run in the agents' sandboxes:
   recipes.
 - **Candidate features:** a `raised e` pattern for calls that raised, mirroring how calls are
   printed; and `==` between values of different types evaluating to false instead of failing.
+
+---
+
+## 2026-10-02: Round 3 abandoned: reading localizes mutants of larger programs too
+
+**Context.** Round 3 (`usability/round-3/`) generated exercises meant to resist reading:
+- three programs of 740–1070 lines with aggregated outputs;
+- mutation operators modelling natural-looking bugs;
+- candidates filtered to silent, rare, deep mutants changing few output lines;
+- a read-only Sonnet screen, which could only read the code and the two outputs, to keep the
+  ones it couldn't localize.
+
+**Result.** The screen localized all 18 candidates, in 7 to 11 turns each, at most 2.5 minutes
+and 235k tokens.
+- A diff of the outputs points to a feature, and the code's names lead from there to the
+  mutated function.
+- A single mechanical change, even one that reads naturally (a removed `+=`, `continue`
+  instead of `break`), stays visible to a reader who knows where to look.
+
+**Decision.**
+- **No round 3 runs.** The round is abandoned before any run of the study; its setup and screen
+  stay as a record.
+- **Round 4 uses real bugs.** As the user chose, it sources real bugs from real projects instead
+  of mutants.
+
+**Open question.** Is any mechanical single-site mutation hard to localize by reading, given the
+expected output?

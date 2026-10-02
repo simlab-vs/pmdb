@@ -77,4 +77,13 @@ the success of each arm.
 
 ## Changes after the start
 
-None.
+None: the round was abandoned before any run of the study (below).
+
+## Outcome: abandoned after the screen
+
+The screen localized every candidate (`data/screen.jsonl`): all 18 candidates (7 warehouse,
+5 sheet, 6 league), in 7 to 11 turns and 64k to 235k tokens each, without running anything.
+Candidates that the screen solved can't make "exercises that can't easily be fixed by reading
+the code", so the user decided to source real bugs from real projects instead
+(`../round-4/`). The selection rule's fallback (10 localized candidates) was not applied, and no
+run of the study was made with these exercises.
