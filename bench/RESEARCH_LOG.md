@@ -352,3 +352,32 @@ against 165 s), which is suggestive at best.
   identifiers?
 - Should `show` abbreviate large arguments itself?
 - Should `pmdb-record` record class instances as tables of their fields by default?
+
+---
+
+## 2026-10-02: Round 2 results
+
+**Context.** Round 2 re-ran round 1's exercises with the current pmdb, the agent skill installed as
+a Claude Code skill, and otherwise the same protocol (`usability/round-2/`).
+
+**Results.** See `usability/round-2/results/REPORT.md`.
+- **Success:** every run in both arms fixed its bug.
+- **Cost:** arm B still costs more, by a median of +57k tokens and +2 turns over 20 pairs
+  (p < 0.001 and p = 0.022).
+- **Sonnet** used pmdb in 2 of 10 runs and debugged by reading.
+- **Haiku** invoked the skill in all 10 of its runs, without being told to.
+  - Its pmdb error rate stayed about the same: 13 of 41 commands, against 15 of 39 in round 1.
+  - The causes changed. There were no errors from the command line or from missing features.
+    The errors were misuses that the skill warns against: `show` without a variable, `$1` with
+    one `select`, a pipe inside the heredoc, and SQL-like queries.
+
+**Decisions.**
+- **Round 3 goes ahead with exercises built to resist reading.** Round 1's exercises can't show
+  an efficiency gain, because reading the code is enough.
+
+**Open questions.**
+- Should pmdb's parse errors name what was expected? For example, "`show` expects a variable
+  such as `$0`", or listing the defined variables when one is undefined.
+- Should `show` have a compact form (calls and results, no excerpts) and a limit, since agents
+  didn't use the skill's `grep`/`clip` recipes?
+- Should the skill point to snapshots for values inside a call?

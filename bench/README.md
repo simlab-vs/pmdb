@@ -16,7 +16,7 @@ bench/
 
 | Study | Question | Experiments |
 |---|---|---|
-| [usability](usability/) | How do agents use pmdb, where do they struggle, and does it change how much effort a fix takes? | [round 1](usability/round-1/) (done 2026-10-01), [round 2](usability/round-2/) (round 1's exercises with the current pmdb and the agent skill) |
+| [usability](usability/) | How do agents use pmdb, where do they struggle, and does it change how much effort a fix takes? | [round 1](usability/round-1/) (done 2026-10-01), [round 2](usability/round-2/) (done 2026-10-02: round 1's exercises with the current pmdb and the agent skill) |
 
 ## Running an experiment of the usability study
 
