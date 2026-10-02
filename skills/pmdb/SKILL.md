@@ -28,9 +28,11 @@ python3 <this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
   instead of `python3`).
 - If `recorder` can't be imported, add the directory `Python` of the pmdb repository to
   `PYTHONPATH` (ask the user where it is if you can't find it).
-- Not recorded: lambdas, calls answered by a cache such as `functools.lru_cache`, and test
-  functions. A generator call returns at once; the calls made while consuming it appear under
-  the consumer.
+- Not recorded: lambdas, calls answered by a cache such as `functools.lru_cache`, asynchronous
+  generators, and test functions. A generator or coroutine call is recorded when it starts
+  running, and the calls it makes appear under it.
+- Record one failing test, not a test file: traces of large projects grow fast (tens of
+  thousands of calls per test).
 
 To record a failing pytest test, record a driver script placed at the project root:
 
@@ -60,7 +62,8 @@ when you're done.
 
 ## 2. Run queries
 
-Pipe commands to pmdb in a quoted heredoc (`'EOF'`), so the shell leaves `$`, `\` and quotes
+`pmdb` is a command on your `PATH` (not a Python module, and not one of this skill's scripts).
+Pipe commands to it in a quoted heredoc (`'EOF'`), so the shell leaves `$`, `\` and quotes
 alone:
 
 ```
@@ -73,6 +76,10 @@ EOF
 - `select <query>` stores its matches in the next variable, `$0` first, then `$1`, and so on, and
   prints their count. `show $N` prints one line per match:
   `file:line: call f(args) -> result` (or `raised {…}`), where `file:line` is the call site.
+- `show` takes a variable (`show $0`), not a file. `show functions` lists every recorded function
+  with its number of calls: use it first to find exact names, such as `Class.method`.
+- The heredoc holds pmdb commands only. Shell pipes go after it, on the `pmdb` line:
+  `pmdb trace.pmdb <<'EOF' | head -50`, never `show $0 | head` inside it.
 - Variables last for one pmdb invocation, so a `select` and the commands using its result go in
   the same heredoc.
 - pmdb stops at the first failing command (exit status 1), so run independent queries in separate
@@ -126,7 +133,14 @@ After the arguments, `-> r` matches calls that returned, binding `r` to the resu
 | the last positional argument | `select f(*, last)` |
 | a subset of earlier matches | `select f(x) from $0 where x > 1` |
 
-Function names match exactly, and a regex (`/…/`) must match the whole name.
+Function names match exactly, and a regex (`/…/`) must match the whole name. When a pattern names
+no recorded function, pmdb warns and lists the recorded functions it partially matches (e.g.
+`Parser.take` for `take`).
+
+`raised` matches every recorded call that raised, including exceptions that were caught and
+handled along the way: libraries and Python itself raise and catch many (e.g. `AttributeError`
+while looking up attributes). Narrow by function or by `e.type`, and start from the exception the
+failing test reports rather than from all of them.
 
 To compare floating-point results with a tolerance, write both differences, since there is no
 `abs`: `select total(q, p) -> t where t - q * p > 0.005 || q * p - t > 0.005`.
