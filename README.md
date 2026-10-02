@@ -180,6 +180,7 @@ Some examples:
 | `f(*, code = "BIG50", **)` | calls to `f` with a named argument `code` equal to `"BIG50"` |
 | `f(x) -> r where r < x` | calls to `f` that returned less than their argument |
 | `f(...) -> none` | calls to `f` that returned `none` |
+| `f(x) raised e where e.type == "KeyError"` | calls to `f` that raised a `KeyError` |
 | `invoice(o) where o.has("coupon") && o.coupon == "BIG50"` | calls whose argument is a table with `coupon` equal to `"BIG50"` |
 | `/Parser\..*/(...)` | calls to the methods of `Parser` |
 | `/.*\$exception/` | snaps recording exceptions |
@@ -209,9 +210,14 @@ Argument patterns are positional or named:
 A call pattern matches a call if and only if each argument of the call is matched by a different argument pattern and every argument pattern is matched, with positional patterns matching positional arguments in order.
 For example, `f(x, b = _)` doesn't match `f(1, b = 2, c = 3)`, because `c` isn't matched, and `f(x, y)` doesn't match `f(1)`, because `y` isn't matched.
 
-A call pattern can be followed by an arrow (`->`) and a positional pattern matching the value returned by the call.
-For example, `f(x) -> r where r > x` matches the calls to `f` returning a value greater than their argument, and `f(x) -> x` matches those returning their argument.
-Such a pattern only matches calls whose result has been recorded, so it never matches calls that raised an exception.
+A call pattern can be followed by an outcome pattern, which filters calls by how they ended:
+
+- an arrow (`->`) followed by a positional pattern matches the calls that returned a value matching that pattern.
+  For example, `f(x) -> r where r > x` matches the calls to `f` returning a value greater than their argument, and `f(x) -> x` matches those returning their argument;
+- `raised` followed by a positional pattern matches the calls that raised an exception matching that pattern, the exception being the table with the `type` and the `message` that is recorded for it.
+  For example, `f(x) raised e where e.type == "KeyError"` matches the calls to `f` that raised a `KeyError`, and `f(...) raised _` all the calls to `f` that raised.
+
+Outcome patterns only match calls whose outcome has been recorded, so `->` never matches calls that raised and `raised` never matches calls that returned.
 
 ### Sources
 

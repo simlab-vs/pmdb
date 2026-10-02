@@ -98,11 +98,18 @@ public struct Parser {
         diagnostics.append(w)
       }
 
-      // Is there a pattern for the result?
-      let result = try take(operator: "->").map({ (_) in try parseResultPattern() })
+      // Is there a pattern for the outcome?
+      let outcome: Query.OutcomePattern? =
+        if take(operator: "->") != nil {
+          try .returned(parseOutcomePattern())
+        } else if take(contextual: "raised") != nil {
+          try .raised(parseOutcomePattern())
+        } else {
+          nil
+        }
 
       let (source, filter) = try parseQueryClauses()
-      return .call(identifier, xs, result: result, from: source, where: filter)
+      return .call(identifier, xs, outcome: outcome, from: source, where: filter)
     }
 
     // Otherwise, expect we're parsing identifiers in snapshots.
@@ -218,8 +225,9 @@ public struct Parser {
     }
   }
 
-  /// Parses the pattern matching the result of a call, which is a positional argument pattern.
-  private mutating func parseResultPattern() throws -> ArgumentPattern {
+  /// Parses the pattern matching the value returned or the exception raised by a call, which is a
+  /// positional argument pattern.
+  private mutating func parseOutcomePattern() throws -> ArgumentPattern {
     if let n = take(.name) {
       return .positional(binding: text(n))
     } else if take(.underscore) != nil {
@@ -227,7 +235,7 @@ public struct Parser {
     } else if let v = try parseOptionalLiteral() {
       return .positionalLiteral(v)
     } else {
-      throw expected("result pattern")
+      throw expected("outcome pattern")
     }
   }
 

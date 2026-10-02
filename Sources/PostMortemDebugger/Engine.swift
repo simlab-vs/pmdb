@@ -111,8 +111,6 @@ public struct Engine: ~Copyable {
       }
 
     case .call(let f, let xs, let r, let source, let filter):
-      // The result of a call is matched as the only positional argument of a pattern list.
-      let results = r.map({ (p) in ArgumentPatternList([p]) })
       try await reduce(
         select(source, from: haystack), into: &accumulator, { (s, i) in s.calls(in: i) }
       ) { (buffer, trace, calls) in
@@ -121,7 +119,7 @@ public struct Engine: ~Copyable {
           let s = trace[at: o]
           e.removeAll(keepingCapacity: true)
           if try f.matches(s.function) && xs.matches(argumentsOf: s, in: &e)
-            && matches(results, resultOf: o, in: trace, binding: &e)
+            && matches(r, outcomeOf: o, in: trace, binding: &e)
             && satisfied(filter, in: e)
           {
             buffer[trace: trace.identity].calls.insert(o)
@@ -193,16 +191,19 @@ public struct Engine: ~Copyable {
 
 }
 
-/// Returns `true` iff `pattern` is `nil` or the call `o` in `trace` returned a value matching
+/// Returns `true` iff `pattern` is `nil` or the outcome of the call `o` in `trace` matches
 /// `pattern`, unifying variables in `environment`.
 private func matches(
-  _ pattern: ArgumentPatternList?, resultOf o: Call.Index, in trace: Trace,
+  _ pattern: Query.OutcomePattern?, outcomeOf o: Call.Index, in trace: Trace,
   binding environment: inout [String: Value]
 ) -> Bool {
-  guard let p = pattern else { return true }
-  if case .returned(let v) = trace.outcome(of: o) {
-    return p.matches([v], [:], in: &environment)
-  } else {
+  // The payload of an outcome is matched as the only positional argument of a pattern list.
+  switch (pattern, trace.outcome(of: o)) {
+  case (nil, _):
+    return true
+  case (.returned(let p), .returned(let v)), (.raised(let p), .raised(let v)):
+    return ArgumentPatternList([p]).matches([v], [:], in: &environment)
+  default:
     return false
   }
 }

@@ -352,6 +352,44 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
 }
 
 @Test(arguments: [
+  ("_(...) raised _", 2),
+  ("_(...) -> _", 1),
+  ("_(...)", 4),  // Including the root, which neither returned nor raised.
+  ("bad(x) raised e where e.type == \"KeyError\" && x == \"k\"", 1),
+  ("h() raised e where e.message == \"'k'\"", 1),
+  ("_(...) raised e where e.type == \"ValueError\"", 0),
+  ("ok(raised) -> raised", 1),
+  ("ok(raised) where raised - 1 == 0", 1),
+])
+func selectsCallsByOutcome(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def bad(x):
+      raise KeyError(x)
+
+    @r.record
+    def h():
+      bad("k")
+
+    @r.record
+    def ok(x):
+      return x
+
+    try:
+      h()
+    except KeyError:
+      pass
+    ok(1)
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  let result = try await engine.select(query("select \(source)"))
+  #expect(result.count == count)
+}
+
+@Test(arguments: [
   ("f(\"x\")", 1),
   ("f(\"y\", b = -1)", 1),
   ("f(\"y\", b = 1)", 0),
