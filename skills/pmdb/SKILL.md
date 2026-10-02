@@ -64,8 +64,10 @@ show $0
 EOF
 ```
 
-- `select <query>` prints `$N = <k element(s) in 1 trace(s)>` and stores the matches in `$N`
-  (`$0`, `$1`, … in the order of the `select`s).
+- Each `select <query>` stores its matches in a new variable and prints it, as in
+  `$0 = <k element(s) in 1 trace(s)>`. Numbering starts at `$0`: the first `select` of an
+  invocation creates `$0`, the second `$1`, and so on. Other commands, `show` included, create
+  no variables, so after a single `select`, `show $0` is the only valid `show`.
 - `show $N` prints each match as `file:line: call f(args) -> result` (or `raised {…}`) followed
   by five lines of source around the call site.
 - The heredoc holds pmdb commands only; filters go after the redirection:
@@ -84,7 +86,19 @@ EOF
 
 ## 3. Ask questions as queries
 
-The most productive query states what *should* hold and lets pmdb list the calls where it doesn't:
+A query states what to look for, and can state what *should* hold, so that pmdb lists the calls
+where it doesn't.
+
+**Patterns bind variables.** In a call pattern, every name that isn't a literal binds a new
+variable to the value it matches, which the where clause can then use: in
+`select line_total(l) -> t where t != l.quantity * l.price`, `l` is bound to the argument and `t`
+to the returned value. So `f(E0)` matches *any* argument and calls it `E0`; to match the string,
+write `f("E0")`. Literals (`10`, `"B2"`, `true`, `none`) match equal values only, and `_`
+matches anything without binding it.
+
+**Outcome patterns** filter calls by how they ended: `f(...) -> r` matches the calls that returned,
+binding `r` to the value, and `f(...) raised e` the calls that raised, binding `e` to a table with
+the exception's `type` and `message`.
 
 | Question | Query |
 |---|---|
@@ -93,18 +107,28 @@ The most productive query states what *should* hold and lets pmdb list the calls
 | calls by named argument | `select f(*, code = "BIG50", **)` |
 | calls breaking an invariant | `select f(x) -> r where r > x` |
 | calls returning a given value | `select f(...) -> none`, `select f(...) -> 0` |
+| calls that raised | `select f(...) raised e`, `select _(...) raised e where e.type == "KeyError"` |
 | calls on tables (dicts, named tuples) | `select invoice(o) where o.currency == "GBP"` |
 | … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
 | calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
 | methods (named `Class.method`, `self` first) | `select /Parser\.take/(...)`, `select /.*\.take/(...)` |
 | nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
-| exceptions | `select /.*\$exception/`, then `show` it |
+| the last positional argument | `select f(*, last)` |
 | a subset of earlier matches | `select f(x) from $0 where x > 1` |
 
-Then `show` the few matches, read the arguments, and move to the function that produced a wrong
-argument (a caller) or to the callees of a call whose result is wrong although its arguments are
-right. Prefer functions whose arguments are small and specific to the bug (`discounted(amount,
-percent)` rather than `price(catalog, sku)`): their matches are short to read and easy to check.
+Matches of functions whose arguments are small (`discounted(amount, percent)` rather than
+`price(catalog, sku)`) are shorter to read.
+
+**Snaps** hold single values. Their labels are strings, of three forms:
+- `<function>.$result`: the value returned by a call to `<function>` (`total.$result`, or
+  `Cart.add.$result` for a method);
+- `<function>.$exception`: the exception raised by a call, a table with `type` and `message`;
+- any label the program chose when recording a snap explicitly
+  (`recorder.main.snapshot("total", t)` gives `total`).
+
+A snap pattern must match the whole label, and `.` and `$` need a regular expression:
+`select /total\.\$result/`, `select /.*\$exception/`. To find calls by outcome, outcome
+patterns are simpler.
 
 **The query language in brief.** Besides the patterns above: `+ - * /` (integer `/` truncates
 toward zero, unlike Python's `//`; there is no `%`), `< <= > >=` on numbers, `== !=`, `&& || !`,
@@ -136,10 +160,10 @@ arguments.
   named one (shown as `y: 2`), and omitted defaults are absent, so `f(x, y)` doesn't match it.
   Start with `f(...)` or `f(x, *, **)` and look at how calls were actually recorded.
 - **Patterns must account for every argument.** `f(x)` silently matches nothing when `f` takes two
-  arguments; use `f(x, *)`, `f(_, y, **)` or `f(...)`. Methods count `self` as the first argument.
+  arguments; use `f(x, *)`, `f(*, x)`, `f(_, y, **)` or `f(...)`. `*` matches any number of
+  positional arguments wherever it is. Methods count `self` as the first argument.
 - **Names match exactly, and a regex must match the whole name.** `take(...)` doesn't match the
   method `Parser.take`; write `/.*\.take/(...)`.
-- **Bare names in patterns are variables.** `f(E0)` matches any argument; write `f("E0")`.
 - **Instances of classes are opaque**, dataclasses included. Only dicts with string keys and named
   tuples become tables, and lists and tuples arrays. Other values (class instances, sets,
   `Decimal`, dicts with non-string keys, integers beyond 64 bits) are recorded as `<object>` or as
@@ -154,23 +178,10 @@ arguments.
   `t["k"]`.
 - **`from $N` searches the matched calls only**, not the calls made inside them. Use
   `pmdb --show` with `grep -A` to look inside a call.
-- **Exceptions are recorded in every recorded frame they pass through**, and `f(...) -> r` never
-  matches calls that raised. To find where an exception started, take the deepest `raised` in
-  `pmdb --show trace.pmdb | grep -n raised`; `show` points at the line calling the raising
-  function, not at the `raise`.
+- **An exception is recorded for every recorded call it passes through**: if `f` calls `g` and
+  `g` raises, both `g(...) raised e` and `f(...) raised e` match. `show` points at the line
+  calling the raising function, not at the `raise`.
 - **Values print without quotes**: `call f(B2)` is the string `"B2"`, and `f()` may be a call with
   an empty string.
 - **Arguments are recorded when the call starts**, results when it returns: a list mutated by the
   call shows its old contents in the arguments.
-
-## 5. Workflow
-
-1. Run the program, diff its output with the expected one, and pick the first wrong value.
-2. Record that run.
-3. Find the call that produced the wrong value: `select f(...) -> r where r == <wrong value>` or an
-   invariant query, then `show` it.
-4. Check its arguments. If an argument is already wrong, repeat with the function that computed it.
-   If the arguments are right and the result is wrong, look at what it called
-   (`pmdb --show … | grep -A`) until you reach a call whose callees are right and whose result
-   is wrong. That function holds the bug.
-5. Fix it, re-run the program and compare the whole output, not just the value you followed.
