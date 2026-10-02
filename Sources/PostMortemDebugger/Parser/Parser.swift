@@ -42,6 +42,8 @@ public struct Parser {
       return try parseSelect()
     case .show:
       return try parseShow()
+    case .name where text(head) == "export":
+      return try parseExport()
     default:
       throw Diagnostic(.error, "unknown command '\(text(head))'", at: head.site)
     }
@@ -142,6 +144,17 @@ public struct Parser {
     } else {
       return nil
     }
+  }
+
+  /// Parses an export command, `export $N to "path"`.
+  private mutating func parseExport() throws -> Command {
+    _ = try take(contextual: "export") ?? expected("'export'")
+    let n = try take(.variable) ?? expected("a variable such as $0")
+    _ = try take(contextual: "to") ?? expected("'to'")
+    guard case .string(let path) = try parseOptionalLiteral() else {
+      throw expected("the path of a file, as a string")
+    }
+    return .export(text(n), to: path)
   }
 
   /// Parses a show command.

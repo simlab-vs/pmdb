@@ -426,6 +426,33 @@ func notesFunctionsThatAreNotRecorded(source: String, note: String?) async throw
   #expect(trace.description == expected)
 }
 
+@Test func exportsCallsAsJSON() async throws {
+  let trace = try await record(
+    """
+    import threading
+
+    @r.record
+    def f(*args, **kwargs):
+      if kwargs.get("fail"):
+        raise KeyError("k")
+      return [args, kwargs]
+
+    f(None, True, 2**70, -0.5, float("nan"), float("-inf"), "a\\"b\\n\\x01", f, threading.Lock())
+    try:
+      f(fail=1)
+    except KeyError:
+      pass
+    """)
+
+  let returned = trace.json(call: trace.calls[1].index)
+  #expect(returned.contains(#""function": "f""#))
+  #expect(returned.contains(
+    #""positional": [null, true, 1180591620717411303424, -0.5, {"$float": "NaN"}, {"$float": "-Infinity"}, "a\"b\n\u0001", {"$function": "f"}, "#))
+  #expect(returned.contains(#""named": {}, "returned": ["#))
+  let raised = trace.json(call: trace.calls[2].index)
+  #expect(raised.hasSuffix(#""named": {"fail": 1}, "raised": {"message": "'k'", "type": "KeyError"}}"#))
+}
+
 @Test func recordsExceptions() async throws {
   let trace = try await record(
     """

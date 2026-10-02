@@ -158,6 +158,33 @@ import PostMortemDebugger
         print("\(k) : \(v.type)")
       }
 
+    case .export(let x, let path):
+      guard case .observations(let v) = try engine.value(for: x) else {
+        throw RuntimeError("'\(x)' isn't the result of a query")
+      }
+      var lines: [String] = []
+      for i in v.traces.indices {
+        let trace = engine.trace(v.traces[i])
+        var snaps = v.snaps(in: i)[...]
+        var calls = v.calls(in: i)[...]
+        while true {
+          if let c = calls.first, snaps.first.map({ (s) in c.untagged < s.untagged }) ?? true {
+            lines.append(trace.json(call: calls.removeFirst()))
+          } else if let s = snaps.first {
+            snaps.removeFirst()
+            lines.append(Trace.json(snap: trace[at: s]))
+          } else {
+            break
+          }
+        }
+      }
+      do {
+        try lines.map({ $0 + "\n" }).joined().write(toFile: path, atomically: true, encoding: .utf8)
+      } catch let e {
+        throw RuntimeError("cannot write '\(path)': \(e.localizedDescription)")
+      }
+      print("exported \(lines.count) observation(s) of \(x) to \(path)")
+
     case .showFunctions:
       for (f, n) in engine.callCounts.sorted(by: { (a, b) in a.key < b.key }) {
         print("\(f): \(n) call(s)")

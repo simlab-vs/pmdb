@@ -234,6 +234,25 @@ func showsBrieflyWhenOutputIsNotTerminal(flags: [String]) async throws {
   #expect(o.error == "")
 }
 
+@Test func exportsObservationsAsJSONLines() async throws {
+  let r = try makeTrace()
+  let path = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).path
+  let o = try await pmdb([r.trace], input: "select f(x)\nexport $0 to \"\(path)\"\n")
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>\nexported 1 observation(s) of $0 to \(path)")
+  let written = try String(contentsOfFile: path, encoding: .utf8)
+  #expect(written == """
+    {"location": "\(r.source):3", "function": "f", "positional": [1], "named": {}}
+
+    """)
+}
+
+@Test func reportsFilesThatCantBeWritten() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "select f(x)\nexport $0 to \"/nonexistent/x\"\n")
+  #expect(!o.succeeded)
+  #expect(o.error.hasPrefix("error: cannot write '/nonexistent/x': "))
+}
+
 /// A source file of seven lines.
 private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
 

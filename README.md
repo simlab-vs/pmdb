@@ -136,6 +136,7 @@ See the documentation of the crate `pmdb-recorder` for details.
 | `show $N` | Prints the observations in `$N`, with the source code around each of them unless the output is brief (see below). |
 | `show variables` | Lists the variables defined so far. |
 | `show functions` | Lists the functions whose calls are recorded in the loaded traces, with their numbers of calls. |
+| `export $N to "path"` | Writes the observations in `$N` to a file as JSON Lines: one object per call (`location`, `function`, `positional`, `named`, and `returned` or `raised`) or snap (`location`, `label`, `value`), to analyze them with other tools. |
 | `load <path> as $name` | Loads another trace. |
 | `exit` | Ends the session. |
 
