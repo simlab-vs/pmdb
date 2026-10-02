@@ -18,8 +18,8 @@ RESULT: {{"file": "<file you fixed>", "function": "<function you fixed>", "cause
 
 TOOLS = {
   "A": "Python 3 is installed, including pdb.",
-  "B": "Python 3 is installed, including pdb. pmdb, a trace-query debugger, is also installed; its "
-       "documentation is in /opt/pmdb/README.md, and a trace of the failing run has already been "
+  "B": "Python 3 is installed, including pdb. pmdb, a trace-query debugger, is also installed, "
+       "with a skill describing how to use it, and a trace of the failing run has already been "
        "recorded to /work/report.pmdb.",
 }
 

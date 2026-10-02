@@ -16,7 +16,7 @@ bench/
 
 | Study | Question | Experiments |
 |---|---|---|
-| [usability](usability/) | How do agents use pmdb, where do they struggle, and does it change how much effort a fix takes? | [round 1](usability/round-1/) (done 2026-10-01) |
+| [usability](usability/) | How do agents use pmdb, where do they struggle, and does it change how much effort a fix takes? | [round 1](usability/round-1/) (done 2026-10-01), [round 2](usability/round-2/) (round 1's exercises with the current pmdb and the agent skill) |
 
 ## Running an experiment of the usability study
 
@@ -36,6 +36,17 @@ python3 probe_sandbox.py                                  # check what agents ca
 python3 auth_check.py                                     # check the token works in the sandbox
 python3 run_study.py plan && python3 run_study.py run --pilot && python3 run_study.py run
 python3 analyze.py > ../results/summary.md
+```
+
+Round 2 differs in two steps. It gives agents the skill, so `assemble.py` also takes the skill's
+destination, and it reuses round 1's exercises and plan instead of generating them:
+
+```
+cd bench/usability/round-2/harness
+python3 assemble.py ../_work/swift-build/release/pmdb ../_work/opt-pmdb ../_work/skill
+cp ../data/*.json ../_work/
+python3 probe_sandbox.py && python3 skill_check.py
+python3 run_study.py run --pilot && python3 run_study.py run
 ```
 
 `_work/` holds builds, sandboxes and raw transcripts and is not committed. Each experiment's inputs

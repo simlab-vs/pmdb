@@ -17,6 +17,7 @@ import os
 import random
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import threading
@@ -36,10 +37,23 @@ RUNS = WORK / "runs"
 PLAN = WORK / "plan.json"
 RESULTS = WORK / "results.jsonl"
 OPT = WORK / "opt-pmdb"
+SKILL = WORK / "skill"
 
 MODELS = ["sonnet", "haiku"]
 ARMS = ["A", "B"]
 TOOLS = "Bash,Read,Edit,Write,Grep,Glob"
+# The pmdb arm can also use skills, but only the pmdb skill: Claude Code always lists its bundled
+# skills too, which can't be hidden, so their use is denied (as listed by `skill_check.py` for the
+# version of Claude Code used).
+TOOLS_B, ALLOWED_B = TOOLS + ",Skill", TOOLS + ",Skill(pmdb)"
+BUNDLED_SKILLS = [
+  "batch", "claude-api", "code-review", "dataviz", "debug", "deep-research", "doctor",
+  "fewer-permission-prompts", "loop", "run", "run-skill-generator", "schedule", "simplify",
+  "update-config", "verify", "workflow-authoring"]
+DENIED_B = ",".join(f"Skill({s})" for s in BUNDLED_SKILLS)
+# The skill as installed in the sandbox, and the variables it is used with.
+SKILL_IN_SANDBOX = "/home/agent/.claude/skills/pmdb"
+ENV_B = {"PYTHONPATH": "/opt/pmdb/python"}
 MAX_TURNS = 60
 TIMEOUT = 20 * 60
 PLAN_SEED = 4242
@@ -95,8 +109,14 @@ def execute(run, exercise, dry=False):
   secret = "" if dry else token()
 
   if run["arm"] == "B":
+    # The copy is writable, like a skill installed by a user, so that the run can be deleted.
+    skill = directory / "home" / ".claude" / "skills" / "pmdb"
+    shutil.copytree(SKILL, skill)
+    for p in [skill, *skill.rglob("*")]:
+      p.chmod(p.stat().st_mode | stat.S_IWUSR)
     r = subprocess.run(sandbox.command(directory, [
-      "pmdb-record", "-o", "/work/report.pmdb", "main.py", input_name], opt=opt),
+      f"{SKILL_IN_SANDBOX}/scripts/pmdb-record", "-o", "/work/report.pmdb", "main.py", input_name],
+      opt=opt, env=ENV_B),
       capture_output=True, text=True, timeout=300)
     if not (directory / "work" / "report.pmdb").exists():
       raise RuntimeError(f"recording failed: {r.stderr[-500:]}")
@@ -106,9 +126,12 @@ def execute(run, exercise, dry=False):
   if dry:
     return None
 
-  env = {"CLAUDE_CODE_OAUTH_TOKEN": secret}
-  common = ["--model", run["model"], "--tools", TOOLS, "--allowedTools", TOOLS,
-            "--permission-mode", "dontAsk", "--strict-mcp-config", "--setting-sources", ""]
+  env = {"CLAUDE_CODE_OAUTH_TOKEN": secret, **(ENV_B if run["arm"] == "B" else {})}
+  tools, allowed = (TOOLS_B, ALLOWED_B) if run["arm"] == "B" else (TOOLS, TOOLS)
+  denied = ["--disallowedTools", DENIED_B] if run["arm"] == "B" else []
+  # User settings come from the run's fresh home directory, which only holds the skill in arm B.
+  common = ["--model", run["model"], "--tools", tools, "--allowedTools", allowed, *denied,
+            "--permission-mode", "dontAsk", "--strict-mcp-config", "--setting-sources", "user"]
   transcript = directory / "transcript.jsonl"
   started = time.time()
   with open(transcript, "w") as out:
