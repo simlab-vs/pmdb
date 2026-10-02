@@ -37,14 +37,10 @@ The recorders for Python and Rust record the outcome of every call they record.
 8. functions, represented by their names, and
 9. arbitrary objects, represented as raw sequence of bytes.
 
-`pmdb` internally represents integers using 64 signed bits and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
-This particular choice has a couple of noteworthy consequences:
-
-- One cannot load integer values that are not representable as a two's complement 64-bit integer.
-- The semantics of where clauses depend on the specifics of these representations. For example, computing `x + 1` in a context where `x` is equal to `0xff` will result in `0x100` even if the value of `x` was recorded from a program manipulating bytes.
+`pmdb` represents integers with arbitrary precision and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
+As a consequence, the semantics of where clauses don't depend on the width of the integers recorded: computing `x + 1` in a context where `x` is equal to `0xff` results in `0x100` even if the value of `x` was recorded from a program manipulating bytes.
 
 One should store values as objects in situations where a finer control is necessary.
-For example, one can store a 128 bit integer as a raw sequence of 16 bytes.
 
 ## XML representation
 

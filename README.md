@@ -252,7 +252,7 @@ The operators, from the loosest to the tightest binding, are:
 - `||` and `&&`, which evaluate their right operand only if the left one doesn't determine their result;
 - `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
 - `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
-- `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on overflows and divisions by zero;
+- `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on divisions by zero (integers have arbitrary precision, so they never overflow);
 - `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
 

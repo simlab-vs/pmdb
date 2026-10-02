@@ -1,4 +1,5 @@
 import Archivist
+import BigInt
 
 /// A tag identifying the type of a value.
 public enum ValueTag: UInt8, Hashable, Sendable {
@@ -35,8 +36,8 @@ public enum Value: Hashable, Sendable {
   /// A Boolean.
   case boolean(Bool)
 
-  /// A signed integer.
-  case integer(Int64)
+  /// A signed integer of arbitrary precision.
+  case integer(BigInt)
 
   /// A floating-point number.
   case float(Double)
@@ -117,7 +118,7 @@ extension Value: Archivable {
       }
 
     case ValueTag.integer.rawValue:
-      self = try .integer(archive.readSignedLEB128(as: Int64.self))
+      self = try .integer(Self.readSignedLEB128(from: &archive))
 
     case ValueTag.float.rawValue:
       self = try .float(archive.read(Double.self, endianness: .little))
@@ -156,6 +157,33 @@ extension Value: Archivable {
 
     default:
       throw ArchiveError.invalidInput
+    }
+  }
+
+  /// Reads an integer of arbitrary precision encoded with the signed LEB128 encoding.
+  private static func readSignedLEB128<T>(from archive: inout ReadableArchive<T>) throws -> BigInt {
+    // Accumulate the first 63 bits in a machine integer, which is enough for most values.
+    var bits: UInt64 = 0
+    var wide = BigInt(0)
+    var shift = 0
+    while true {
+      let b = try archive.readByte()
+      if shift < 63 {
+        bits |= UInt64(b & 0x7f) << shift
+      } else {
+        if shift == 63 { wide = BigInt(bits) }
+        wide |= BigInt(b & 0x7f) << shift
+      }
+      shift += 7
+      if b & 0x80 != 0 { continue }
+
+      let negative = b & 0x40 != 0
+      if shift <= 63 {
+        let n = Int64(bitPattern: negative ? bits | (~0 << shift) : bits)
+        return BigInt(n)
+      } else {
+        return negative ? wide - (BigInt(1) << shift) : wide
+      }
     }
   }
 

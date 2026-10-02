@@ -18,6 +18,9 @@ let package = Package(
       url: "https://github.com/kyouko-taiga/archivist.git",
       branch: "main"),
     .package(
+      url: "https://github.com/attaswift/BigInt.git",
+      from: "6.0.0"),
+    .package(
       url: "https://github.com/swiftlang/swift-subprocess.git",
       revision: "b3937ab85dd32f6e9435914599c1519074769c1a"), // 1.0.0
   ],
@@ -34,6 +37,7 @@ let package = Package(
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Archivist", package: "archivist"),
+        .product(name: "BigInt", package: "BigInt"),
       ]
     ),
 

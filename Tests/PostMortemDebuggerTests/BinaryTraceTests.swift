@@ -1,3 +1,4 @@
+import BigInt
 import Foundation
 import Subprocess
 import Testing
@@ -93,21 +94,27 @@ func readsFloatsFromBinaryTrace(value: Double) async throws {
   #expect(trace.calls[1].value.positional == [.float(1.5), .integer(-7)])
 }
 
-@Test(arguments: [Int64.min, -1, 0, 63, 64, Int64.max])
+// Signed LEB128 encodes integers in [-2^62, 2^62) with at most 9 bytes, and others with more.
+@Test(arguments: [
+  Int64.min, -1, 0, 63, 64, Int64.max,
+  0x4000_0000_0000_0000, 0x3fff_ffff_ffff_ffff, -0x4000_0000_0000_0000, -0x4000_0000_0000_0001,
+] as [Int64])
 func readsIntegerBoundariesFromBinaryTrace(value: Int64) async throws {
   let trace = try await record("r.snapshot('x', \(value))")
   #expect(trace.calls.map(\.value.function) == ["root"])
-  #expect(trace.snaps[0].value.value == .integer(value))
+  #expect(trace.snaps[0].value.value == .integer(BigInt(value)))
 }
 
-@Test(arguments: ["2**63", "-2**63 - 1"])
-func readsIntegersOutOfRangeAsObjects(value: String) async throws {
+@Test(arguments: [
+  ("2**63", "9223372036854775808"),
+  ("-2**63 - 1", "-9223372036854775809"),
+  ("10**40", "10000000000000000000000000000000000000000"),
+  ("-10**40", "-10000000000000000000000000000000000000000"),
+])
+func readsWideIntegersFromBinaryTrace(value: String, digits: String) async throws {
   let trace = try await record("r.snapshot('x', \(value))")
   #expect(trace.calls.map(\.value.function) == ["root"])
-  guard case .object = trace.snaps[0].value.value else {
-    Issue.record("expected an object, got \(trace.snaps[0].value.value)")
-    return
-  }
+  #expect(trace.snaps[0].value.value == .integer(BigInt(digits)!))
 }
 
 @Test func selectsCallsWithNamedArgumentsFromBinaryTrace() async throws {

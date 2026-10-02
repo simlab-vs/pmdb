@@ -304,6 +304,12 @@ func rejectsInvalidBooleansInXMLTrace(payload: String) {
   ("factorial(x) where x * 1_000 == 3_000", 1),
   ("factorial(x) where 1_000.5 > 1_000.0", 3),
   ("factorial(-0_1)", 0),
+  ("factorial(x) where x + 9223372036854775807 > 9223372036854775807", 3),
+  ("factorial(x) where -(x - 9223372036854775807 - 2) == 9223372036854775806", 1),
+  ("factorial(x) where x * 99999999999999999999 == 299999999999999999997", 1),
+  ("factorial(x) where 99999999999999999999 / 33333333333333333333 == x", 1),
+  ("factorial(x) where (x | 18446744073709551616) == 18446744073709551619", 1),
+  ("factorial(x) where (-18446744073709551616 ^ -x) == 18446744073709551613", 1),
 ])
 func selectsObservations(source: String, count: Int) async throws {
   var engine = Engine()
@@ -314,7 +320,6 @@ func selectsObservations(source: String, count: Int) async throws {
 
 @Test(arguments: [
   ("factorial(x) where -x.y", "value of type 'integer' is not a table"),
-  ("factorial(x) where -(x - 9223372036854775807 - 2)", "arithmetic overflow in '-'"),
   ("factorial(x) where ~x", "unsupported prefix operator '~'"),
   ("factorial(x) where x > 1 || y", "undefined symbol 'y'"),
   ("factorial(x) where x(1)", "value of type 'integer' is not a lambda"),
@@ -339,7 +344,6 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(x) where x > 1 & x < 3", "cannot apply < on values of type 'boolean' and 'integer'"),
   ("factorial(x) where x == \"1\"", "cannot apply == on values of type 'integer' and 'string'"),
   ("factorial(x) where \"\\q\" == \"\"", "invalid escape sequence '\\q'"),
-  ("factorial(x) where x + 9223372036854775807 > 0", "arithmetic overflow in '+'"),
   ("factorial(x) where 1 / (x - 1) > 0", "division by zero in '/'"),
   ("factorial(x) where 1.0 / 0.0 > 0.0", "division by zero in '/'"),
   ("factorial(x) where x + 1.0 > 0.0", "cannot apply + on values of type 'integer' and 'float'"),
@@ -349,7 +353,7 @@ func selectsObservations(source: String, count: Int) async throws {
   ("factorial(xs*) where xs.has(\"y\")", "cannot apply has on values of type 'array' and 'string'"),
   ("factorial(x, ys**) where ys.has(1)", "cannot apply has on values of type 'table' and 'integer'"),
   ("factorial(x, ys**) where ys.has()", "expected 1 argument(s), found 0"),
-  ("factorial(x) where x == 99999999999999999999", "cannot parse '99999999999999999999' as an integer literal"),])
+])
 func reportsEvaluationErrors(source: String, message: String) async throws {
   var engine = Engine()
   engine.add(try loadFactorialTrace())

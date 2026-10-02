@@ -1,4 +1,5 @@
 import Archivist
+import BigInt
 import Foundation
 
 #if canImport(FoundationXML)
@@ -170,7 +171,7 @@ extension Trace {
       return payload.stringValue.flatMap(Bool.init(_:)).map(Value.boolean(_:))
 
     case .some("integer"):
-      return payload.stringValue.flatMap(Int64.init(_:)).map(Value.integer(_:))
+      return payload.stringValue.flatMap({ (s) in BigInt(s) }).map(Value.integer(_:))
 
     case .some("float"):
       return payload.stringValue.flatMap(Double.init(_:)).map(Value.float(_:))

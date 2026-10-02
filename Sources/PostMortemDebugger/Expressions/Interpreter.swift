@@ -1,3 +1,5 @@
+import BigInt
+
 extension Expression {
 
   /// Returns the value of `self` evaluated in the specified `environment`.
@@ -12,7 +14,7 @@ extension Expression {
     case .integer(let v):
       // Underscores separate groups of digits.
       let digits = v.filter({ (c) in c != "_" })
-      return try .integer(Int64(digits) ?? Diagnostic.invalidIntergerLiteral(v, at: site))
+      return try .integer(BigInt(digits) ?? Diagnostic.invalidIntergerLiteral(v, at: site))
     case .float(let v):
       let digits = v.filter({ (c) in c != "_" })
       return try .float(Double(digits) ?? Diagnostic.invalidFloatingPointLiteral(v, at: site))
@@ -145,7 +147,7 @@ extension Expression.Apply {
       return try .init(xs.contains(where: p))
     case "count":
       let p = try predicate(in: &environment)
-      return try .integer(Int64(xs.count(where: p)))
+      return try .integer(BigInt(xs.count(where: p)))
     case "len":
       return try length(of: xs)
     default:
@@ -175,7 +177,7 @@ extension Expression.Apply {
     if !arguments.isEmpty {
       throw Diagnostic.invalidArgumentCount(expected: 0, found: arguments.count, at: callee.site)
     }
-    return .integer(Int64(c.count))
+    return .integer(BigInt(c.count))
   }
 
   /// Returns a function that applies the lambda passed as the only argument of `self` to a value
@@ -304,7 +306,7 @@ extension Expression.Element {
     switch try array.evaluate(in: &environment) {
     case .array(let t):
       switch try index.evaluate(in: &environment) {
-      case .integer(let i) where UInt64(bitPattern: i) < t.count:
+      case .integer(let i) where (i >= 0) && (i < t.count):
         return t[Int(i)]
       case .integer(let i):
         throw Diagnostic.outOfBounds(i, at: index.site)
@@ -356,7 +358,7 @@ extension Value {
   fileprivate func negated() throws -> Value? {
     switch self {
     case .integer(let v):
-      return try checked(Int64(0).subtractingReportingOverflow(v))
+      return .integer(-v)
     case .float(let v):
       return .float(-v)
     default:
@@ -368,7 +370,7 @@ extension Value {
   fileprivate func add(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return try checked(lhs.addingReportingOverflow(rhs))
+      return .integer(lhs + rhs)
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs + rhs)
     default:
@@ -380,7 +382,7 @@ extension Value {
   fileprivate func sub(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return try checked(lhs.subtractingReportingOverflow(rhs))
+      return .integer(lhs - rhs)
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs - rhs)
     default:
@@ -392,7 +394,7 @@ extension Value {
   fileprivate func mul(_ other: Value) throws -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
-      return try checked(lhs.multipliedReportingOverflow(by: rhs))
+      return .integer(lhs * rhs)
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs * rhs)
     default:
@@ -406,7 +408,7 @@ extension Value {
     case (.integer, .integer(0)), (.float, .float(0)):
       throw ArithmeticFailure(reason: "division by zero")
     case (.integer(let lhs), .integer(let rhs)):
-      return try checked(lhs.dividedReportingOverflow(by: rhs))
+      return .integer(lhs / rhs)
     case (.float(let lhs), .float(let rhs)):
       return .float(lhs / rhs)
     default:
@@ -417,7 +419,7 @@ extension Value {
   /// Returns `self` and `other` combined with `integers` iff both are integers, or with `booleans`
   /// iff both are Booleans.
   fileprivate func bitwise(
-    _ other: Value, _ integers: (Int64, Int64) -> Int64, _ booleans: (Bool, Bool) -> Bool
+    _ other: Value, _ integers: (BigInt, BigInt) -> BigInt, _ booleans: (Bool, Bool) -> Bool
   ) -> Value? {
     switch (self, other) {
     case (.integer(let lhs), .integer(let rhs)):
@@ -427,12 +429,6 @@ extension Value {
     default:
       return nil
     }
-  }
-
-  /// Returns `r.partialValue` iff `r` did not overflow. Otherwise, throws.
-  private func checked(_ r: (partialValue: Int64, overflow: Bool)) throws -> Value {
-    if r.overflow { throw ArithmeticFailure(reason: "arithmetic overflow") }
-    return .integer(r.partialValue)
   }
 
 }
@@ -510,7 +506,7 @@ extension Diagnostic {
   }
 
   /// Returns an error diagnosing an array index that is out of bounds.
-  fileprivate static func outOfBounds(_ i: Int64, at site: Range<String.Index>) -> Diagnostic {
+  fileprivate static func outOfBounds(_ i: BigInt, at site: Range<String.Index>) -> Diagnostic {
     error("index '\(i)' is out of bounds", at: site)
   }
 

@@ -79,8 +79,8 @@ class Archive(object):
       self.write_byte(TypeIdentifier.Boolean.value)
       self.write_byte(int(o))
 
-    # Handle signed integers whose two's complement representation requires at most 64 bits.
-    elif isinstance(o, int) and -(1 << 63) <= o < (1 << 63):
+    # Handle integers.
+    elif isinstance(o, int):
       self.write_byte(TypeIdentifier.Integer.value)
       self.write_signed(o)
 

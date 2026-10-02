@@ -166,7 +166,7 @@ arguments.
   method `Parser.take`; write `/.*\.take/(...)`.
 - **Instances of classes are opaque**, dataclasses included. Only dicts with string keys and named
   tuples become tables, and lists and tuples arrays. Other values (class instances, sets,
-  `Decimal`, dicts with non-string keys, integers beyond 64 bits) are recorded as `<object>` or as
+  `Decimal`, dicts with non-string keys) are recorded as `<object>` or as
   their `repr`, a string such as `<shop.Cart object at 0x…>`, so `self.items` can't be queried and
   fails with `value of type 'string' is not a table`. To see an object's fields, give its class a
   method `def __pmdb__(self): return vars(self)` while you debug; the recorder records what it
