@@ -7,7 +7,8 @@ the command and its output. Usage: python3 reproduce_attempts.py > ../_work/repr
 import subprocess
 from pathlib import Path
 
-import sandbox
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
+from pmdbbench import sandbox
 
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = ROOT / "_work" / "runs"

@@ -5,11 +5,13 @@ Usage: python3 analyze.py > ../results/summary.md
 
 import collections
 import json
-import math
-import random
 import re
 import statistics
 from pathlib import Path
+
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
+from pmdbbench import transcripts
+from pmdbbench.stats import bootstrap_median, mcnemar, wilcoxon
 
 ROOT = Path(__file__).resolve().parent.parent
 WORK = ROOT / "_work"
@@ -21,80 +23,9 @@ def tokens(r):
                                     "cache_creation_input_tokens"))
 
 
-def wilcoxon(differences):
-  """Returns `(W+, n, two-sided exact p)` of the Wilcoxon signed-rank test, dropping zeros."""
-  d = [x for x in differences if x != 0]
-  n = len(d)
-  if n == 0:
-    return 0, 0, 1.0
-  order = sorted(range(n), key=lambda i: abs(d[i]))
-  ranks = [0.0] * n
-  i = 0
-  while i < n:
-    j = i
-    while j + 1 < n and abs(d[order[j + 1]]) == abs(d[order[i]]):
-      j += 1
-    for k in range(i, j + 1):
-      ranks[order[k]] = (i + j) / 2 + 1
-    i = j + 1
-  doubled = [int(round(2 * r)) for r in ranks]
-  w_plus = sum(r for r, x in zip(doubled, d) if x > 0)
-  # Exact null distribution of the doubled W+ by dynamic programming.
-  counts = collections.Counter({0: 1})
-  for r in doubled:
-    nxt = collections.Counter()
-    for s, c in counts.items():
-      nxt[s] += c
-      nxt[s + r] += c
-    counts = nxt
-  total = 2 ** n
-  mean = sum(doubled) / 2
-  extreme = abs(w_plus - mean)
-  p = sum(c for s, c in counts.items() if abs(s - mean) >= extreme - 1e-9) / total
-  return w_plus / 2, n, min(1.0, p)
-
-
-def mcnemar(pairs):
-  """Exact McNemar test on `(a, b)` boolean pairs: returns `(b only, a only, p)`."""
-  b_only = sum(1 for a, b in pairs if b and not a)
-  a_only = sum(1 for a, b in pairs if a and not b)
-  n = a_only + b_only
-  k = min(a_only, b_only)
-  p = min(1.0, 2 * sum(math.comb(n, i) for i in range(k + 1)) / 2 ** n) if n else 1.0
-  return b_only, a_only, p
-
-
-def bootstrap_median(values, rounds=10000, seed=0):
-  rng = random.Random(seed)
-  medians = sorted(statistics.median(rng.choices(values, k=len(values))) for _ in range(rounds))
-  return medians[int(0.025 * rounds)], medians[int(0.975 * rounds)]
-
-
 def pmdb_errors(run_id):
   """Returns the error messages printed by pmdb commands in a run's transcript."""
-  path = WORK / "runs" / run_id / "transcript.jsonl"
-  if not path.exists():
-    return []
-  commands, errors = {}, []
-  for line in path.read_text().splitlines():
-    try:
-      event = json.loads(line)
-    except json.JSONDecodeError:
-      continue
-    content = event.get("message", {}).get("content", [])
-    if not isinstance(content, list):
-      continue
-    for block in content:
-      if block.get("type") == "tool_use" and block.get("name") == "Bash":
-        command = block.get("input", {}).get("command", "")
-        if "pmdb" in command:
-          commands[block["id"]] = command
-      elif block.get("type") == "tool_result" and block.get("tool_use_id") in commands:
-        text = block.get("content")
-        text = text if isinstance(text, str) else json.dumps(text)
-        for m in re.findall(r"(?:error|warning): [^\n\"\\]+", text):
-          errors.append((commands[block["tool_use_id"]], m))
-  return errors
+  return transcripts.pmdb_errors(WORK / "runs" / run_id / "transcript.jsonl")
 
 
 def main():

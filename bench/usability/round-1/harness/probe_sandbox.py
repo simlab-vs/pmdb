@@ -5,7 +5,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-import sandbox
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
+from pmdbbench import sandbox
 
 PROBE = r"""
 echo "user: $(id)"; echo "host: $(hostname 2>/dev/null || cat /proc/sys/kernel/hostname)"

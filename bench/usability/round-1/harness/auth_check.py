@@ -5,8 +5,9 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
 import run_study
-import sandbox
+from pmdbbench import sandbox
 
 
 def main():

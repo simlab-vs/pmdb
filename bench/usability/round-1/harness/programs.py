@@ -2,11 +2,10 @@
 
 import importlib.util
 import json
-import os
-import subprocess
-import sys
-import tempfile
 from pathlib import Path
+
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
+from pmdbbench.execution import run
 
 ROOT = Path(__file__).resolve().parent.parent
 PROGRAMS = ROOT / "programs"
@@ -36,21 +35,6 @@ def input_text(name, seed):
 
 def input_file_name(name):
   return "input.txt" if name == "calc" else "input.json"
-
-
-def run(directory, input_text, timeout=20):
-  """Runs the program in `directory` on `input_text`, returning `(returncode, stdout, stderr)`."""
-  with tempfile.TemporaryDirectory() as t:
-    path = Path(t) / "input"
-    path.write_text(input_text)
-    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0")
-    try:
-      r = subprocess.run(
-        [sys.executable, "main.py", str(path)], cwd=directory, capture_output=True, text=True,
-        timeout=timeout, env=env)
-    except subprocess.TimeoutExpired:
-      return ("timeout", "", "")
-    return (r.returncode, r.stdout, r.stderr)
 
 
 if __name__ == "__main__":

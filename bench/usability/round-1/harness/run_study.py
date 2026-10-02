@@ -23,9 +23,12 @@ import threading
 import time
 from pathlib import Path
 
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
 import exercises
 import prompts
-import sandbox
+from pmdbbench import sandbox
+from pmdbbench.credentials import TOKEN_FILE, token  # noqa: F401
+from pmdbbench.transcripts import claimed, parse_stream, scrub
 
 ROOT = Path(__file__).resolve().parent.parent
 WORK = ROOT / "_work"
@@ -33,7 +36,6 @@ RUNS = WORK / "runs"
 PLAN = WORK / "plan.json"
 RESULTS = WORK / "results.jsonl"
 OPT = WORK / "opt-pmdb"
-TOKEN_FILE = Path.home() / ".config" / "pmdb-study" / "oauth-token"
 
 MODELS = ["sonnet", "haiku"]
 ARMS = ["A", "B"]
@@ -48,10 +50,6 @@ LIMIT_PATTERNS = re.compile(
   r"authentication|OAuth|401|invalid api key|ECONNRESET|ETIMEDOUT|socket hang up", re.I)
 
 lock = threading.Lock()
-
-
-def token():
-  return TOKEN_FILE.read_text().strip()
 
 
 def plan(args):
@@ -82,64 +80,6 @@ def done_ids():
   if not RESULTS.exists():
     return set()
   return {json.loads(l)["id"] for l in RESULTS.read_text().splitlines() if l.strip()}
-
-
-def parse_stream(path):
-  """Extracts metrics from a stream-json transcript."""
-  metrics = {"tool_calls": 0, "tool_errors": 0, "pmdb_calls": 0, "pmdb_record_calls": 0,
-             "pmdb_failed": 0, "bash_commands": [], "session_id": None, "model": None,
-             "result": None}
-  pending = {}
-  for line in path.read_text().splitlines():
-    try:
-      event = json.loads(line)
-    except json.JSONDecodeError:
-      continue
-    kind = event.get("type")
-    if kind == "system" and event.get("subtype") == "init":
-      metrics["session_id"] = event.get("session_id")
-      metrics["model"] = event.get("model")
-    elif kind == "assistant":
-      for block in event.get("message", {}).get("content", []):
-        if block.get("type") == "tool_use":
-          metrics["tool_calls"] += 1
-          command = block.get("input", {}).get("command", "")
-          if block.get("name") == "Bash":
-            metrics["bash_commands"].append(command)
-          uses_pmdb = bool(re.search(r"(^|[\s/;&|(])pmdb(\s|$)", command))
-          uses_record = "pmdb-record" in command
-          metrics["pmdb_calls"] += uses_pmdb
-          metrics["pmdb_record_calls"] += uses_record
-          pending[block.get("id")] = uses_pmdb or uses_record
-    elif kind == "user":
-      content = event.get("message", {}).get("content", [])
-      for block in content if isinstance(content, list) else []:
-        if block.get("type") == "tool_result":
-          failed = bool(block.get("is_error"))
-          text = json.dumps(block.get("content"))
-          metrics["tool_errors"] += failed
-          if pending.get(block.get("tool_use_id")) and (failed or "error:" in text):
-            metrics["pmdb_failed"] += 1
-    elif kind == "result":
-      metrics["result"] = {k: event.get(k) for k in (
-        "subtype", "is_error", "num_turns", "duration_ms", "duration_api_ms", "total_cost_usd",
-        "usage", "result")}
-  return metrics
-
-
-def claimed(text):
-  match = re.findall(r"RESULT:\s*(\{.*\})", text or "")
-  if not match:
-    return None
-  try:
-    return json.loads(match[-1])
-  except json.JSONDecodeError:
-    return None
-
-
-def scrub(path, secret):
-  if path.exists() and secret:
-    path.write_text(path.read_text().replace(secret, "<token>"))
 
 
 def execute(run, exercise, dry=False):

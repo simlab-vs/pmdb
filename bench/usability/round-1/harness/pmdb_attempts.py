@@ -7,33 +7,10 @@ import json
 import sys
 from pathlib import Path
 
+import _lib  # noqa: F401  (makes `pmdbbench` importable)
+from pmdbbench.transcripts import attempts
+
 ROOT = Path(__file__).resolve().parent.parent
-
-
-def attempts(run_dir):
-  """Yields `(command, output, is_error)` for each Bash call mentioning pmdb in a transcript."""
-  commands = {}
-  path = run_dir / "transcript.jsonl"
-  for line in path.read_text().splitlines():
-    try:
-      event = json.loads(line)
-    except json.JSONDecodeError:
-      continue
-    content = event.get("message", {}).get("content", [])
-    if not isinstance(content, list):
-      continue
-    for block in content:
-      if block.get("type") == "tool_use":
-        tool_input = block.get("input", {})
-        text = tool_input.get("command", "") or tool_input.get("file_path", "")
-        if "pmdb" in text:
-          commands[block["id"]] = (block.get("name"), text)
-      elif block.get("type") == "tool_result" and block.get("tool_use_id") in commands:
-        output = block.get("content")
-        if isinstance(output, list):
-          output = "\n".join(c.get("text", "") for c in output if isinstance(c, dict))
-        tool, command = commands.pop(block["tool_use_id"])
-        yield tool, command, output or "", bool(block.get("is_error"))
 
 
 def main():
