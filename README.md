@@ -193,6 +193,16 @@ Some examples:
 A **snap pattern** matches the label of snaps.
 It is an identifier, a regular expression enclosed in slashes (e.g., `/.*\$result/`), or the wildcard `_`.
 
+Labels are strings, and a pattern must match a whole label.
+Their forms depend on how snaps were recorded:
+
+- `<function>.$result` labels the snap holding the value returned by a call to `<function>`, e.g. `total.$result`, or `Cart.add.$result` for a method;
+- `<function>.$exception` labels the snap holding the exception raised by a call to `<function>`, a table with its `type` and `message`;
+- a snap recorded explicitly has the label given by the program, e.g. `total` for `recorder.main.snapshot("total", t)` in Python.
+
+Since `.` and `$` can't appear in identifiers, labels of the first two forms are matched with regular expressions, such as `/total\.\$result/`, `/.*\$exception/` or `/Cart\..*\$result/`.
+To select calls by their outcomes rather than the snaps recording them, use outcome patterns (below).
+
 A **call pattern** has the form `<identifier-pattern>(<argument patterns>)`, where the identifier pattern matches the name of the function and the argument patterns, separated by commas, match the arguments.
 Identifiers and regular expressions must match the *whole* name.
 Python methods are recorded with their qualified names (e.g., `Parser.take`), so they are matched with regular expressions such as `/Parser\.take/` or `/.*\.take/`.
@@ -200,7 +210,9 @@ Python methods are recorded with their qualified names (e.g., `Parser.take`), so
 Argument patterns are positional or named:
 
 - A **positional pattern** is a wildcard (`_`), a variable, or a literal.
-  A variable matches any value and binds it, and repeated occurrences of the same variable must match equal values: `f(x, x)` matches `f(1, 1)` but not `f(1, 2)`.
+  A variable is any name that isn't a literal (e.g. `x`, `order`, or `E0`): it matches any value and binds the name to that value, so that the where clause can use it, as in `f(x) where x > 1`.
+  Repeated occurrences of the same variable must match equal values: `f(x, x)` matches `f(1, 1)` but not `f(1, 2)`.
+  To match a string, write it in double quotes: `f(E0)` matches any argument and binds `E0`, whereas `f("E0")` matches the string `"E0"`.
   A literal is a Boolean, an integer, a floating-point number, a string in double quotes, or `none`, and matches only equal values: `f(1, "a")` matches `f(1, "a")` but not `f(1.0, "a")`, since an integer is never equal to a floating-point number.
 - A **named pattern** is a label followed by `=` and a positional pattern: `f(a = x, b = x)` matches `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`.
 - A **variadic positional pattern** (`*`) matches any number of positional arguments, and a **variadic named pattern** (`**`) any number of named arguments.
@@ -229,7 +241,8 @@ Without a from clause, a query searches all observations of all loaded traces.
 
 ### Where clauses
 
-A where clause is an expression evaluated for each match, in which the names bound by the pattern are defined.
+A where clause is an expression evaluated for each match, in which the names bound by the pattern are defined: the variables of its argument patterns (`x` in `f(x)`), of its outcome pattern (`r` in `-> r`, `e` in `raised e`), and of its variadic patterns (`xs` in `xs*`).
+A snap pattern binds no name.
 A match is kept if the expression evaluates to a *truthy* value, which is any value other than `none`, `false`, zero, an empty string, an empty array, or an empty table.
 If the evaluation fails for any match (e.g., because it divides by zero, selects a property that a table doesn't have, or compares an integer with a floating-point number), the query fails and the error is reported.
 
