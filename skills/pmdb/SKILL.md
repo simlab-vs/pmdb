@@ -1,6 +1,6 @@
 ---
 name: pmdb
-description: Debug a Python or Rust program by recording a trace of its function calls (arguments, return values, exceptions, panics) and querying it with pmdb, instead of adding prints or stepping through a debugger. Use it whenever a program produces wrong output or a test fails with a wrong value and the cause isn't obvious from the traceback or a quick read, especially when the wrong value comes out of a long call chain, from one input among many, from recursion, or from a computation whose intermediate values you'd otherwise print. Also use it when the user mentions pmdb, traces, or a `.pmdb` file. Skip it when a traceback already points at the faulty line or the code is small enough to check by reading.
+description: Debug a Python program by recording a trace of its function calls (arguments, return values, exceptions) and querying it with pmdb, instead of adding prints or stepping through a debugger. Use it whenever a program produces wrong output or a test fails with a wrong value and the cause isn't obvious from the traceback or a quick read, especially when the wrong value comes out of a long call chain, from one input among many, from recursion, or from a computation whose intermediate values you'd otherwise print. Also use it when the user mentions pmdb, traces, or a `.pmdb` file. Skip it when a traceback already points at the faulty line or the code is small enough to check by reading.
 ---
 
 # Debugging with pmdb
@@ -52,14 +52,6 @@ it when you're done.
 **Python, by hand:** decorate functions with `@recorder.main.record` (`import recorder`), then
 `open("trace.pmdb", "wb").write(recorder.main.serialize().buffer)` at the end.
 
-**Rust:** add `pmdb-recorder = { path = "<pmdb checkout>/Rust/recorder" }` to `Cargo.toml` (it isn't
-on crates.io; edition 2024, Rust 1.85+), annotate functions with `#[pmdb::record]` after
-`use pmdb_recorder as pmdb;`, derive `pmdb::Record` on the types whose contents you want to see,
-and call `pmdb::main().write_to("trace.pmdb")` at the end of `main`. A panic that unwinds out of
-`main` skips that call, so to record a panicking run, run the body in `std::panic::catch_unwind`
-and write the trace afterwards. Methods are recorded as `Type::method`, and panics as exceptions
-of type `panic`.
-
 ## 2. Query it
 
 Pipe commands to pmdb, one per line, in a quoted heredoc (`'EOF'`) so the shell leaves `$`, `\` and
@@ -104,7 +96,7 @@ The most productive query states what *should* hold and lets pmdb list the calls
 | calls on tables (dicts, named tuples) | `select invoice(o) where o.currency == "GBP"` |
 | … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
 | calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
-| methods (Python `Class.method`, Rust `Type::method`) | `select /Parser\.take/(...)`, `select /.*::take/(...)` |
+| methods (named `Class.method`, `self` first) | `select /Parser\.take/(...)`, `select /.*\.take/(...)` |
 | nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
 | exceptions | `select /.*\$exception/`, then `show` it |
 | a subset of earlier matches | `select f(x) from $0 where x > 1` |
@@ -155,8 +147,8 @@ arguments.
   fails with `value of type 'string' is not a table`. To see an object's fields, give its class a
   method `def __pmdb__(self): return vars(self)` while you debug; the recorder records what it
   returns instead.
-- **Keys that aren't identifiers can't be read**: Rust enums are tables with a key `$variant` and
-  fields `0`, `1`, …, and neither `x.$variant` nor `x.0` parses. Use `t.has("…")` and `show`.
+- **Keys that aren't identifiers can't be read**: a dict key such as `"unit price"` or `"0"`
+  has no `t.…` form. Use `t.has("…")` and `show`.
 - **Syntax:** strings in double quotes only; `true`, `false`, `none`; `&&`, `||`, `!` (not
   `and`, `or`, `not`); `_` only in patterns (name an argument to use it in `where`); `t.k`, not
   `t["k"]`.
