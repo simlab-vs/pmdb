@@ -482,3 +482,36 @@ expected output?
     calls, and duration growing faster than input size.
 - **The sandbox will block the network for agents** and only reach the API.
 - **pmdb gets fixes for the problems above,** one commit each.
+
+---
+
+## 2026-10-02: pmdb fixes from round 4's feedback
+
+**Changes** (one commit each, with tests):
+- **The recorder no longer records calls made while it encodes values** (`fbe6e19`). A property
+  read by `isinstance` made camel's tests recurse forever.
+- **Generator and coroutine functions keep their kind when recorded** (`ac2a5cd`). pytest no
+  longer skipped beets' generator fixtures, which had broken one bug and given ex01 a trace of
+  setup only. Calls inside generators and coroutines now nest under them, and calls made while
+  they are suspended don't. Re-recording round 4's two beets bugs now works and records their
+  fix functions.
+- **New command `show functions`** lists the recorded functions with their call counts
+  (`7ee64db`). A parse error after `show` now says what it expects.
+- **Warning when a query names no recorded function** (`e174511`). It lists the functions the
+  pattern partially matches, e.g. `MusicBrainzPlugin.get_tracks_from_medium` for
+  `get_tracks_from_medium`. This is the most common silent miss in rounds 2 and 4.
+- **Clearer error messages:**
+  - an undefined variable's error lists the defined ones (`2c9e798`);
+  - a trace that can't be read is named, with the reason (`c817efe`).
+- **Skill** (`6d588f9`):
+  - pmdb is a command on `PATH`;
+  - `show` takes a variable, and pipes go after the heredoc;
+  - `show functions` and the new warning;
+  - `raised` also matches exceptions caught along the way;
+  - record one test, not a file.
+
+**Not changed, to decide with the user.**
+- Matching a bare name against the last component of qualified names: `take` would match
+  `Parser.take`.
+- Recording dataclasses as tables by default.
+- A compact or limited `show` inside pmdb.
