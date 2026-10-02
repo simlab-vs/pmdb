@@ -112,7 +112,9 @@ import PostMortemDebugger
       do { try Self.load(url, into: &engine) } catch let e { try handle(e) }
     }
     while let s = sources.next() {
-      if s.allSatisfy(\.isWhitespace) { continue }
+      // Skip lines holding only whitespace and comments.
+      var tokens = Lexer(tokenizing: s)
+      if tokens.next() == nil { continue }
       do {
         if try await !Self.execute(Self.parse(s), in: &engine, paged: interactive, brief: brief) {
           return

@@ -227,6 +227,13 @@ func showsBrieflyWhenOutputIsNotTerminal(flags: [String]) async throws {
   #expect(o.error == "warning: no call of 'g' is recorded")
 }
 
+@Test func skipsLinesHoldingOnlyComments() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "# Calls of f.\nselect f(x)\n  # done\n")
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <1 element(s) in 1 trace(s)>")
+  #expect(o.error == "")
+}
+
 /// A source file of seven lines.
 private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
 
