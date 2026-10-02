@@ -99,7 +99,7 @@ public struct ArgumentPatternList: Hashable, Sendable {
       let matched: Bool =
         switch p {
         case .positional(let b): unify(b, head.first!, in: &e)
-        case .positionalLiteral(let v): head.first! == v
+        case .positionalLiteral(let v): head.first!.isEqual(to: v)
         case .positionalVariadic(let b): unify(b, .array(Array(head)), in: &e)
         default: false
         }
@@ -128,7 +128,7 @@ public struct ArgumentPatternList: Hashable, Sendable {
         else { return false }
       case .namedLiteral(let label, let expected):
         guard let value = arguments[label], matchedLabels.insert(label).inserted,
-          value == expected
+          value.isEqual(to: expected)
         else { return false }
       default:
         continue
@@ -153,7 +153,7 @@ public struct ArgumentPatternList: Hashable, Sendable {
     _ binding: String?, _ value: Value, in environment: inout [String: Value]
   ) -> Bool {
     guard let b = binding else { return true }
-    if let m = environment[b] { return m == value }
+    if let m = environment[b] { return m.isEqual(to: value) }
     environment[b] = value
     return true
   }

@@ -75,13 +75,13 @@ extension Expression.Apply {
     case .identifier("||"):
       return try logical(in: &environment, shortCircuitingOn: true)
     case .identifier("<"):
-      return try compareNumerically(in: &environment) { (r) in r < 0 }
+      return try compareNumerically(in: &environment) { (o) in o == .less }
     case .identifier("<="):
-      return try compareNumerically(in: &environment) { (r) in r <= 0 }
+      return try compareNumerically(in: &environment) { (o) in o == .less || o == .equal }
     case .identifier(">"):
-      return try compareNumerically(in: &environment) { (r) in r > 0 }
+      return try compareNumerically(in: &environment) { (o) in o == .greater }
     case .identifier(">="):
-      return try compareNumerically(in: &environment) { (r) in r >= 0 }
+      return try compareNumerically(in: &environment) { (o) in o == .greater || o == .equal }
     case .identifier("=="):
       return try compareForEquality(in: &environment) { (r) in r }
     case .identifier("!="):
@@ -246,20 +246,18 @@ extension Expression.Apply {
   /// Evaluates `self` as an equality test between operands evaluated in `environment`, using
   /// `transform` to convert the result of the test to a Boolean.
   ///
-  /// Numbers are compared numerically. Other values are equal iff they have the same type and
-  /// contents, except that `none` can be compared with any value.
+  /// Numbers are compared by value. Other values can be compared iff they have the same type, or
+  /// if one of them is `none`.
   private func compareForEquality(
     in environment: inout [String: Value],
     transformingResultWith transform: (Bool) -> Bool
   ) throws -> Value {
     try binary(in: &environment) { (a, b) in
-      if let result = a.compareNumerically(to: b) {
-        return .init(transform(result == 0))
-      }
       switch (a, b) {
-      case (.null, _), (_, .null), (.boolean, .boolean), (.string, .string), (.array, .array),
+      case (.null, _), (_, .null), (.boolean, .boolean), (.integer, .integer), (.integer, .float),
+        (.float, .integer), (.float, .float), (.string, .string), (.array, .array),
         (.table, .table), (.function, .function), (.object, .object):
-        return .init(transform(a == b))
+        return .init(transform(a.isEqual(to: b)))
       default:
         throw Diagnostic.invalidBinaryOperation(callee, a, b)
       }
@@ -267,13 +265,13 @@ extension Expression.Apply {
   }
 
   /// Evaluates `self` as a numeric comparison between operands evaluared in `environment`, using
-  /// `transform` to convert the result of two-way comparisons to a Boolean.
+  /// `transform` to convert the result of the comparison to a Boolean.
   private func compareNumerically(
     in environment: inout [String: Value],
-    transformingResultWith transform: (Int) -> Bool
+    transformingResultWith transform: (Value.NumericOrder) -> Bool
   ) throws -> Value {
     try binary(in: &environment) { (a, b) in
-      if let result = a.compareNumerically(to: b) {
+      if let result = a.numericOrder(b) {
         return .init(transform(result))
       } else {
         throw Diagnostic.invalidBinaryOperation(callee, a, b)
@@ -340,19 +338,6 @@ extension Expression.Property {
 }
 
 extension Value {
-
-  /// Returns `-1`, `0`, `1`, or `nil` if `self` is respectively less than, equal to, greater than,
-  /// or incomparable to `other`.
-  fileprivate func compareNumerically(to other: Value) -> Int? {
-    switch (self, other) {
-    case (.integer(let lhs), .integer(let rhs)):
-      return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
-    case (.float(let lhs), .float(let rhs)):
-      return if lhs == rhs { 0 } else if lhs < rhs { -1 } else { 1 }
-    default:
-      return nil
-    }
-  }
 
   /// Returns the negation of `self` iff that operation is defined.
   fileprivate func negated() throws -> Value? {

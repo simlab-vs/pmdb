@@ -590,6 +590,49 @@ func selectsBooleans(source: String, count: Int) async throws {
 }
 
 @Test(arguments: [
+  ("f(0)", 3),
+  ("f(0.0)", 3),
+  ("f(x) where x == 0", 3),
+  ("f(x) where x < 0.5", 3),
+  ("f(x) where x < 1", 4),
+  ("f(x) where x >= 1", 3),
+  ("f(x) where !(x < 1) && !(x >= 1)", 1),
+  ("f(x) where x == x", 7),
+  ("f(x) where x != x", 1),
+  ("f(x) where x == 9007199254740993", 1),
+  ("f(x) where x > 9007199254740992.0", 2),
+  ("f(9007199254740992)", 1),
+  ("g(xs, t, ys, u) where xs == ys && t == u", 1),
+  ("h(x, x)", 1),
+])
+func comparesNumbersByValue(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def f(x):
+      pass
+
+    @r.record
+    def g(xs, t, ys, u):
+      pass
+
+    @r.record
+    def h(x, y):
+      pass
+
+    for x in [0, 0.0, -0.0, 0.5, float("nan"), 2**53 + 1, 2.0**53, float("inf")]:
+      f(x)
+    g([0, 1.0], {"a": 1}, [0.0, 1], {"a": 1.0})
+    h(0, 0.0)
+    h(float("nan"), float("nan"))
+    """)
+
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try await engine.select(query("select \(source)")).count == count)
+}
+
+@Test(arguments: [
   ("f(x) where x == none", 1),
   ("f(x) where x != none", 3),
   ("f(x) where !x", 2),

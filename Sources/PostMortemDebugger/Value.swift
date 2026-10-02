@@ -221,3 +221,78 @@ extension Value: CustomStringConvertible {
   }
 
 }
+
+extension Value {
+
+  /// The result of comparing two numbers.
+  enum NumericOrder {
+
+    /// The left operand is less than the right one.
+    case less
+
+    /// The operands are equal.
+    case equal
+
+    /// The left operand is greater than the right one.
+    case greater
+
+    /// One of the operands is NaN.
+    case unordered
+
+  }
+
+  /// Returns how `self` compares to `other` by value iff both are numbers, or `nil` otherwise.
+  ///
+  /// Integers and floating-point numbers are compared exactly, without converting one to the
+  /// other.
+  func numericOrder(_ other: Value) -> NumericOrder? {
+    switch (self, other) {
+    case (.integer(let a), .integer(let b)):
+      return a < b ? .less : a > b ? .greater : .equal
+    case (.float(let a), .float(let b)):
+      return a < b ? .less : a > b ? .greater : a == b ? .equal : .unordered
+    case (.integer(let a), .float(let b)):
+      return Self.compare(a, b)
+    case (.float(let a), .integer(let b)):
+      switch Self.compare(b, a) {
+      case .less: return .greater
+      case .greater: return .less
+      case let o: return o
+      }
+    default:
+      return nil
+    }
+  }
+
+  /// Returns how `a` compares to `b`.
+  private static func compare(_ a: BigInt, _ b: Double) -> NumericOrder {
+    if b.isNaN { return .unordered }
+    if b.isInfinite { return b < 0 ? .greater : .less }
+    let n = BigInt(exactly: b.rounded(.down))!
+    if a < n { return .less }
+    if a > n { return .greater }
+    return b == b.rounded(.down) ? .equal : .less
+  }
+
+  /// Returns `true` iff `self` is equal to `other`.
+  ///
+  /// Numbers are equal iff they have the same value, NaN being equal to nothing. Arrays and tables
+  /// are equal iff their contents are. Other values are equal iff they have the same type and
+  /// contents, except lambdas, which are never equal.
+  func isEqual(to other: Value) -> Bool {
+    switch (self, other) {
+    case (.integer, _), (.float, _):
+      return numericOrder(other) == .equal
+    case (.array(let a), .array(let b)):
+      return a.count == b.count && zip(a, b).allSatisfy({ (x, y) in x.isEqual(to: y) })
+    case (.table(let a), .table(let b)):
+      return a.count == b.count
+        && zip(a, b).allSatisfy({ (x, y) in x.key == y.key && x.value.isEqual(to: y.value) })
+    case (.lambda, _):
+      return false
+    default:
+      return self == other
+    }
+  }
+
+}

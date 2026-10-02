@@ -214,7 +214,7 @@ Argument patterns are positional or named:
   A variable is any name that isn't a literal (e.g. `x`, `order`, or `E0`): it matches any value and binds the name to that value, so that the where clause can use it, as in `f(x) where x > 1`.
   Repeated occurrences of the same variable must match equal values: `f(x, x)` matches `f(1, 1)` but not `f(1, 2)`.
   To match a string, write it in double quotes: `f(E0)` matches any argument and binds `E0`, whereas `f("E0")` matches the string `"E0"`.
-  A literal is a Boolean, an integer, a floating-point number, a string in double quotes, or `none`, and matches only equal values: `f(1, "a")` matches `f(1, "a")` but not `f(1.0, "a")`, since an integer is never equal to a floating-point number.
+  A literal is a Boolean, an integer, a floating-point number, a string in double quotes, or `none`, and matches only equal values, as compared by `==`: `f(1, "a")` matches `f(1, "a")` and `f(1.0, "a")`, but not `f("1", "a")`.
 - A **named pattern** is a label followed by `=` and a positional pattern: `f(a = x, b = x)` matches `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`.
 - A **variadic positional pattern** (`*`) matches any number of positional arguments, and a **variadic named pattern** (`**`) any number of named arguments.
   Either can be prefixed by a name binding the matched arguments as an array or a table, as in `f(xs*) where xs.all(x => x == 0)`.
@@ -245,16 +245,19 @@ Without a from clause, a query searches all observations of all loaded traces.
 A where clause is an expression evaluated for each match, in which the names bound by the pattern are defined: the variables of its argument patterns (`x` in `f(x)`), of its outcome pattern (`r` in `-> r`, `e` in `raised e`), and of its variadic patterns (`xs` in `xs*`).
 A snap pattern binds no name.
 A match is kept if the expression evaluates to a *truthy* value, which is any value other than `none`, `false`, zero, an empty string, an empty array, or an empty table.
-If the evaluation fails for any match (e.g., because it divides by zero, selects a property that a table doesn't have, or compares an integer with a floating-point number), the query fails and the error is reported.
+If the evaluation fails for any match (e.g., because it divides by zero, selects a property that a table doesn't have, or compares a number with a string), the query fails and the error is reported.
 
 The operators, from the loosest to the tightest binding, are:
 
 - `||` and `&&`, which evaluate their right operand only if the left one doesn't determine their result;
-- `<`, `<=`, `>`, and `>=`, which compare two integers or two floating-point numbers;
+- `<`, `<=`, `>`, and `>=`, which compare two numbers;
 - `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
 - `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on divisions by zero (integers have arbitrary precision, so they never overflow);
 - `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
+
+Integers and floating-point numbers are both numbers, compared by value: `0 == 0.0` and `1 < 1.5` hold, but `9007199254740993 == 9007199254740992.0` doesn't.
+Floating-point numbers follow IEEE 754, so NaN is neither less than, equal to, nor greater than any number, itself included.
 
 Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
 
