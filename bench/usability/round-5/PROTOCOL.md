@@ -214,4 +214,8 @@ feedback questionnaire.
 
 ## Changes after the start
 
-None yet.
+- **Runs that reach the turn cap are kept.** The check for runs interrupted by a usage limit
+  searched the end of the raw transcript, where numbers such as token counts can contain `529`,
+  so the first run to reach 80 turns was discarded as interrupted and the runner stopped after
+  17 runs. Runs ending with `error_max_turns` now count as completed (and are graded like any
+  other); the discarded run was run again from scratch.

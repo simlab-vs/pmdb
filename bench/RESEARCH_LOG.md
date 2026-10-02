@@ -515,3 +515,39 @@ expected output?
   `Parser.take`.
 - Recording dataclasses as tables by default.
 - A compact or limited `show` inside pmdb.
+
+---
+
+## 2026-10-03: Round 5: reported issues, no network, no pre-recorded trace
+
+**Context.** Round 5 (`usability/round-5/`) applied the user's methodology change and round 4's
+harness fixes:
+- **The prompt** is the GitHub issue the fix closes. The project is at the parent commit, and
+  the official tests are hidden and grade the fix.
+- **Agents have no network.** Claude Code reaches only the API, through a socat relay.
+- **Arm B gets no pre-recorded trace.**
+- **pipx was excluded at the user's request,** because its tests need the network.
+- **The design:** 9 exercises from 5 projects, 3 models, 54 runs.
+
+**Results** (`usability/round-5/results/REPORT.md`).
+- **Agents didn't use pmdb when nothing pointed to it.**
+  - The skill was invoked in 3 of 27 pmdb-arm runs.
+  - pmdb was run in 1 (Haiku). Sonnet and Opus never ran it.
+  - Success was A 12/27 against B 13/27, and B − A tokens p = 0.41.
+- **Half the exercises can't be solved from the issue.** Four were solved by no run, and one by
+  one run. In the cases inspected, agents fixed the reported behaviour, but the hidden tests
+  check unstated implementation choices, such as the exact key wrapping a list in camel.
+- **Opus is still about 10× cheaper** than Sonnet and Haiku. All models wrote reproduction tests.
+
+**Harness problem fixed during the round.** The interruption check matched `529` in a
+transcript's numbers. It discarded a run that reached the turn cap and stopped the runner. Runs
+ending at the turn cap are now kept.
+
+**Decisions.**
+- **Measure pmdb's value where its use is natural or required,** not only its adoption:
+  - a trace that comes with the report (post-mortem);
+  - or an arm instructed to use pmdb.
+- **Issue-based exercises need a solvability check before selection.**
+- **Round 6 explores hand-designed scenarios where runtime evidence is essential,** in
+  parallel. They are labelled as designed to favour pmdb: they test where it can help, not how
+  much it helps in general.

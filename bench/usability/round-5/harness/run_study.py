@@ -152,7 +152,8 @@ def execute(run, exercise, dry=False):
   result = metrics["result"] or {}
   text = result.get("result") or ""
   if not timed_out and (not metrics["result"] or (
-      result.get("is_error") and LIMIT_PATTERNS.search(text + transcript.read_text()[-2000:]))):
+      result.get("is_error") and result.get("subtype") != "error_max_turns"
+      and LIMIT_PATTERNS.search(text + transcript.read_text()[-2000:]))):
     print(f"[{run['id']}] interrupted, will retry: {text[:200]!r}", flush=True)
     shutil.move(directory, directory.with_name(directory.name + f".interrupted-{int(started)}"))
     return None
