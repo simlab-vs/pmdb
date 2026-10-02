@@ -1,99 +1,171 @@
 ---
 name: pmdb
-description: Debug a Python or Rust program by recording a trace of its function calls (arguments and return values) and querying it with pmdb. Use when a bug depends on runtime values that reading the code doesn't reveal, e.g. a wrong result deep in a call chain, a rare input among many calls, or recursion, or when the user mentions pmdb or a `.pmdb` trace. Not worth it when a traceback already points at the faulty line, or when the code is small enough to read in full.
+description: Debug a Python or Rust program by recording a trace of its function calls (arguments, return values, exceptions, panics) and querying it with pmdb, instead of adding prints or stepping through a debugger. Use it whenever a program produces wrong output or a test fails with a wrong value and the cause isn't obvious from the traceback or a quick read, especially when the wrong value comes out of a long call chain, from one input among many, from recursion, or from a computation whose intermediate values you'd otherwise print. Also use it when the user mentions pmdb, traces, or a `.pmdb` file. Skip it when a traceback already points at the faulty line or the code is small enough to check by reading.
 ---
 
 # Debugging with pmdb
 
-pmdb answers questions such as "which calls of `f` returned something odd?" over a recorded trace,
-instead of stepping through a live program. A trace records every call to the instrumented
-functions, with its arguments (at call time), its return value or raised exception, and its call
-site, as a tree.
+pmdb answers questions like "which calls of `price` returned something other than the sum of their
+parts?" over a recorded run, so you check hypotheses against every call at once instead of
+printing values and re-running. A trace is a tree of calls to the recorded functions, each with
+its arguments (as they were when the call started), its result or exception, and its call site.
 
-## 1. Record a trace
+## 1. Record the failing run
 
-**Python, without editing the program.** `scripts/pmdb-record` (next to this file) runs a script
-and records every function and method defined in the `.py` files of the script's directory:
+Record the smallest run that shows the bug: one failing input rather than a whole test suite keeps
+the trace small and the answers readable. Traces of tens of thousands of calls with big arguments
+reach tens of megabytes; queries stay fast, but their output gets long.
+
+**Python, without editing anything.** `<this skill>/scripts/pmdb-record` runs a script and records
+every function and method defined in the `.py` files of the script's directory and its packages:
 
 ```
-PYTHONPATH=<pmdb repository>/Python <this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
+<this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
 ```
 
-The program runs normally; the trace is written at exit, even if it raises. Record the failing
-run, and record a passing run too if you want to compare.
+The program runs as usual (same output, same exit status) and the trace is written at exit, even
+if it raises. If `pmdb-record` can't import the recorder, add the directory containing the package
+`recorder` (the directory `Python` of the pmdb checkout or installation; ask the user if you can't
+find it) to `PYTHONPATH`. Things it doesn't record: lambdas, calls answered by a cache such as
+`functools.lru_cache`, and the bodies of generators under their call (a generator call returns at
+once, and the calls made while consuming it are attached to the consumer). To record a failing
+test, write a small script at the project root that calls the failing code, and record that.
+
+Class instances (including `self`) are recorded as opaque values, which queries can't look into.
+If the state you care about lives in objects, add `def __pmdb__(self): return vars(self)` to
+their classes *before* recording, so that they're recorded as tables of their fields, and remove
+it when you're done.
 
 **Python, by hand:** decorate functions with `@recorder.main.record` (`import recorder`), then
 `open("trace.pmdb", "wb").write(recorder.main.serialize().buffer)` at the end.
 
-**Rust:** annotate functions with `#[pmdb::record]` (crate `pmdb-recorder`, in `Rust/` of the
-repository), then call `pmdb::main().write_to("trace.pmdb")`.
+**Rust:** add `pmdb-recorder = { path = "<pmdb checkout>/Rust/recorder" }` to `Cargo.toml` (it isn't
+on crates.io; edition 2024, Rust 1.85+), annotate functions with `#[pmdb::record]` after
+`use pmdb_recorder as pmdb;`, derive `pmdb::Record` on the types whose contents you want to see,
+and call `pmdb::main().write_to("trace.pmdb")` at the end of `main`. A panic that unwinds out of
+`main` skips that call, so to record a panicking run, run the body in `std::panic::catch_unwind`
+and write the trace afterwards. Methods are recorded as `Type::method`, and panics as exceptions
+of type `panic`.
 
 ## 2. Query it
 
-Pipe commands to pmdb, one per line. Use a quoted heredoc (`'EOF'`) so the shell leaves `$` and
-`\` alone:
+Pipe commands to pmdb, one per line, in a quoted heredoc (`'EOF'`) so the shell leaves `$`, `\` and
+quotes alone:
 
 ```
 pmdb trace.pmdb <<'EOF'
-select line_subtotal(l) -> s where l.quantity >= 10
+select line_total(l) -> t where t != l.quantity * l.price
 show $0
 EOF
 ```
 
 - `select <query>` prints `$N = <k element(s) in 1 trace(s)>` and stores the matches in `$N`
-  (`$0`, `$1`, … in order).
-- `show $N` prints each match as `file:line: call f(args) -> result`, with the source around the
-  call site.
-- `pmdb --show trace.pmdb` prints the whole call tree, with results: `call f(3) -> 6`, or
-  `raised {message: …, type: KeyError}`. It is large; prefer queries and pipe through `head` or
-  `grep` if you need it.
-- Variables only exist within one pmdb invocation. Put every command of an investigation in the
-  same heredoc. pmdb stops at the first failing command (exit status 1), so later commands don't
-  run.
+  (`$0`, `$1`, … in the order of the `select`s).
+- `show $N` prints each match as `file:line: call f(args) -> result` (or `raised {…}`) followed
+  by five lines of source around the call site.
+- The heredoc holds pmdb commands only; filters go after the redirection:
+  `pmdb trace.pmdb <<'EOF' | grep -v '^[ >]'` drops the source excerpts, leaving one line per match.
+- Arguments print in full, so a function taking a big structure (a catalog, a config, a parsed
+  file) prints all of it on every line. Pipe the output through `<this skill>/scripts/clip`, which
+  elides the middle of long lines and keeps the function name and the result, and through `head`
+  when you don't know how many lines to expect.
+- Variables live for one pmdb invocation only, so a `select` and the `show` or `from $N` using its
+  result go in the same heredoc. pmdb stops at the first failing command (exit status 1) and
+  skips the rest, so run independent or exploratory queries in separate invocations rather than
+  queueing them behind one that may fail.
+- `pmdb --show trace.pmdb` prints the whole call tree with results. It's the way to see what a
+  given call did inside, but it can be megabytes long, so always filter it:
+  `pmdb --show trace.pmdb | <this skill>/scripts/clip | grep -n -A 15 'call price(B07'`.
 
-## 3. Query recipes
+## 3. Ask questions as queries
 
-| To find | Write |
+The most productive query states what *should* hold and lets pmdb list the calls where it doesn't:
+
+| Question | Query |
 |---|---|
-| calls of `f`, any arguments | `select f(...)` |
-| calls with a given argument | `select volume_discount_rate(10)` or `select f(_, "B2", y)` |
+| every call of `f` | `select f(...)` |
+| calls with given arguments | `select rate(10)`, `select f(_, "B2", *)` |
 | calls by named argument | `select f(*, code = "BIG50", **)` |
-| calls whose result is odd | `select f(x) -> r where r > x` |
-| calls returning a given value | `select f(...) -> 0` |
-| calls filtered on table fields | `select invoice(o) where o.currency == "GBP"` |
-| … when the field may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
-| calls on arrays | `select spread(n, ws) where ws.len() > 1 && ws.any(w => w < 100)` |
-| methods (recorded as `Class.method`, with `self` first) | `select /Parser\.take/(...)` or `select /.*\.take/(_, "op", *)` |
-| exceptions | `select /.*\$exception/` then `show $N` |
-| a subset of a previous result | `select f(x) from $0 where x > 1` |
+| calls breaking an invariant | `select f(x) -> r where r > x` |
+| calls returning a given value | `select f(...) -> none`, `select f(...) -> 0` |
+| calls on tables (dicts, named tuples) | `select invoice(o) where o.currency == "GBP"` |
+| … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
+| calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
+| methods (Python `Class.method`, Rust `Type::method`) | `select /Parser\.take/(...)`, `select /.*::take/(...)` |
+| nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
+| exceptions | `select /.*\$exception/`, then `show` it |
+| a subset of earlier matches | `select f(x) from $0 where x > 1` |
 
-## 4. Pitfalls
+Then `show` the few matches, read the arguments, and move to the function that produced a wrong
+argument (a caller) or to the callees of a call whose result is wrong although its arguments are
+right. Prefer functions whose arguments are small and specific to the bug (`discounted(amount,
+percent)` rather than `price(catalog, sku)`): their matches are short to read and easy to check.
 
-- **Names are matched exactly.** Methods are recorded by qualified name, so `take(...)` doesn't
-  match `Parser.take`. Use a regex, `/Parser\.take/(...)`. A regex must match the *whole* name.
-- **A pattern that doesn't fit the arity matches nothing, silently.** `f(x)` doesn't match a
-  call with two arguments; use `f(x, ...)`-style patterns: `f(x, *)`, `f(_, y, **)`, or `f(...)`.
-- **Bare names in patterns are variables, not strings.** `f(E0)` binds `E0` to any value; write
-  `f("E0")`.
-- **Strings use double quotes only**; booleans are `true`/`false`, the null value is `none`.
-- **Logical operators are `&&`, `||`, `!`** (not `and`/`or`/`not`). `&`, `|`, `^` are bitwise and
-  bind tighter than comparisons: write `(x > 1) & (y > 1)` or use `&&`.
-- **`_` can't be used in a where clause**; name the argument instead (`f(x) where x > 0`).
-- **One failing evaluation fails the whole query**, e.g. `o.coupon` on a table without `coupon`
-  or comparing an integer with a float (`x > 1.0` when `x` is an integer). Guard with `has`,
-  match types (`1` vs `1.0`), or narrow the pattern first.
-- **`from $N` searches only the observations in `$N`**, not the calls made inside them.
-- **Values print without quotes** (`call f(B2)` is the string `"B2"`). Objects the recorder can't
-  describe print as `<object>`.
-- **Arguments are recorded when the call starts**, results when it returns, so mutations during
-  the call show up in the result, not in the arguments.
+**The query language in brief.** Besides the patterns above: `+ - * /` (integer `/` truncates
+toward zero, unlike Python's `//`; there is no `%`), `< <= > >=` on numbers, `== !=`, `&& || !`,
+`x.field`, `xs[i]` (no negative indexes: `xs[xs.len() - 1]`), and the methods `len()`, `all(p)`,
+`any(p)`, `count(p)` (with a lambda `x => …`) and `t.has("key")`. There are no array or table
+literals, no string operations besides equality, and no sums or folds over arrays.
 
-## 5. A good workflow
+**When a check is beyond the query language**, export the trace and finish in Python:
+`pmdb --export-xml trace.pmdb > trace.xml` gives every call with typed arguments and results
+(`pmdb:call` elements with a `pmdb:function`, `pmdb:arguments` and nested `pmdb:observations`, and
+the outcome in the `pmdb:snap` labeled `<function>.$result` that follows the call), which
+`xml.etree.ElementTree` reads unambiguously. `show` output is easier to skim but ambiguous to
+parse: the string `"1"` and the integer `1` both print as `1`, and `"a, b"` prints like two
+arguments.
 
-1. Run the program and diff its output with the expected one; note the first wrong value.
-2. Record the failing run with `pmdb-record`.
-3. Find the function that produced the wrong value: `select f(...) -> r where r == <wrong value>`,
-   then `show $0` for its arguments and call site.
-4. Walk down: query the callees of that function with the arguments you just saw, until a call's
-   result is wrong although its arguments are right. That function holds the bug.
-5. Fix it, re-run the program, and re-record if you need to confirm the intermediate values.
+## 4. What trips queries up
+
+- **Values of different types never compare, not even with `==`.** `r > 0` and `r != 0` fail the
+  *whole query* as soon as one `r` is a float (`cannot apply > on values of type 'float' and
+  'integer'`), and Python code often returns `0` in one branch and `0.5` in another; a string
+  compared with an integer fails the same way. Only `x == none` works on any value. A literal of
+  the right type (`r > 0.0`) only helps if every value has that type. Otherwise use truthiness
+  (`where r` holds for non-zero numbers and non-empty strings, `where !r` for zero), or literals in
+  the pattern, which never fail: `f(x) -> 0` matches only the integer 0, `f(x) -> 0.0` only the
+  float.
+- **One failing evaluation fails the whole query**, e.g. `o.coupon` on a table without `coupon`.
+  Guard with `has`, or narrow the pattern first and filter `from $N`.
+- **Arguments are recorded as passed.** `f(1, y=2)` is recorded with a positional argument and a
+  named one (shown as `y: 2`), and omitted defaults are absent, so `f(x, y)` doesn't match it.
+  Start with `f(...)` or `f(x, *, **)` and look at how calls were actually recorded.
+- **Patterns must account for every argument.** `f(x)` silently matches nothing when `f` takes two
+  arguments; use `f(x, *)`, `f(_, y, **)` or `f(...)`. Methods count `self` as the first argument.
+- **Names match exactly, and a regex must match the whole name.** `take(...)` doesn't match the
+  method `Parser.take`; write `/.*\.take/(...)`.
+- **Bare names in patterns are variables.** `f(E0)` matches any argument; write `f("E0")`.
+- **Instances of classes are opaque**, dataclasses included. Only dicts with string keys and named
+  tuples become tables, and lists and tuples arrays. Other values (class instances, sets,
+  `Decimal`, dicts with non-string keys, integers beyond 64 bits) are recorded as `<object>` or as
+  their `repr`, a string such as `<shop.Cart object at 0x…>`, so `self.items` can't be queried and
+  fails with `value of type 'string' is not a table`. To see an object's fields, give its class a
+  method `def __pmdb__(self): return vars(self)` while you debug; the recorder records what it
+  returns instead.
+- **Keys that aren't identifiers can't be read**: Rust enums are tables with a key `$variant` and
+  fields `0`, `1`, …, and neither `x.$variant` nor `x.0` parses. Use `t.has("…")` and `show`.
+- **Syntax:** strings in double quotes only; `true`, `false`, `none`; `&&`, `||`, `!` (not
+  `and`, `or`, `not`); `_` only in patterns (name an argument to use it in `where`); `t.k`, not
+  `t["k"]`.
+- **`from $N` searches the matched calls only**, not the calls made inside them. Use
+  `pmdb --show` with `grep -A` to look inside a call.
+- **Exceptions are recorded in every recorded frame they pass through**, and `f(...) -> r` never
+  matches calls that raised. To find where an exception started, take the deepest `raised` in
+  `pmdb --show trace.pmdb | grep -n raised`; `show` points at the line calling the raising
+  function, not at the `raise`.
+- **Values print without quotes**: `call f(B2)` is the string `"B2"`, and `f()` may be a call with
+  an empty string.
+- **Arguments are recorded when the call starts**, results when it returns: a list mutated by the
+  call shows its old contents in the arguments.
+
+## 5. Workflow
+
+1. Run the program, diff its output with the expected one, and pick the first wrong value.
+2. Record that run.
+3. Find the call that produced the wrong value: `select f(...) -> r where r == <wrong value>` or an
+   invariant query, then `show` it.
+4. Check its arguments. If an argument is already wrong, repeat with the function that computed it.
+   If the arguments are right and the result is wrong, look at what it called
+   (`pmdb --show … | grep -A`) until you reach a call whose callees are right and whose result
+   is wrong. That function holds the bug.
+5. Fix it, re-run the program and compare the whole output, not just the value you followed.
