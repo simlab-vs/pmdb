@@ -77,16 +77,17 @@ public struct Engine: ~Copyable {
     return result
   }
 
-  /// Returns a note saying that the function pattern of `q` matches no recorded function, naming
-  /// the recorded functions that it partially matches, or `nil` if `q` isn't a call pattern or
-  /// its function pattern matches a recorded function.
+  /// Returns a note explaining why the call pattern `q` can't match any recorded call: its function
+  /// pattern matches no recorded function (the note names those it partially matches), or no call
+  /// of the functions it matches has arguments of the shape of its argument patterns (the note
+  /// shows how they were called). Returns `nil` otherwise, or if `q` isn't a call pattern.
   ///
   /// A name partially matches the recorded functions whose names end with `.` and that name (e.g.,
   /// `take` and `Parser.take`); a regular expression, those whose names contain a match.
   public func noteOnUnrecordedFunction(of q: Query) -> String? {
-    guard case .call(let f, _, _, _, _) = q else { return nil }
+    guard case .call(let f, let xs, _, _, _) = q else { return nil }
     let names = callCounts.keys
-    if names.contains(where: f.matches) { return nil }
+    if names.contains(where: f.matches) { return noteOnUnmatchedArguments(f, xs) }
 
     let partial: [String]
     let note: String
@@ -105,6 +106,37 @@ public struct Engine: ~Copyable {
     let shown = partial.sorted().prefix(10).joined(separator: ", ")
     return note + "; recorded functions with partial matches: " + shown
       + (partial.count > 10 ? ", …" : "")
+  }
+
+  /// Returns a note saying that no recorded call of the functions matching `f` has arguments of
+  /// the shape that `xs` matches (the number of positional arguments and the labels of named
+  /// ones, whatever their values), describing the shapes of these calls, or `nil` if a call has.
+  private func noteOnUnmatchedArguments(_ f: IdentifierPattern, _ xs: ArgumentPatternList) -> String? {
+    let shape = ArgumentPatternList(xs.patterns.map({ (p) -> ArgumentPattern in
+      switch p {
+      case .positional, .positionalLiteral: .positional(binding: nil)
+      case .named(let l, _), .namedLiteral(let l, _): .named(label: l, binding: nil)
+      case .positionalVariadic: .positionalVariadic(binding: nil)
+      case .namedVariadic: .namedVariadic(binding: nil)
+      case .universal: .universal
+      }
+    }))
+    var shapes: [String: Int] = [:]
+    var count = 0
+    for t in traces.values {
+      for c in t.calls where c.index.untagged != 0 && f.matches(c.value.function) {
+        var e: [String: Value] = [:]
+        if shape.matches(argumentsOf: c.value, in: &e) { return nil }
+        let named = c.value.named.keys.map({ (k) in k + " = _" })
+        let arguments = Array(repeating: "_", count: c.value.positional.count) + named
+        shapes["\(c.value.function)(\(arguments.joined(separator: ", ")))", default: 0] += 1
+        count += 1
+      }
+    }
+    let shown = shapes.sorted(by: { (a, b) in (a.value, b.key) > (b.value, a.key) }).prefix(3)
+      .map({ (k, n) in "\(k) (\(n)×)" }).joined(separator: ", ")
+    return "\(count) recorded call(s) of '\(f)', but none has arguments of the shape (\(xs)); "
+      + "they were made as " + shown + (shapes.count > 3 ? ", …" : "")
   }
 
   /// Adds the given trace to the store.
