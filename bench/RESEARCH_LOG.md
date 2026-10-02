@@ -381,3 +381,26 @@ a Claude Code skill, and otherwise the same protocol (`usability/round-2/`).
 - Should `show` have a compact form (calls and results, no excerpts) and a limit, since agents
   didn't use the skill's `grep`/`clip` recipes?
 - Should the skill point to snapshots for values inside a call?
+
+---
+
+## 2026-10-02: Detailed pmdb findings of round 2
+
+**Context.** As for round 1, every pmdb command of round 2 was classified by cause, and the failing
+ones were re-run in the agents' sandboxes:
+- `usability/round-2/results/PMDB_FINDINGS.md`;
+- `usability/round-2/results/pmdb_reproduced.md`.
+
+**Findings.**
+- **A bug: `*` followed by positional patterns matches nothing.** `f(*, _)` and `f(*, _, *)`
+  return no matches although the README says `*` matches any number of positional arguments.
+  Variadic matching consumes all remaining arguments without backtracking.
+- **Most failures are forms the skill warns against.** Haiku used them right after reading it:
+  `show query`, `show $1` after a single `select`, and bare names such as `turn_penalty(S, W)`,
+  which silently matched 227 calls instead of 12.
+- **Suggested fixes for those failures.** Errors that state what is expected or defined, and
+  saying when a call pattern names a function absent from the traces.
+- **Agents want a compact `show` and a limit.** No agent used the skill's `clip` or `grep`
+  recipes.
+- **Candidate features:** a `raised e` pattern for calls that raised, mirroring how calls are
+  printed; and `==` between values of different types evaluating to false instead of failing.
