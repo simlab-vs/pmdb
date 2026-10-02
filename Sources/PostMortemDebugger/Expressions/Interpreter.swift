@@ -95,11 +95,11 @@ extension Expression.Apply {
     case .identifier("/"):
       return try binary(in: &environment,) { (a, b) in try a.div(b) }
     case .identifier("&"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, &, { (l, r) in l && r }) }
+      return try binary(in: &environment,) { (a, b) in try a.bitwise(b, &, { (l, r) in l && r }) }
     case .identifier("^"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, ^, !=) }
+      return try binary(in: &environment,) { (a, b) in try a.bitwise(b, ^, !=) }
     case .identifier("|"):
-      return try binary(in: &environment,) { (a, b) in a.bitwise(b, |, { (l, r) in l || r }) }
+      return try binary(in: &environment,) { (a, b) in try a.bitwise(b, |, { (l, r) in l || r }) }
     case .identifier(let o) where o.first.map({ (c) in !c.isLetter && c != "_" }) ?? false:
       throw Diagnostic.error("unsupported operation '\(callee)'", at: callee.site)
     default:
@@ -413,18 +413,35 @@ extension Value {
     }
   }
 
-  /// Returns `self` and `other` combined with `integers` iff both are integers, or with `booleans`
-  /// iff both are Booleans.
+  /// Returns `self` and `other` combined with `integers` iff both are numbers with integral
+  /// values, or with `booleans` iff both are Booleans.
+  ///
+  /// Floating-point numbers are converted to 64-bit integers, throwing if they aren't
+  /// representable exactly.
   fileprivate func bitwise(
     _ other: Value, _ integers: (BigInt, BigInt) -> BigInt, _ booleans: (Bool, Bool) -> Bool
-  ) -> Value? {
+  ) throws -> Value? {
     switch (self, other) {
-    case (.integer(let lhs), .integer(let rhs)):
-      return .integer(integers(lhs, rhs))
     case (.boolean(let lhs), .boolean(let rhs)):
       return .boolean(booleans(lhs, rhs))
+    case (.integer, .integer), (.integer, .float), (.float, .integer), (.float, .float):
+      return try .integer(integers(exactInteger(), other.exactInteger()))
     default:
       return nil
+    }
+  }
+
+  /// Returns `self`, which is a number, as an integer, throwing if it is a floating-point number
+  /// that has no exact 64-bit integer representation.
+  private func exactInteger() throws -> BigInt {
+    switch self {
+    case .integer(let v):
+      return v
+    case .float(let v):
+      if let w = Int64(exactly: v) { return BigInt(w) }
+      throw ArithmeticFailure(reason: "'\(v)' has no exact 64-bit integer representation")
+    default:
+      fatalError("unreachable")
     }
   }
 
