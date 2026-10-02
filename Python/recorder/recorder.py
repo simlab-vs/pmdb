@@ -1,4 +1,5 @@
 import functools
+import inspect
 import sys
 import typing
 import uuid
@@ -98,6 +99,16 @@ class Call(Observation):
     return 0x02
 
 
+class Driven(object):
+  """An awaitable running a generator, as `Recorder.drive` returns."""
+
+  def __init__(self, generator):
+    self.generator = generator
+
+  def __await__(self):
+    return self.generator
+
+
 class Recorder(object):
   """Instrumentation for tracing the execution of a Python program."""
 
@@ -114,36 +125,103 @@ class Recorder(object):
     self.encoding = 0
 
   def record(self, f):
-    """Decorates `f` so that each of its calls is recorded in `self`."""
+    """Decorates `f` so that each of its calls is recorded in `self`.
+
+    The decorated function is of the same kind as `f`. The call of a generator function or of a
+    coroutine function is recorded when it starts running, with the value it returns or the
+    exception it raises as its outcome; calls made while it is suspended aren't nested in it.
+    Asynchronous generator functions are returned undecorated.
+    """
+    if inspect.isasyncgenfunction(f):
+      return f
+
+    if inspect.isgeneratorfunction(f):
+      @functools.wraps(f)
+      def generator(*args, **kwargs):
+        if self.encoding:
+          return (yield from f(*args, **kwargs))
+        return (yield from self.drive(f, args, kwargs, lambda g: g))
+      return generator
+
+    if inspect.iscoroutinefunction(f):
+      @functools.wraps(f)
+      async def coroutine(*args, **kwargs):
+        if self.encoding:
+          return await f(*args, **kwargs)
+        return await Driven(self.drive(f, args, kwargs, lambda c: c.__await__()))
+      return coroutine
+
     @functools.wraps(f)
     def decorated(*args, **kwargs):
       if self.encoding:
         return f(*args, **kwargs)
       caller = Recorder.caller()
-      callee = f.__qualname__
-
-      # Attach a new call observation to the current trace node.
-      call = self.encoded(Call, caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
-      self.step_into(call)
-
-      # Apply the decorated function, recording the exception it raises, if any.
+      call = self.enter(caller, f, args, kwargs)
       try:
         result = f(*args, **kwargs)
       except BaseException as e:
-        exception = self.encoded(
-          lambda: {"type": type(e).__qualname__, "message": describe(e, str)})
-        snap = self.encoded(
-          Snapshot, caller.f_code.co_filename, caller.f_lineno, callee + ".$exception", exception)
-        self.step_out(snap)
+        self.leave(caller, call, raised=e)
         raise
-
-      # Get back to the original trace node.
-      snap = self.encoded(
-        Snapshot, caller.f_code.co_filename, caller.f_lineno, callee + ".$result", result)
-      self.step_out(snap)
+      self.leave(caller, call, returned=result)
       return result
 
     return decorated
+
+  def enter(self, caller, f, args, kwargs):
+    """Records the start of a call to `f` made at the frame `caller` and makes it the active
+    observation, returning the name under which it is recorded."""
+    callee = f.__qualname__
+    call = self.encoded(Call, caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
+    self.step_into(call)
+    return callee
+
+  def leave(self, caller, callee, **outcome):
+    """Records the outcome of the active call to `callee`, made at the frame `caller`: the value
+    it `returned`, or the exception it `raised`."""
+    if "raised" in outcome:
+      e = outcome["raised"]
+      value = self.encoded(lambda: {"type": type(e).__qualname__, "message": describe(e, str)})
+      label = callee + ".$exception"
+    else:
+      value, label = outcome["returned"], callee + ".$result"
+    self.step_out(
+      self.encoded(Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value))
+
+  def drive(self, f, args, kwargs, iterator):
+    """Runs the generator `iterator(f(*args, **kwargs))`, recording the call to `f`, and returns
+    its value.
+
+    The call is the active observation while the generator runs, and its parent while it is
+    suspended, so that calls made by the generator's consumer aren't nested in it.
+    """
+    caller = Recorder.caller()
+    callee = self.enter(caller, f, args, kwargs)
+    index = self.active
+    parent = self.parent[index]
+    try:
+      g = iterator(f(*args, **kwargs))
+    except BaseException as e:
+      self.leave(caller, callee, raised=e)
+      raise
+    send, value = True, None
+    while True:
+      self.active = index
+      try:
+        item = g.send(value) if send else g.throw(value)
+      except StopIteration as stop:
+        self.leave(caller, callee, returned=stop.value)
+        return stop.value
+      except BaseException as e:
+        self.leave(caller, callee, raised=e)
+        raise
+      self.active = parent
+      try:
+        send, value = True, (yield item)
+      except GeneratorExit:
+        g.close()
+        raise
+      except BaseException as e:
+        send, value = False, e
 
   def snapshot(self, label, value):
     caller = Recorder.caller()

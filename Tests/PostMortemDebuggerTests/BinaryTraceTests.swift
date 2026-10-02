@@ -297,7 +297,6 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
     def f(x):
       return threading.Lock()
 
-    @r.record
     async def g():
       return 0
 
@@ -308,7 +307,9 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
         raise TypeError()
 
     f(x for x in [])
-    g().close()
+    c = g()
+    r.snapshot('c', c)
+    c.close()
     r.snapshot('x', Opaque())
     """)
 
@@ -385,6 +386,44 @@ func notesFunctionsThatAreNotRecorded(source: String, note: String?) async throw
   var engine = Engine()
   engine.add(trace)
   #expect(try engine.noteOnUnrecordedFunction(of: query("select \(source)")) == note)
+}
+
+@Test func recordsGeneratorsAndCoroutinesAsSuch() async throws {
+  // Frameworks such as pytest tell generator fixtures by their kind, so recording must keep it.
+  let trace = try await record(
+    """
+    import asyncio
+    import inspect
+
+    @r.record
+    def numbers(n):
+      for i in range(n):
+        yield twice(i)
+
+    @r.record
+    def twice(i):
+      return 2 * i
+
+    @r.record
+    async def later(x):
+      await asyncio.sleep(0)
+      return twice(x)
+
+    assert inspect.isgeneratorfunction(numbers) and inspect.iscoroutinefunction(later)
+    assert list(numbers(2)) == [0, 2]
+    assert asyncio.run(later(3)) == 6
+    """)
+
+  let expected = """
+    * call root()
+    ├─* call numbers(2) -> none
+    │ ├─* call twice(0) -> 0
+    │ └─* call twice(1) -> 2
+    └─* call later(3) -> 6
+      └─* call twice(3) -> 6
+
+    """
+  #expect(trace.description == expected)
 }
 
 @Test func recordsExceptions() async throws {
