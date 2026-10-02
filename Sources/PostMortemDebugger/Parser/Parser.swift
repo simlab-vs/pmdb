@@ -183,15 +183,22 @@ public struct Parser {
   /// Parses a comma-separated list of argument patterns.
   private mutating func parseArgumentPatternList() throws -> ArgumentPatternList {
     // Is tha pattern universal?
+    var head: [ArgumentPattern] = []
     if take(.ellipsis) != nil {
-      return .init([.universal])
+      if next(is: .rightParenthesis) { return .init([.universal]) }
+      head = [.positionalVariadic(binding: nil), .namedVariadic(binding: nil)]
+      _ = try take(.comma) ?? expected("',' or ')'")
     }
 
-    // Otherwise, parse a list of patterns.
+    // Otherwise, parse a list of patterns, in which `...` stands for any further arguments.
     let (xs, _) = try commaSeparated(until: Token.hasTag(.rightParenthesis)) { (me) in
-      try me.parseArgumentPattern()
+      if me.take(.ellipsis) != nil {
+        return [ArgumentPattern.positionalVariadic(binding: nil), .namedVariadic(binding: nil)]
+      } else {
+        return try [me.parseArgumentPattern()]
+      }
     }
-    return .init(xs)
+    return .init(head + xs.flatMap(\.self))
   }
 
   /// The tags of the tokens that are words: names and keywords.
