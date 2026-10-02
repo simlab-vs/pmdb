@@ -205,6 +205,8 @@ Argument patterns are positional or named:
 - A **named pattern** is a label followed by `=` and a positional pattern: `f(a = x, b = x)` matches `f(a = 1, b = 1)` but not `f(a = 1, b = 2)`.
 - A **variadic positional pattern** (`*`) matches any number of positional arguments, and a **variadic named pattern** (`**`) any number of named arguments.
   Either can be prefixed by a name binding the matched arguments as an array or a table, as in `f(xs*) where xs.all(x => x == 0)`.
+  A variadic positional pattern can appear anywhere among positional patterns: `f(*, x)` binds the last positional argument, and `f(1, *, x)` matches calls whose first positional argument is 1 and that have at least two.
+  When several variadic positional patterns could split the arguments differently, the first one takes as many as possible.
 - The **universal pattern** `...` matches any argument list: `f(...)` matches `f()`, `f(1, 2)`, and `f(1, b = 2)`.
 
 A call pattern matches a call if and only if each argument of the call is matched by a different argument pattern and every argument pattern is matched, with positional patterns matching positional arguments in order.

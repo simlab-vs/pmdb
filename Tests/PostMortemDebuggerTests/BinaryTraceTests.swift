@@ -418,6 +418,39 @@ func matchesLiteralPatterns(source: String, count: Int) async throws {
 }
 
 @Test(arguments: [
+  ("g(*, _)", 2),
+  ("g(*, 3)", 1),
+  ("g(*, 2)", 0),
+  ("g(1, *, 3)", 1),
+  ("g(_, *, _)", 1),
+  ("g(*, _, *)", 2),
+  ("g(*, *)", 3),
+  ("g(xs*, x) where xs.len() == 2 && x == 3", 1),
+  ("g(xs*, ys*) where xs.len() == 3 && ys.len() == 0", 1),
+  ("g(**, k = 2)", 0),
+  ("g(_, **, k = 2)", 1),
+  ("g(_, kw**, k = x) where kw.len() == 0 && x == 2", 1),
+  ("g(*, k = 2, **)", 1),
+])
+func matchesVariadicPatternsAnywhere(source: String, count: Int) async throws {
+  let trace = try await record(
+    """
+    @r.record
+    def g(*args, **kwargs):
+      return 0
+
+    g(1, 2, 3)
+    g(1)
+    g()
+    g(1, k=2)
+    """)
+  var engine = Engine()
+  engine.add(trace)
+  let result = try await engine.select(query("select \(source)"))
+  #expect(result.count == count)
+}
+
+@Test(arguments: [
   ("f(o) where o.has(\"coupon\")", 1),
   ("f(o) where !o.has(\"coupon\")", 2),
   ("f(o) where o.has(\"coupon\") && o.coupon == \"BIG50\"", 1),

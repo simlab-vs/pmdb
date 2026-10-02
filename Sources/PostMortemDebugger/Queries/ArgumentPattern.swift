@@ -22,6 +22,14 @@ public enum ArgumentPattern: Hashable, Sendable {
   /// Matches any number of named arguments, optionally binding the key/value pairs.
   case namedVariadic(binding: String?)
 
+  /// `true` iff `self` matches positional arguments.
+  public var isPositional: Bool {
+    switch self {
+    case .positional, .positionalLiteral, .positionalVariadic: true
+    default: false
+    }
+  }
+
   /// `true` iff `self` matches an arbitrary sequence of arguments without binding it.
   public var isUnboundVariadic: Bool {
     switch self {

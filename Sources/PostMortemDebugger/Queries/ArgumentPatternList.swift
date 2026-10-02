@@ -51,114 +51,111 @@ public struct ArgumentPatternList: Hashable, Sendable {
   }
 
   /// Returns `true` iff `self` matches the given arguments, unifying variables in `environement`.
+  ///
+  /// Positional patterns match positional arguments in order, a variadic positional pattern
+  /// matching any number of them. Named patterns match named arguments regardless of order, a
+  /// variadic named pattern matching those that other named patterns don't.
   public func matches(
     _ positional: [Value], _ named: SortedDictionary<String, Value>,
     in environment: inout [String: Value]
   ) -> Bool {
     // Trivial if `self` is the universal pattern.
-    if isUniversal{ return true }
+    if isUniversal { return true }
 
-    // Trivial if `self` is empty.
-    if isEmpty { return positional.isEmpty && named.isEmpty }
-
-    // Otherwise, we have to match each given argument with a pattern.
-    var remainingPositional = positional[...]
-    var matchedLabels: [String] = []
     var e = environment
+    let p = patterns.filter(\.isPositional)
+    if !Self.matches(p[...], positional[...], in: &e) { return false }
+    if !Self.matches(patterns.filter({ (q) in !q.isPositional }), named, in: &e) { return false }
+    swap(&e, &environment)
+    return true
+  }
 
-    for pattern in patterns {
-      switch pattern {
-      case .positional(let binding):
-        // Consume one positional argument.
-        guard let value = remainingPositional.popFirst() else { return false }
+  /// Returns `true` iff `patterns`, which are positional, match `arguments` in order, unifying
+  /// variables in `environment`, which is left unchanged if they don't.
+  private static func matches(
+    _ patterns: ArraySlice<ArgumentPattern>, _ arguments: ArraySlice<Value>,
+    in environment: inout [String: Value]
+  ) -> Bool {
+    guard let p = patterns.first else { return arguments.isEmpty }
+    let rest = patterns.dropFirst()
 
-        // If there's a binding, assign it or make sure its value matches.
-        if let b = binding {
-          if let m = e[b] {
-            if m != value { return false }
-          } else {
-            e[b] = value
-          }
+    // The number of arguments that `p` can match, from the largest.
+    let counts: [Int]
+    switch p {
+    case .positional, .positionalLiteral:
+      counts = arguments.isEmpty ? [] : [1]
+    case .positionalVariadic:
+      let required = rest.count(where: { (q) in
+        if case .positionalVariadic = q { false } else { true }
+      })
+      counts = arguments.count >= required ? Array((0 ... arguments.count - required).reversed()) : []
+    default:
+      fatalError("unreachable")
+    }
+
+    for n in counts {
+      var e = environment
+      let head = arguments.prefix(n)
+      let matched: Bool =
+        switch p {
+        case .positional(let b): unify(b, head.first!, in: &e)
+        case .positionalLiteral(let v): head.first! == v
+        case .positionalVariadic(let b): unify(b, .array(Array(head)), in: &e)
+        default: false
         }
+      if matched && matches(rest, arguments.dropFirst(n), in: &e) {
+        swap(&e, &environment)
+        return true
+      }
+    }
+    return false
+  }
 
-      case .positionalLiteral(let expected):
-        // Consume one positional argument, which must be equal to the literal.
-        guard let value = remainingPositional.popFirst(), value == expected else { return false }
+  /// Returns `true` iff `patterns`, which are named, match `arguments`, unifying variables in
+  /// `environment`.
+  private static func matches(
+    _ patterns: [ArgumentPattern], _ arguments: SortedDictionary<String, Value>,
+    in environment: inout [String: Value]
+  ) -> Bool {
+    var matchedLabels: Set<String> = []
 
-      case .positionalVariadic(let binding):
-        // If there's a binding, assign it or make sure its value matches.
-        if let b = binding {
-          // Gather the remaining positional arguments.
-          let vs = Array(remainingPositional)
-
-          // Assign or check for a match.
-          if let m = e[b] {
-            if m != .array(vs) { return false }
-          } else {
-            e[b] = .array(vs)
-          }
-        }
-
-        // Mark all remaining positional arguments as having been matched.
-        remainingPositional.removeAll()
-
+    // Match the named arguments that have patterns of their own.
+    for p in patterns {
+      switch p {
       case .named(let label, let binding):
-        // Consume a named argument with the specified label.
-        guard let value = named[label], !matchedLabels.contains(label) else { return false }
-        matchedLabels.append(label)
-
-        // If there's a binding, assign it or make sure its value matches.
-        if let b = binding {
-          if let m = e[b] {
-            if m != value { return false }
-          } else {
-            e[b] = value
-          }
-        }
-
+        guard let value = arguments[label], matchedLabels.insert(label).inserted,
+          unify(binding, value, in: &environment)
+        else { return false }
       case .namedLiteral(let label, let expected):
-        // Consume a named argument with the specified label, which must be equal to the literal.
-        guard let value = named[label], !matchedLabels.contains(label), value == expected else {
-          return false
-        }
-        matchedLabels.append(label)
-
-      case .namedVariadic(let binding):
-        // If there's a binding, assign it or make sure its value matches.
-        if let b = binding {
-          // Gather the remaining named arguments, making them as having been matched.
-          var vs = SortedDictionary<String, Value>()
-          for (k, v) in named where !matchedLabels.contains(k) {
-            vs[k] = v
-            matchedLabels.append(k)
-          }
-
-          // Assign or check for a match.
-          if let m = e[b] {
-            if m != .table(vs) { return false }
-          } else {
-            e[b] = .table(vs)
-          }
-        } else {
-          // Mark all remaining positional arguments as having been matched.
-          for k in named.keys where !matchedLabels.contains(k) {
-            matchedLabels.append(k)
-          }
-        }
-
-      case .universal:
-        // Universal patterns should have been matched earler.
-        fatalError("unreachable")
+        guard let value = arguments[label], matchedLabels.insert(label).inserted,
+          value == expected
+        else { return false }
+      default:
+        continue
       }
     }
 
-    // Did we match everything?
-    if remainingPositional.isEmpty && matchedLabels.count == named.count {
-      swap(&e, &environment)
-      return true
-    } else {
-      return false
+    // Match the others with variadic patterns, the first one taking them all.
+    for case .namedVariadic(let binding) in patterns {
+      var vs = SortedDictionary<String, Value>()
+      for (k, v) in arguments where matchedLabels.insert(k).inserted {
+        vs[k] = v
+      }
+      if !unify(binding, .table(vs), in: &environment) { return false }
     }
+
+    return matchedLabels.count == arguments.count
+  }
+
+  /// Returns `true` iff `binding` is `nil`, unbound in `environment`, or bound to `value`, binding
+  /// it to `value` in the second case.
+  private static func unify(
+    _ binding: String?, _ value: Value, in environment: inout [String: Value]
+  ) -> Bool {
+    guard let b = binding else { return true }
+    if let m = environment[b] { return m == value }
+    environment[b] = value
+    return true
   }
 
 }
