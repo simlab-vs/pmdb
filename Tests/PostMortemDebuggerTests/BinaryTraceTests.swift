@@ -566,6 +566,7 @@ func matchesVariadicPatternsAnywhere(source: String, count: Int) async throws {
   ("f(o) where o.has(\"coupon\") && o.coupon == \"BIG50\"", 1),
   ("f(o) where o.has(\"$variant\")", 1),
   ("f(o) where o.has(\"len\")", 0),
+  ("f(o) where o.has(\"load\") && o.load == 1", 0),
   ("f(o) where (k => o.has(k))(\"id\")", 3),
 ])
 func testsWhetherTablesHaveProperties(source: String, count: Int) async throws {

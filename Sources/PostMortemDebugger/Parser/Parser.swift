@@ -194,6 +194,11 @@ public struct Parser {
     return .init(xs)
   }
 
+  /// The tags of the tokens that are words: names and keywords.
+  private static let wordTags: Set<Token.Tag> = [
+    .name, .else, .exit, .false, .if, .load, .noneLiteral, .pmdb, .select, .show, .then, .true,
+  ]
+
   /// Parses an argument pattern.
   private mutating func parseArgumentPattern() throws -> ArgumentPattern {
     if let n = take(.name) {
@@ -343,7 +348,8 @@ public struct Parser {
   /// `head`. Otherwise, returns `nil`.
   private mutating func appendPropertySelection(to head: Expression) throws -> Expression? {
     if take(.dot) == nil { return nil }
-    let n = try take(.name) ?? expected("identifier")
+    // Keywords such as `load` can name properties too.
+    let n = try take(if: { (t) in Self.wordTags.contains(t.tag) }) ?? expected("identifier")
     let x = Parsed(text(n), at: n.site)
     let s = span(from: head.site.lowerBound)
     return .init(syntax: .property(.init(table: head, name: x)), site: s)
