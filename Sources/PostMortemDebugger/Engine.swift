@@ -77,6 +77,36 @@ public struct Engine: ~Copyable {
     return result
   }
 
+  /// Returns a note saying that the function pattern of `q` matches no recorded function, naming
+  /// the recorded functions that it partially matches, or `nil` if `q` isn't a call pattern or
+  /// its function pattern matches a recorded function.
+  ///
+  /// A name partially matches the recorded functions whose names end with `.` and that name (e.g.,
+  /// `take` and `Parser.take`); a regular expression, those whose names contain a match.
+  public func noteOnUnrecordedFunction(of q: Query) -> String? {
+    guard case .call(let f, _, _, _, _) = q else { return nil }
+    let names = callCounts.keys
+    if names.contains(where: f.matches) { return nil }
+
+    let partial: [String]
+    let note: String
+    switch f {
+    case .wildcard:
+      return nil
+    case .exactly(let n):
+      partial = names.filter({ (m) in m.hasSuffix("." + n) })
+      note = "no call of '\(n)' is recorded"
+    case .regex(let r):
+      let pattern = try? Regex(String(r.dropFirst().dropLast()))
+      partial = names.filter({ (m) in pattern.map({ (p) in m.contains(p) }) ?? false })
+      note = "no recorded function's whole name matches \(r)"
+    }
+    if partial.isEmpty { return note }
+    let shown = partial.sorted().prefix(10).joined(separator: ", ")
+    return note + "; recorded functions with partial matches: " + shown
+      + (partial.count > 10 ? ", …" : "")
+  }
+
   /// Adds the given trace to the store.
   public mutating func add(_ t: Trace) {
     traces[t.identity] = t

@@ -220,6 +220,13 @@ func showsBrieflyWhenOutputIsNotTerminal(flags: [String]) async throws {
   #expect(o.error == "error: expected a variable such as $0, 'variables', or 'functions'")
 }
 
+@Test func warnsWhenNoCallOfFunctionIsRecorded() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "select g(x)\n")
+  #expect(o.succeeded)
+  #expect(o.output == "$0 = <0 element(s) in 0 trace(s)>")
+  #expect(o.error == "warning: no call of 'g' is recorded")
+}
+
 /// A source file of seven lines.
 private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
 

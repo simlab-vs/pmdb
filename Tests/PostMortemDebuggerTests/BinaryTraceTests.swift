@@ -357,6 +357,36 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   #expect(trace.description == expected)
 }
 
+@Test(arguments: [
+  ("add(...)", "no call of 'add' is recorded; recorded functions with partial matches: Cart.add"),
+  ("/add/(...)",
+   "no recorded function's whole name matches /add/; recorded functions with partial matches: Cart.add"),
+  ("nothing(x)", "no call of 'nothing' is recorded"),
+  ("f(...)", nil),
+  ("f(2)", nil),
+  ("/.*add/(...)", nil),
+  ("_(...)", nil),
+  ("x", nil),
+] as [(String, String?)])
+func notesFunctionsThatAreNotRecorded(source: String, note: String?) async throws {
+  let trace = try await record(
+    """
+    class Cart:
+      @r.record
+      def add(self, x):
+        return x
+
+    @r.record
+    def f(x):
+      return Cart().add(x)
+
+    f(1)
+    """)
+  var engine = Engine()
+  engine.add(trace)
+  #expect(try engine.noteOnUnrecordedFunction(of: query("select \(source)")) == note)
+}
+
 @Test func recordsExceptions() async throws {
   let trace = try await record(
     """

@@ -141,6 +141,7 @@ import PostMortemDebugger
       let k = engine.fresh()
       engine.assign(.observations(v), for: k)
       print(Self.style.result("\(k) = <\(v.count) element(s) in \(v.traces.count) trace(s)>"))
+      if v.count == 0, let n = engine.noteOnUnrecordedFunction(of: q) { warning(n) }
 
     case .show(let x):
       switch try engine.value(for: x) {
@@ -350,6 +351,7 @@ import PostMortemDebugger
 
   /// Reports `message` as a warning to the standard error.
   private static func warning(_ message: String) {
+    fflush(nil)
     var m = Self.style.warning("warning: ")
     m.write(message)
     m.write("\n")
