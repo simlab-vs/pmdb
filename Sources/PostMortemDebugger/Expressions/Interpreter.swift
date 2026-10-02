@@ -353,51 +353,63 @@ extension Value {
 
   /// Returns the sum of `self` and `other` iff that operation is defined.
   fileprivate func add(_ other: Value) throws -> Value? {
-    switch (self, other) {
-    case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs + rhs)
-    case (.float(let lhs), .float(let rhs)):
-      return .float(lhs + rhs)
-    default:
-      return nil
-    }
+    try arithmetic(other, +, +)
   }
 
   /// Returns `other` subtraced from `self` iff that operation is defined.
   fileprivate func sub(_ other: Value) throws -> Value? {
-    switch (self, other) {
-    case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs - rhs)
-    case (.float(let lhs), .float(let rhs)):
-      return .float(lhs - rhs)
-    default:
-      return nil
-    }
+    try arithmetic(other, -, -)
   }
 
   /// Returns `self` multiplied by `other` iff that operation is defined.
   fileprivate func mul(_ other: Value) throws -> Value? {
-    switch (self, other) {
-    case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs * rhs)
-    case (.float(let lhs), .float(let rhs)):
-      return .float(lhs * rhs)
+    try arithmetic(other, *, *)
+  }
+
+  /// Returns `self` divided by `other` iff that operation is defined, as a floating-point number.
+  fileprivate func div(_ other: Value) throws -> Value? {
+    guard let (lhs, rhs) = try Value.floatingPoint(self, other) else { return nil }
+    if rhs == 0 { throw ArithmeticFailure(reason: "division by zero") }
+    return .float(lhs / rhs)
+  }
+
+  /// Returns `self` and `other` combined with `integers` iff both are integers, or with `floats`
+  /// iff both are numbers and one of them is a floating-point number.
+  private func arithmetic(
+    _ other: Value,
+    _ integers: (BigInt, BigInt) -> BigInt, _ floats: (Double, Double) -> Double
+  ) throws -> Value? {
+    if case (.integer(let lhs), .integer(let rhs)) = (self, other) {
+      return .integer(integers(lhs, rhs))
+    } else if let (lhs, rhs) = try Value.floatingPoint(self, other) {
+      return .float(floats(lhs, rhs))
+    } else {
+      return nil
+    }
+  }
+
+  /// Returns `a` and `b` as floating-point numbers iff both are numbers, throwing if one of them
+  /// is an integer that has no exact floating-point representation.
+  private static func floatingPoint(_ a: Value, _ b: Value) throws -> (Double, Double)? {
+    switch (a, b) {
+    case (.integer, .integer), (.integer, .float), (.float, .integer), (.float, .float):
+      return try (a.exactFloatingPoint(), b.exactFloatingPoint())
     default:
       return nil
     }
   }
 
-  /// Returns `self` divided by `other` iff that operation is defined.
-  fileprivate func div(_ other: Value) throws -> Value? {
-    switch (self, other) {
-    case (.integer, .integer(0)), (.float, .float(0)):
-      throw ArithmeticFailure(reason: "division by zero")
-    case (.integer(let lhs), .integer(let rhs)):
-      return .integer(lhs / rhs)
-    case (.float(let lhs), .float(let rhs)):
-      return .float(lhs / rhs)
+  /// Returns `self`, which is a number, as a floating-point number, throwing if it is an integer
+  /// that has no exact floating-point representation.
+  private func exactFloatingPoint() throws -> Double {
+    switch self {
+    case .float(let v):
+      return v
+    case .integer(let v):
+      if let w = Double(exactly: v) { return w }
+      throw ArithmeticFailure(reason: "integer '\(v)' has no exact floating-point representation")
     default:
-      return nil
+      fatalError("unreachable")
     }
   }
 

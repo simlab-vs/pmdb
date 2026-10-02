@@ -252,12 +252,15 @@ The operators, from the loosest to the tightest binding, are:
 - `||` and `&&`, which evaluate their right operand only if the left one doesn't determine their result;
 - `<`, `<=`, `>`, and `>=`, which compare two numbers;
 - `==` and `!=`, which also compare two Booleans, strings, arrays, tables, functions, or objects by contents, and can compare any value with `none` (e.g., `x == none` holds iff `x` is `none`);
-- `+`, `-`, `*`, and `/`, which compute on two integers or two floating-point numbers, failing on divisions by zero (integers have arbitrary precision, so they never overflow);
+- `+`, `-`, `*`, and `/`, which compute on two numbers, failing on divisions by zero;
 - `|`, `^`, and `&`, which compute the bitwise or, exclusive or, and and of two integers, or the same operations on two Booleans without short-circuiting, `|` and `^` binding as tightly as `+` and `-`, and `&` as `*` and `/`;
 - the prefix operators `!`, which negates the truthiness of its operand, and `-`, which negates a number.
 
 Integers and floating-point numbers are both numbers, compared by value: `0 == 0.0` and `1 < 1.5` hold, but `9007199254740993 == 9007199254740992.0` doesn't.
 Floating-point numbers follow IEEE 754, so NaN is neither less than, equal to, nor greater than any number, itself included.
+Integers have arbitrary precision, so they never overflow.
+`+`, `-`, and `*` compute an integer from two integers, and a floating-point number otherwise; `/` always computes a floating-point number (`7 / 2 == 3.5`).
+An integer is converted to a floating-point number only if it has an exact floating-point representation, and the operation fails otherwise (e.g., `9007199254740993 + 0.5` fails).
 
 Comparisons and logical operators evaluate to the Booleans `true` and `false`, which are distinct from integers: `true == 1` and `true + 1` fail.
 
