@@ -172,7 +172,7 @@ private func makeTrace(
   let o = try await pmdb([makeTrace().trace], input: "select f(x) from $nope\nselect f(x)\n")
   #expect(!o.succeeded)
   #expect(o.output == "")
-  #expect(o.error == "error: undefined symbol '$nope'")
+  #expect(o.error == "error: undefined symbol '$nope'; no variables are defined")
 }
 
 @Test func ignoresBlankLinesOfInput() async throws {
@@ -439,7 +439,7 @@ func showsTraces(flagFirst: Bool) async throws {
     output: .string(limit: 1 << 20), error: .discarded)
   #expect(result.standardOutput.normalized == """
     $0 = <1 element(s) in 1 trace(s)>
-    error: undefined symbol '$nope'
+    error: undefined symbol '$nope'; defined: $0
     """)
 }
 

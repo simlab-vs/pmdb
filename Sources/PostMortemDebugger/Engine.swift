@@ -59,7 +59,11 @@ public struct Engine: ~Copyable {
 
   /// Returns the value assigned to `k`.
   public func value(for k: String) throws -> ConvenienceValue {
-    try bindings[k] ?? RuntimeError("undefined symbol '\(k)'")
+    if let v = bindings[k] { return v }
+    let defined = bindings.keys.sorted()
+    let known =
+      defined.isEmpty ? "no variables are defined" : "defined: " + defined.joined(separator: ", ")
+    throw RuntimeError("undefined symbol '\(k)'; \(known)")
   }
 
   /// The number of recorded calls of each function in the loaded traces, by name.
