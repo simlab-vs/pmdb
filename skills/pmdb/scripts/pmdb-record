@@ -7,7 +7,7 @@ Every function and method defined in the Python files of the script's directory 
 without modifying those files. The trace is written when the program exits, even if it raises.
 
 The pmdb Python recorder must be importable, e.g. by adding the directory `Python` of the pmdb
-repository to `PYTHONPATH`.
+repository to `PYTHONPATH`, unless this script is in the pmdb repository.
 """
 
 import argparse
@@ -22,8 +22,19 @@ import traceback
 try:
   import recorder
 except ImportError:
-  sys.exit("pmdb-record: cannot import the pmdb recorder; add the directory 'Python' of the pmdb "
-           "repository to PYTHONPATH")
+  # Look for the recorder in the pmdb repository containing this script, if any.
+  REPOSITORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", "..")
+  sys.path.append(os.path.join(REPOSITORY, "Python"))
+  try:
+    import recorder
+  except ImportError:
+    sys.exit("pmdb-record: cannot import the pmdb recorder; add the directory containing the "
+             "package 'recorder' (the directory 'Python' of the pmdb repository) to PYTHONPATH")
+
+
+# The methods that the recorder may call to record a value, which can't be recorded themselves
+# because recording their calls records their argument `self` again.
+RECORDING_METHODS = {"__pmdb__", "__repr__", "__reduce__", "__reduce_ex__", "__getstate__"}
 
 
 class Instrument(ast.NodeTransformer):
@@ -31,7 +42,8 @@ class Instrument(ast.NodeTransformer):
 
   def visit_FunctionDef(self, node):
     self.generic_visit(node)
-    node.decorator_list.append(ast.Name("__pmdb_record__", ast.Load()))
+    if node.name not in RECORDING_METHODS:
+      node.decorator_list.append(ast.Name("__pmdb_record__", ast.Load()))
     return node
 
   visit_AsyncFunctionDef = visit_FunctionDef
@@ -63,9 +75,14 @@ class Finder(importlib.abc.MetaPathFinder):
     self.directory = directory
 
   def find_spec(self, name, path, target=None):
-    candidate = os.path.join(self.directory, *name.split(".")) + ".py"
+    base = os.path.join(self.directory, *name.split("."))
+    candidate = base + ".py"
     if os.path.isfile(candidate):
       return importlib.util.spec_from_file_location(name, candidate, loader=Loader(candidate))
+    candidate = os.path.join(base, "__init__.py")
+    if os.path.isfile(candidate):
+      return importlib.util.spec_from_file_location(
+        name, candidate, loader=Loader(candidate), submodule_search_locations=[base])
     return None
 
 
@@ -83,6 +100,10 @@ def main():
   sys.argv = [args.script] + args.arguments
   sys.path[0] = directory
   sys.meta_path.insert(0, Finder(directory))
+
+  # Each recorded call adds frames to the stack, which would make deep recursions that work
+  # without recording raise `RecursionError`.
+  sys.setrecursionlimit(4 * sys.getrecursionlimit())
 
   r = recorder.Recorder()
   builtins.__pmdb_record__ = r.record
