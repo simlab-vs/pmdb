@@ -268,3 +268,22 @@ description, harness and results under `bench/usability/round-1/` still refer to
 - **Living documentation describes current pmdb.** This means the README,
   `Documentation/Traces.md` (which now describes the `$result`/`$exception` convention) and
   `skills/pmdb`.
+
+---
+
+## 2026-10-02: One directory per experiment, with a shared library
+
+**Context.** The usability study is getting more rounds, which need their own protocols,
+harnesses and results without touching round 1.
+
+**Changes.**
+- **Layout.** Round 1 moved to `bench/usability/round-1/` unchanged, apart from the path
+  `assemble.py` uses to find the repository. Round 2 starts as a copy of round 1's harness,
+  programs and `opt-pmdb` in `bench/usability/round-2/`.
+- **Shared library.** Code that doesn't depend on an experiment moved to `bench/lib/pmdbbench`:
+  the sandbox, the subscription token, transcript parsing, the statistics, the mutation operators
+  and the program runner. Every function was moved verbatim, except that `pmdb_errors` now takes
+  a transcript path instead of a run identifier.
+- **No behaviour change.** Round 1's harness, before and after the change, produced identical
+  programs, mutants, exercises, plans, prepared runs, sandbox probes, analyses and transcript
+  parses. The only differences in its outputs were the directory names in the printed paths.
