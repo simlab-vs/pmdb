@@ -107,9 +107,10 @@ A query is a pattern, optionally followed by `from $N` (to search earlier matche
   argument; to match the string, write `f("E0")`.
 - A literal (`10`, `2.5`, `"B2"`, `true`, `none`) matches equal values only, and never fails.
 - `_` matches any value without binding it.
-- `*` matches any number of positional arguments, `**` any number of named ones, and `f(...)` any
-  arguments at all. Every argument the call passed must be matched: `f(x)` doesn't match a call
-  with two arguments.
+- `*` matches any number of positional arguments, `**` any number of named ones, and `...` any
+  further arguments: `f(...)` matches every call of `f`, and `f("B2", ...)` those whose first
+  argument is `"B2"`. Every argument the call passed must be matched: `f(x)` doesn't match a call
+  with two arguments, and pmdb warns when no call has the shape a pattern expects.
 
 After the arguments, `-> r` matches calls that returned, binding `r` to the result, and
 `raised e` calls that raised, binding `e` to a table with the exception's `type` and `message`
@@ -158,8 +159,8 @@ by value:**
 - `0 == 0.0` and `1 < 1.5` hold, and `f(...) -> 0` also matches calls returning `0.0`.
 - `/` always gives a floating-point number: `7 / 2 == 3.5`.
 - NaN is unequal to everything, itself included, so `x != x` finds NaNs.
-- Nothing tells an integer from a floating-point number of the same value; use `--export-xml`
-  when the distinction matters.
+- Nothing tells an integer from a floating-point number of the same value; `export` keeps the
+  distinction (`1` and `1.0`).
 - A condition (the where clause, the operands of `&& || !`, the condition of `if`, the result of
   a lambda given to `all`, `any` or `count`) must be a Boolean: `where r` fails when `r` is a
   number. Write `r != 0`, `r != none`, `s != ""` or `xs.len() > 0`.
@@ -182,10 +183,29 @@ pattern matches. Typical failures:
 **Snaps.** A call's result is also stored as a snap labeled `<function>.$result`, matched by
 `select /f\.\$result/`; outcome patterns (`-> r`) are simpler.
 
-**When a check is beyond the query language**, export the trace and finish in Python:
-`pmdb --export-xml trace.pmdb > trace.xml` gives every call with typed values (`pmdb:call`
-elements holding a `pmdb:function`, `pmdb:arguments` and nested `pmdb:observations`, followed by
-a `pmdb:snap` labeled `<function>.$result`), which `xml.etree.ElementTree` reads unambiguously.
+**Counting, summing and grouping** are beyond the query language: select the calls, `export`
+them, and finish in Python. `export $0 to "calls.jsonl"` writes one JSON object per call, with its
+`location`, `function`, `positional` and `named` arguments and the value it `returned` or the
+exception it `raised`, all typed:
+
+```
+pmdb trace.pmdb <<'EOF'
+select ship(order, carrier) where carrier != "post"
+export $0 to "shipments.jsonl"
+EOF
+python3 -c '
+import collections, json
+calls = [json.loads(l) for l in open("shipments.jsonl")]
+print(collections.Counter(c["positional"][0]["customer"] for c in calls).most_common(5))'
+```
+
+This is much smaller and faster than printing calls with `show` and parsing them.
+
+**When you are handed a trace of a failing run** (rather than recording one), start from what
+it can tell that the code can't: `show functions` gives each function's number of calls, which
+you can compare with the counts in the report (e.g. one more call than there are orders); and the values
+in the report can often be recomputed from the recorded arguments and results, with `export`, to
+find which calls account for a difference.
 
 ## 4. What else trips queries up
 
@@ -205,4 +225,4 @@ a `pmdb:snap` labeled `<function>.$result`), which `xml.etree.ElementTree` reads
   the raising function, not at the `raise`.
 - **Values print without quotes**: `call f(B2)` is a call with the string `"B2"`, `1` may be the
   string `"1"`, `f()` may be a call with an empty string, and `"a, b"` looks like two arguments.
-  Use `--export-xml` when it matters.
+  `export` writes typed values when it matters.
