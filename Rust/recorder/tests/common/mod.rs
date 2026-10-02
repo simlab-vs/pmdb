@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 pub enum Value {
   Null,
   Boolean(bool),
-  Integer(i64),
+  Integer(i128),
   Float(f64),
   String(String),
   Array(Vec<Value>),
@@ -195,14 +195,14 @@ impl Reader<'_> {
     }
   }
 
-  fn signed(&mut self) -> i64 {
-    let (mut n, mut shift) = (0i64, 0);
+  fn signed(&mut self) -> i128 {
+    let (mut n, mut shift) = (0i128, 0);
     loop {
       let b = self.byte();
-      n |= ((b & 0x7f) as i64) << shift;
+      n |= ((b & 0x7f) as i128) << shift;
       shift += 7;
       if b & 0x80 == 0 {
-        if shift < 64 && b & 0x40 != 0 {
+        if shift < 128 && b & 0x40 != 0 {
           n |= -1 << shift;
         }
         return n;

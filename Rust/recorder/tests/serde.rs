@@ -71,10 +71,7 @@ fn maps_the_serde_data_model() {
       ("1", F(2.0))
     ])
   );
-  assert_eq!(
-    recorded(u64::MAX),
-    Value::Object(u128::from(u64::MAX).to_le_bytes().to_vec())
-  );
+  assert_eq!(recorded(u64::MAX), Value::Integer(u64::MAX.into()));
   assert_eq!(recorded(serde_bytes_like()), Value::Object(vec![1, 2]));
   assert_eq!(
     recorded(BTreeMap::from([(1, 2)])),

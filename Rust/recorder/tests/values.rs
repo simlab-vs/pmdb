@@ -24,8 +24,8 @@ fn records_scalars() {
   assert_eq!(recorded!(Some(3u8)), Value::Integer(3));
   assert_eq!(recorded!(true), Value::Boolean(true));
   assert_eq!(recorded!(-7i8), Value::Integer(-7));
-  assert_eq!(recorded!(i64::MIN), Value::Integer(i64::MIN));
-  assert_eq!(recorded!(i64::MAX as u64), Value::Integer(i64::MAX));
+  assert_eq!(recorded!(i64::MIN), Value::Integer(i64::MIN.into()));
+  assert_eq!(recorded!(i64::MAX as u64), Value::Integer(i64::MAX.into()));
   assert_eq!(recorded!(1.5f32), Value::Float(1.5));
   assert_eq!(recorded!('é'), Value::str("é"));
   assert_eq!(recorded!("hi"), Value::str("hi"));
@@ -37,15 +37,10 @@ fn records_scalars() {
 }
 
 #[test]
-fn records_integers_out_of_range_as_objects() {
-  assert_eq!(
-    recorded!(u64::MAX),
-    Value::Object(u128::from(u64::MAX).to_le_bytes().to_vec())
-  );
-  assert_eq!(
-    recorded!(i128::MIN),
-    Value::Object(i128::MIN.to_le_bytes().to_vec())
-  );
+fn records_wide_integers() {
+  assert_eq!(recorded!(u64::MAX), Value::Integer(u64::MAX.into()));
+  assert_eq!(recorded!(i128::MIN), Value::Integer(i128::MIN));
+  assert_eq!(recorded!(i128::MAX as u128), Value::Integer(i128::MAX));
   assert_eq!(recorded!(5u128), Value::Integer(5));
 }
 

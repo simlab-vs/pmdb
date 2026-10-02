@@ -1,6 +1,6 @@
 //! The encoding of Rust values as the values of a trace.
 
-use crate::archive::{write_signed, write_string, write_unsigned};
+use crate::archive::{write_signed, write_signed_unsigned, write_string, write_unsigned};
 use std::borrow::Cow;
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, LinkedList, VecDeque};
@@ -95,25 +95,17 @@ impl<'a> ValueWriter<'a> {
 
   /// Records `n`.
   pub fn integer(mut self, n: i64) {
+    write_signed(self.begin(Tag::Integer), n.into());
+  }
+
+  /// Records `n`.
+  pub fn wide_integer(mut self, n: i128) {
     write_signed(self.begin(Tag::Integer), n);
   }
 
-  /// Records `n` as an integer if it is representable as an `i64`, or otherwise as an object
-  /// containing its 16 bytes in little-endian order.
-  pub fn wide_integer(self, n: i128) {
-    match i64::try_from(n) {
-      Ok(m) => self.integer(m),
-      Err(_) => self.object(&n.to_le_bytes()),
-    }
-  }
-
-  /// Records `n` as an integer if it is representable as an `i64`, or otherwise as an object
-  /// containing its 16 bytes in little-endian order.
-  pub fn wide_unsigned(self, n: u128) {
-    match i64::try_from(n) {
-      Ok(m) => self.integer(m),
-      Err(_) => self.object(&n.to_le_bytes()),
-    }
+  /// Records `n`.
+  pub fn wide_unsigned(mut self, n: u128) {
+    write_signed_unsigned(self.begin(Tag::Integer), n);
   }
 
   /// Records `n`.
