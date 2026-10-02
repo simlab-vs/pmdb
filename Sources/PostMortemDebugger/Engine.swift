@@ -62,6 +62,17 @@ public struct Engine: ~Copyable {
     try bindings[k] ?? RuntimeError("undefined symbol '\(k)'")
   }
 
+  /// The number of recorded calls of each function in the loaded traces, by name.
+  public var callCounts: [String: Int] {
+    var result: [String: Int] = [:]
+    for t in traces.values {
+      for c in t.calls where c.index.untagged != 0 {
+        result[c.value.function, default: 0] += 1
+      }
+    }
+    return result
+  }
+
   /// Adds the given trace to the store.
   public mutating func add(_ t: Trace) {
     traces[t.identity] = t

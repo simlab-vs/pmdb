@@ -208,6 +208,18 @@ func showsBrieflyWhenOutputIsNotTerminal(flags: [String]) async throws {
     """)
 }
 
+@Test func showsRecordedFunctions() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "show functions\n")
+  #expect(o.succeeded)
+  #expect(o.output == "f: 1 call(s)")
+}
+
+@Test func reportsWhatShowExpects() async throws {
+  let o = try await pmdb([makeTrace().trace], input: "select f(x)\nshow trace.pmdb\n")
+  #expect(!o.succeeded)
+  #expect(o.error == "error: expected a variable such as $0, 'variables', or 'functions'")
+}
+
 /// A source file of seven lines.
 private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
 

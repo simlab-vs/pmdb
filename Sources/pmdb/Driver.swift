@@ -154,6 +154,11 @@ import PostMortemDebugger
       for (k, v) in engine.definitions {
         print("\(k) : \(v.type)")
       }
+
+    case .showFunctions:
+      for (f, n) in engine.callCounts.sorted(by: { (a, b) in a.key < b.key }) {
+        print("\(f): \(n) call(s)")
+      }
     }
     return true
   }

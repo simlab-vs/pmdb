@@ -135,6 +135,7 @@ See the documentation of the crate `pmdb-recorder` for details.
 | `select <query>` | Runs a [query](#query-language) and assigns its result to the next variable `$0`, `$1`, … |
 | `show $N` | Prints the observations in `$N`, with the source code around each of them unless the output is brief (see below). |
 | `show variables` | Lists the variables defined so far. |
+| `show functions` | Lists the functions whose calls are recorded in the loaded traces, with their numbers of calls. |
 | `load <path> as $name` | Loads another trace. |
 | `exit` | Ends the session. |
 

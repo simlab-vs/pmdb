@@ -152,8 +152,10 @@ public struct Parser {
       return .show(text(n))
     } else if take(contextual: "variables") != nil {
       return .showConvenienceVariables
+    } else if take(contextual: "functions") != nil {
+      return .showFunctions
     } else {
-      throw expected("variable")
+      throw expected("a variable such as $0, 'variables', or 'functions'")
     }
   }
 

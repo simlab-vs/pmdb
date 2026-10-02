@@ -18,4 +18,7 @@ public enum Command: Hashable, Sendable {
   /// Enumerates convenience variables.
   case showConvenienceVariables
 
+  /// Enumerates the functions whose calls are recorded in the loaded traces.
+  case showFunctions
+
 }
