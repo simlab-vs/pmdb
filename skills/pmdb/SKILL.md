@@ -68,10 +68,10 @@ EOF
   `$0 = <k element(s) in 1 trace(s)>`. Numbering starts at `$0`: the first `select` of an
   invocation creates `$0`, the second `$1`, and so on. Other commands, `show` included, create
   no variables, so after a single `select`, `show $0` is the only valid `show`.
-- `show $N` prints each match as `file:line: call f(args) -> result` (or `raised {…}`) followed
-  by five lines of source around the call site.
+- `show $N` prints one line per match, `file:line: call f(args) -> result` (or `raised {…}`),
+  where `file:line` is the call site; read the source there for context.
 - The heredoc holds pmdb commands only; filters go after the redirection:
-  `pmdb trace.pmdb <<'EOF' | grep -v '^[ >]'` drops the source excerpts, leaving one line per match.
+  `pmdb trace.pmdb <<'EOF' | head -50`.
 - Arguments print in full, so a function taking a big structure (a catalog, a config, a parsed
   file) prints all of it on every line. Pipe the output through `<this skill>/scripts/clip`, which
   elides the middle of long lines and keeps the function name and the result, and through `head`
