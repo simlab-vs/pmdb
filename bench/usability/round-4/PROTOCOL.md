@@ -198,4 +198,15 @@ trace's size and whether it records the fix functions, and the feedback question
 
 ## Changes after the start
 
-None.
+- **Four runs at a time instead of two**, at the user's request, after 1 run had finished: the
+  two runs in progress were stopped and discarded, and run again from scratch. Tokens and turns
+  are unaffected; wall times are less comparable with earlier rounds, since more runs share the
+  machine.
+- **Sixteen runs at a time**, at the user's request, after 7 runs had finished: the runs in
+  progress were again stopped, discarded and run again. The machine has 14 cores, so wall times
+  are inflated by contention; they are reported but not interpreted.
+- **pipx's runs graded with the network.** pipx's test session downloads a package cache first, so
+  offline every test of its test files fails, and every pipx run was graded as a failure.
+  `prepare.py`'s offline check (b) had passed because its offline runs reused the cache of its
+  online runs. After all runs had finished, the 12 pipx runs were graded again with the network
+  (`harness/regrade.py`); the offline grades are kept in the records as `grade_offline`.

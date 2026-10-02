@@ -431,3 +431,54 @@ and 235k tokens.
 
 **Open question.** Is any mechanical single-site mutation hard to localize by reading, given the
 expected output?
+
+---
+
+## 2026-10-02: Round 4: real bugs, three models
+
+**Context.** Round 4 (`usability/round-4/`) used real bugs instead of mutants.
+- **Mining.** Recent fixes (April–September 2026) were mined mechanically from 9 pure-Python
+  projects on GitHub. Every candidate had to be reproducible offline, recordable, and have at
+  most 10 failing tests; 19 of 25 passed.
+- **Exercises.** 10 bugs from 7 projects were selected, with hard ones first.
+- **Models.** Haiku, Sonnet and Opus 5.5, with and without pmdb: 60 runs.
+- **Prompt.** It named the failing tests.
+
+**Results** (`usability/round-4/results/REPORT.md`).
+- **No efficiency gain for any model.** 29/30 fixed without pmdb, 30/30 with it. B − A: median
+  +76k tokens (p = 0.08) and +2 turns (p = 0.36).
+- **The screen localized 20 of 22 bugs by reading alone.** The fixed tests state the cause.
+- **The models differ much more than the arms.**
+  - Opus fixes in about 6 turns and 51k tokens, with one-shot correct edits, and skips pmdb by
+    the skill's own advice.
+  - Sonnet uses pmdb to confirm hypotheses it already has.
+  - Haiku always uses pmdb, fails 22 of its 59 commands, and was misled by routinely caught
+    exceptions matched by `raised`.
+- **pmdb helped only where tests hung.** In pipx, it was the only runtime evidence.
+
+**pmdb problems found.**
+- **Fixed** (`fbe6e19`): the recorder recursed forever when encoding a value called recorded
+  code.
+- **Not yet fixed:**
+  - the recorder breaks some beets fixtures;
+  - `raised` matches exceptions that are caught normally, which the skill invites;
+  - bare method names silently match nothing;
+  - unhelpful messages: a missing file with no name, `show <path>`, empty results;
+  - objects are opaque.
+
+**Harness problems.**
+- **The network wasn't blocked.** Agents and fixtures used it.
+- **pipx was mis-graded offline,** and was graded again with the network.
+- **16 parallel runs on 14 cores** inflated wall times.
+
+**Decisions.**
+- **Issues instead of tests.** At the user's suggestion, real-bug rounds give the issue text a
+  user reported, not the failing tests. The fixed tests are hidden and still grade the fix. The
+  agent reproduces the bug; in the pmdb arm it records its own reproduction.
+- **Settings where runtime evidence is needed.**
+  - Post-mortem runs that can't be replayed.
+  - Performance bugs (the user's suggestion): per-call durations in traces enable queries a
+    profiler can't answer. Examples: which arguments make a function slow, identical repeated
+    calls, and duration growing faster than input size.
+- **The sandbox will block the network for agents** and only reach the API.
+- **pmdb gets fixes for the problems above,** one commit each.
