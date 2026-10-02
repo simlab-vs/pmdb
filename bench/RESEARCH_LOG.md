@@ -287,3 +287,28 @@ harnesses and results without touching round 1.
 - **No behaviour change.** Round 1's harness, before and after the change, produced identical
   programs, mutants, exercises, plans, prepared runs, sandbox probes, analyses and transcript
   parses. The only differences in its outputs were the directory names in the printed paths.
+
+---
+
+## 2026-10-02: History rewritten; old commit hashes
+
+**Context.** CI failed on macOS and Windows: the driver tests didn't find `pmdb` on macOS and
+timed out on Windows, a Rust test assumed Unix paths, and XML exports lost tabs and line feeds in
+attribute values on macOS. Each fix was folded into the commit that introduced the problem, which
+changed the hashes of that commit and of every later commit on `ci`.
+
+**Old and new hashes.** The records of round 1 and earlier entries of this log use the old hashes.
+- Round 1 used pmdb at `a9cb57d`. That commit is kept as the tag `usability-round-1`.
+- Commits mentioned in this log:
+
+| Old | New | Commit |
+|---|---|---|
+| `a9cb57d` | `314cdb6` | Export traces to XML (now with the XML writer fix) |
+| `3590cc2` | `b1331d0` | Let Python types choose how they are recorded |
+| `86168c8` | `c6be50c` | Add a recorder for Rust programs (now with the Windows path fix) |
+| `3efe55c` | `2475737` | Add end-to-end tests for pmdb (now with the macOS and Windows fixes) |
+| `e935b9d` | `9db7dcb` | Name the command pmdb |
+| `8116b20` | `1cb6265` | Add an agent skill for debugging with pmdb |
+
+- Commit messages are unchanged, so other commits can be found by message.
+- The latest commit has the same files as before the rewrite.
