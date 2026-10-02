@@ -184,7 +184,7 @@ private func makeTrace(
 
 @Test func showsWithoutReadingAnswersFromInput() async throws {
   let r = try makeTrace()
-  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\nselect f(x)\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: "select f(x)\nshow $0\nselect f(x)\n")
   #expect(o.succeeded)
   #expect(o.output == """
     $0 = <1 element(s) in 1 trace(s)>
@@ -195,6 +195,17 @@ private func makeTrace(
     $1 = <1 element(s) in 1 trace(s)>
     """)
   #expect(o.error == "")
+}
+
+@Test(arguments: [[], ["--brief"], ["--non-brief", "--brief"]])
+func showsBrieflyWhenOutputIsNotTerminal(flags: [String]) async throws {
+  let r = try makeTrace()
+  let o = try await pmdb(flags + [r.trace], input: "select f(x)\nshow $0\n")
+  #expect(o.succeeded)
+  #expect(o.output == """
+    $0 = <1 element(s) in 1 trace(s)>
+    \(r.source):3: call f(1)
+    """)
 }
 
 /// A source file of seven lines.
@@ -237,7 +248,7 @@ private let sevenLines = "a\nb\nc\nd\ne\nf\ng\n"
 ])
 func showsSourceExcerpt(line: Int, excerpt: String) async throws {
   let r = try makeTrace(source: sevenLines, callingAt: line)
-  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: "select f(x)\nshow $0\n")
   #expect(o.succeeded)
   #expect(o.output == """
     $0 = <1 element(s) in 1 trace(s)>
@@ -249,7 +260,7 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
 
 @Test func showsObservationPastEndOfSource() async throws {
   let r = try makeTrace(source: sevenLines, callingAt: 10)
-  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: "select f(x)\nshow $0\n")
   #expect(o.succeeded)
   #expect(o.output == """
     $0 = <1 element(s) in 1 trace(s)>
@@ -260,7 +271,7 @@ func showsSourceExcerpt(line: Int, excerpt: String) async throws {
 
 @Test func showsLastLineWithoutLineSeparator() async throws {
   let r = try makeTrace(source: "a\nb", callingAt: 2)
-  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: "select f(x)\nshow $0\n")
   #expect(o.succeeded)
   #expect(o.output == """
     $0 = <1 element(s) in 1 trace(s)>
@@ -288,7 +299,7 @@ private let sessionCommands = ["select f(x)", "select _(...) from $0", "show $1"
 
 @Test func executesCommandsFromInput() async throws {
   let r = try makeTrace()
-  let o = try await pmdb([r.trace], input: sessionCommands.joined(separator: "\n") + "\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: sessionCommands.joined(separator: "\n") + "\n")
   #expect(o.succeeded)
   #expect(o.output == sessionOutput(r))
   #expect(o.error == "")
@@ -427,7 +438,7 @@ private let resultOfF = """
 
 @Test func showsResultsOfCalls() async throws {
   let r = try makeTrace(following: resultOfF)
-  let o = try await pmdb([r.trace], input: "select f(x)\nshow $0\n")
+  let o = try await pmdb(["--non-brief", r.trace], input: "select f(x)\nshow $0\n")
   #expect(o.succeeded)
   #expect(o.output.hasPrefix("$0 = <1 element(s) in 1 trace(s)>\n\(r.source):3: call f(1) -> 2\n"))
   #expect(o.error == "")

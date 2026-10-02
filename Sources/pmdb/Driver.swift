@@ -17,6 +17,10 @@ import PostMortemDebugger
   @Flag(help: "Show the contents of the traces passed as arguments and exit.")
   private var show: Bool = false
 
+  /// Whether observations are shown without excerpts of their source, if specified.
+  @Flag(exclusivity: .chooseLast)
+  private var excerpts: Excerpts?
+
   /// The trace that should be printed as XML, if any.
   @Option(
     name: .customLong("export-xml"),
@@ -27,6 +31,26 @@ import PostMortemDebugger
   /// The input file passed to the command.
   @Argument(transform: URL.init(fileURLWithPath:))
   private var inputs: [URL] = []
+
+  /// Whether `show` prints excerpts of the source of the observations it shows.
+  private enum Excerpts: EnumerableFlag {
+
+    /// Observations are shown without excerpts.
+    case brief
+
+    /// Observations are shown with excerpts.
+    case nonBrief
+
+    static func help(for value: Self) -> ArgumentHelp? {
+      switch value {
+      case .brief:
+        "Show observations without excerpts of their source (default if the output isn't a terminal)."
+      case .nonBrief:
+        "Show observations with excerpts of their source (default if the output is a terminal)."
+      }
+    }
+
+  }
 
   /// Creates a new instance with default options.
   public init() {}
@@ -74,6 +98,7 @@ import PostMortemDebugger
   /// Other sessions exit with a failure at the first error.
   private func runSession() async throws {
     let interactive = Self.standardInputIsTerminal
+    let brief = (excerpts ?? (Self.standardOutputIsTerminal ? .nonBrief : .brief)) == .brief
     var sources = AnyIterator({ Self.readSource(prompting: interactive) })
 
     /// Reports `e` and exits with a failure iff the session is not interactive.
@@ -89,17 +114,20 @@ import PostMortemDebugger
     while let s = sources.next() {
       if s.allSatisfy(\.isWhitespace) { continue }
       do {
-        if try await !Self.execute(Self.parse(s), in: &engine, paged: interactive) { return }
+        if try await !Self.execute(Self.parse(s), in: &engine, paged: interactive, brief: brief) {
+          return
+        }
       } catch let e {
         try handle(e)
       }
     }
   }
 
-  /// Executes `command` on `engine`, paging the observations being shown iff `paged` is `true`,
-  /// and returns `false` iff it requests to exit.
+  /// Executes `command` on `engine`, paging the observations being shown iff `paged` is `true` and
+  /// omitting excerpts of their source iff `brief` is `true`, and returns `false` iff it requests
+  /// to exit.
   private static func execute(
-    _ command: Command, in engine: inout Engine, paged: Bool
+    _ command: Command, in engine: inout Engine, paged: Bool, brief: Bool
   ) async throws -> Bool {
     switch command {
     case .exit:
@@ -117,7 +145,7 @@ import PostMortemDebugger
     case .show(let x):
       switch try engine.value(for: x) {
       case .observations(let v):
-        show(v, in: &engine, paged: paged)
+        show(v, in: &engine, paged: paged, brief: brief)
       case .trace(let v):
         print(engine.trace(v))
       }
@@ -135,9 +163,10 @@ import PostMortemDebugger
   }
 
   /// Writes a description of `source` to the standard output, asking whether to continue after
-  /// each observation iff `paged` is `true`.
+  /// each observation iff `paged` is `true` and omitting excerpts of the source iff `brief` is
+  /// `true`.
   private static func show<T: ObservationSet>(
-    _ source: T, in engine: inout Engine, paged: Bool
+    _ source: T, in engine: inout Engine, paged: Bool, brief: Bool
   ) {
     for i in source.traces.indices {
       let trace = engine.trace(source.traces[i])
@@ -148,10 +177,10 @@ import PostMortemDebugger
       while true {
         if let c = calls.first, snaps.first.map({ (s) in c.untagged < s.untagged }) ?? true {
           let c = calls.removeFirst()
-          show(trace[at: c], described: trace.description(of: c), in: &engine)
+          show(trace[at: c], described: trace.description(of: c), in: &engine, brief: brief)
         } else if !snaps.isEmpty {
           let s = trace[at: snaps.removeFirst()]
-          show(s, described: s.description, in: &engine)
+          show(s, described: s.description, in: &engine, brief: brief)
         } else {
           break
         }
@@ -162,12 +191,13 @@ import PostMortemDebugger
     }
   }
 
-  /// Writes `description`, which describes `o`, and an excerpt of the source of `o` to the
-  /// standard output.
+  /// Writes `description`, which describes `o`, and an excerpt of the source of `o` unless `brief`
+  /// is `true` to the standard output.
   private static func show<T: Observation>(
-    _ o: T, described description: String, in engine: inout Engine
+    _ o: T, described description: String, in engine: inout Engine, brief: Bool
   ) {
     print("\(o.location): \(description)")
+    if brief { return }
     if let s = engine.demand(contentsOf: URL(fileURLWithPath: o.location.source)) {
       let n = o.location.number
       for i in stride(from: max(1, n - 2), through: min(s.lineCount, n + 2), by: 1) {

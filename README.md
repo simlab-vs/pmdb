@@ -133,7 +133,7 @@ See the documentation of the crate `pmdb-recorder` for details.
 | Command | Effect |
 |---|---|
 | `select <query>` | Runs a [query](#query-language) and assigns its result to the next variable `$0`, `$1`, … |
-| `show $N` | Prints the observations in `$N`, with the source code around each of them. |
+| `show $N` | Prints the observations in `$N`, with the source code around each of them unless the output is brief (see below). |
 | `show variables` | Lists the variables defined so far. |
 | `load <path> as $name` | Loads another trace. |
 | `exit` | Ends the session. |
@@ -158,6 +158,7 @@ Several traces can be loaded at once, in which case queries select observations 
 Other options:
 
 - `pmdb --show <traces>` prints traces as trees and exits;
+- `--brief` makes `show` print one line per observation, without the source code around it, and `--non-brief` makes it print the source code. By default, the output is brief iff it isn't written to a terminal; if both flags are given, the last one applies;
 - `pmdb --export-xml <trace>` prints a trace in the XML format described in [Documentation/Traces.md](Documentation/Traces.md). `pmdb` loads traces whose names end with `.xml` as XML documents.
 
 ## Query language
