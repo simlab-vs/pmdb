@@ -29,7 +29,20 @@ if it raises. If `pmdb-record` can't import the recorder, add the directory cont
 find it) to `PYTHONPATH`. Things it doesn't record: lambdas, calls answered by a cache such as
 `functools.lru_cache`, and the bodies of generators under their call (a generator call returns at
 once, and the calls made while consuming it are attached to the consumer). To record a failing
-test, write a small script at the project root that calls the failing code, and record that.
+pytest test, record a driver script at the project root (pmdb-record records the project's
+modules; the test functions themselves aren't recorded):
+
+```
+cat > pmdb_driver.py <<'EOF'
+import sys
+import pytest
+sys.exit(pytest.main(["-q", "-p", "no:cacheprovider", "tests/test_x.py::test_y"]))
+EOF
+python3 <this skill>/scripts/pmdb-record -o trace.pmdb pmdb_driver.py
+```
+
+Run `pmdb-record` with the interpreter that has the project's dependencies (e.g. the
+virtual environment's `python`), as above.
 
 Class instances (including `self`) are recorded as opaque values, which queries can't look into.
 If the state you care about lives in objects, add `def __pmdb__(self): return vars(self)` to
