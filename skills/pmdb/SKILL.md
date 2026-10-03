@@ -62,7 +62,9 @@ EOF
 ```
 
 When the analysis grows, keep loading and helper functions in a file (e.g. `analysis.py`) and
-import it from each new script, rather than pasting them again.
+import it from each new script, rather than pasting them again. Each `t.calls(...)` scans the
+whole trace: inside a loop over calls, use `c.callees(...)` and `c.descendants(...)`, which only
+look at the calls made during `c`.
 
 **Selecting calls.** `t.calls(*selectors, **conditions)` returns the calls (a `Calls` list, in
 the order they started) matching every selector and condition. A selection can be narrowed
@@ -138,11 +140,15 @@ The trace holds what the code and the logs don't: the actual inputs, every inter
 and how many times each function ran. `t.functions()` gives the counts, which you can compare
 with those in the report (e.g. one more call than there are orders), and the figures in the
 report can often be recomputed from recorded arguments and results, to find which calls account
-for a difference. The same recomputation, applied to your fix (e.g. calling the fixed function
+for a difference. Recompute them from calls that see all of the inputs (e.g. the function that
+reads the records, rather than one called only for the records that passed a filter), and
+account for the whole difference, not most of it. The same recomputation, applied to your fix (e.g. calling the fixed function
 on recorded arguments), checks the fix against the figures that were reported.
 
 ## What trips queries up
 
+- **`c.returned` is a Boolean**, whether the call returned: compare the value it returned with
+  `c.result`, or select with `returned=value`. `c.returned == "new"` is always false.
 - **An exception is recorded on every call it passes through**: if `f` calls `g` and `g`
   raises, both `f` and `g` have `raised` set. `c.callees(raised=True)` is empty for the call
   that raised it first.

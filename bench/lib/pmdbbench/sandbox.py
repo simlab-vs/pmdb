@@ -1,6 +1,7 @@
 """Runs commands in a bubblewrap sandbox that exposes only what an agent is meant to see.
 
-The sandbox contains a read-only /nix store, a minimal /etc, a fresh home directory, the writable
+The sandbox contains a read-only /nix store (without the copies of this repository it may hold),
+a minimal /etc, a fresh home directory, the writable
 /work directory and, optionally, a read-only /opt/pmdb. All namespaces but the network are
 unshared, since Claude Code needs to reach the API.
 """
@@ -22,6 +23,15 @@ for t in TOOLS:
     TOOL_DIRS.append(store_dir(t))
 CA_BUNDLE = os.path.realpath("/etc/ssl/certs/ca-certificates.crt")
 SHELL = os.path.join(store_dir("bash"), "bash")
+
+
+def repository_copies():
+  """Returns the copies of this repository in the Nix store (made when its flake is evaluated),
+  which contain the scenarios' private inputs, ground truths and oracles, and older versions of
+  pmdb, and must be hidden from agents."""
+  markers = ["bench/usability", "skills/pmdb", "Python/recorder"]
+  return sorted({str(p.parents[len(Path(m).parts) - 1]) for m in markers
+                 for p in Path("/nix/store").glob(f"*/{m}")})
 
 
 def prepare_etc(root):
@@ -59,6 +69,7 @@ def command(root, argv, opt=None, env=None):
     "bwrap", "--unshare-all", "--share-net", "--die-with-parent", "--new-session",
     "--hostname", "sandbox", "--uid", "1000", "--gid", "100",
     "--ro-bind", "/nix", "/nix",
+    *[x for d in repository_copies() for x in ("--tmpfs", d)],
     "--ro-bind", str(root / "etc"), "/etc",
     "--symlink", os.path.realpath("/bin/sh"), "/bin/sh",
     "--symlink", os.path.realpath("/usr/bin/env"), "/usr/bin/env",

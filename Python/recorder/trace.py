@@ -39,6 +39,7 @@ Conditions (keyword arguments of `calls`, `where` and `Q`):
 """
 
 import collections
+import difflib
 import pickle
 import pickletools
 import re
@@ -189,6 +190,14 @@ class Reader(object):
     raise ValueError(f"unknown value tag {tag:#x} at offset {self.i - 1}")
 
 
+def _no_attribute(obj, name):
+  """Raises the `AttributeError` for reading `name` from `obj`, suggesting close names."""
+  names = [n for n in dir(type(obj)) if not n.startswith("_")]
+  close = difflib.get_close_matches(name, names, n=3, cutoff=0.5)
+  hint = f"; did you mean {', '.join(close)}?" if close else f"; it has {', '.join(names)}"
+  raise AttributeError(f"{type(obj).__name__} has no attribute {name!r}{hint}")
+
+
 def _short(value, n):
   if isinstance(value, Opaque) and value.description is None:
     return f"<{(value.type or 'object').rsplit('.', 1)[-1]}>"
@@ -221,6 +230,9 @@ class Call(object):
     self._outcome = None          # ("returned", value) or ("raised", Raised)
     self.end_location = None      # (file, line) where the call returned or raised, if recorded
     self.depth = depth
+
+  def __getattr__(self, name):
+    _no_attribute(self, name)
 
   # Arguments.
 
@@ -572,16 +584,14 @@ def _callee(trace, selector):
 
 
 def _ancestor(trace, selector):
-  s = _indices(trace, selector)
-
-  def test(c):
-    p = c.caller
-    while p is not None:
-      if p.index in s:
-        return True
-      p = p.caller
-    return False
-  return test
+  # The calls made during a selected call.
+  inside, pending = set(), [i for i in _indices(trace, selector)]
+  while pending:
+    for j in trace._by_index[pending.pop()].children_indices:
+      if j not in inside:
+        inside.add(j)
+        pending.append(j)
+  return lambda c: c.index in inside
 
 
 def _descendant(trace, selector):
@@ -623,6 +633,9 @@ def _key(key):
 
 class Calls(list):
   """A selection of calls, in recording order."""
+
+  def __getattr__(self, name):
+    _no_attribute(self, name)
 
   def where(self, *selectors, **conditions):
     """The calls selected by every selector and satisfying every condition (see the module's
@@ -723,6 +736,9 @@ def _freeze(value):
 
 class Trace(object):
   """A recorded trace."""
+
+  def __getattr__(self, name):
+    _no_attribute(self, name)
 
   def __init__(self, identifier):
     self.identifier = identifier
