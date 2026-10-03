@@ -1,0 +1,16 @@
+{
+  "mdm_metered_kwh": "1941139.9",
+  "needles": [
+    {
+      "kind": "tx_legacy_to_ml",
+      "account": "AC-252187",
+      "legacy_id": "NW-43185",
+      "old_meter": "TX7278945",
+      "old_kwh": "110.1",
+      "new_meter": "ML-D5F26F",
+      "new_kwh": "77.671",
+      "date": "2026-09-17"
+    }
+  ],
+  "readings": 6428
+}

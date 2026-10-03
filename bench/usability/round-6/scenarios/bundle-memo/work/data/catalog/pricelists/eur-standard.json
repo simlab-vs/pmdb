@@ -1,0 +1,357 @@
+{
+ "id": "eur-standard",
+ "currency": "EUR",
+ "prices": {
+  "LT-101": {
+   "retail": "7.80",
+   "member": "7.20",
+   "trade": "6.20"
+  },
+  "LT-102": {
+   "retail": "7.20",
+   "member": "6.60",
+   "trade": "5.80"
+  },
+  "LT-103": {
+   "retail": "9.80",
+   "member": "9.00",
+   "trade": "7.80"
+  },
+  "LT-104": {
+   "retail": "7.70",
+   "member": "7.10",
+   "trade": "6.20"
+  },
+  "LT-105": {
+   "retail": "13.30",
+   "member": "12.20",
+   "trade": "10.60"
+  },
+  "LT-106": {
+   "retail": "13.20",
+   "member": "12.10",
+   "trade": "10.60"
+  },
+  "LT-107": {
+   "retail": "13.30",
+   "member": "12.20",
+   "trade": "10.60"
+  },
+  "LT-108": {
+   "retail": "12.20",
+   "member": "11.20",
+   "trade": "9.80"
+  },
+  "LT-109": {
+   "retail": "8.80",
+   "member": "8.10",
+   "trade": "7.00"
+  },
+  "LT-110": {
+   "retail": "7.70",
+   "member": "7.10",
+   "trade": "6.20"
+  },
+  "LT-111": {
+   "retail": "13.30",
+   "member": "12.20",
+   "trade": "10.60"
+  },
+  "LT-112": {
+   "retail": "6.20",
+   "member": "5.70",
+   "trade": "5.00"
+  },
+  "LT-113": {
+   "retail": "11.80",
+   "member": "10.90",
+   "trade": "9.40"
+  },
+  "LT-114": {
+   "retail": "12.70",
+   "member": "11.70",
+   "trade": "10.20"
+  },
+  "LT-115": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  },
+  "LT-116": {
+   "retail": "13.20",
+   "member": "12.10",
+   "trade": "10.60"
+  },
+  "LT-117": {
+   "retail": "9.80",
+   "member": "9.00",
+   "trade": "7.80"
+  },
+  "LT-118": {
+   "retail": "9.70",
+   "member": "8.90",
+   "trade": "7.80"
+  },
+  "LT-119": {
+   "retail": "7.30",
+   "member": "6.70",
+   "trade": "5.80"
+  },
+  "LT-120": {
+   "retail": "11.20",
+   "member": "10.30",
+   "trade": "9.00"
+  },
+  "LT-121": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  },
+  "LT-122": {
+   "retail": "6.20",
+   "member": "5.70",
+   "trade": "5.00"
+  },
+  "LT-123": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  },
+  "LT-124": {
+   "retail": "14.70",
+   "member": "13.50",
+   "trade": "11.80"
+  },
+  "LT-125": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  },
+  "LT-126": {
+   "retail": "12.20",
+   "member": "11.20",
+   "trade": "9.80"
+  },
+  "LT-127": {
+   "retail": "8.80",
+   "member": "8.10",
+   "trade": "7.00"
+  },
+  "LT-128": {
+   "retail": "12.70",
+   "member": "11.70",
+   "trade": "10.20"
+  },
+  "LT-129": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  },
+  "LT-130": {
+   "retail": "14.20",
+   "member": "13.10",
+   "trade": "11.40"
+  },
+  "TB-201": {
+   "retail": "3.40",
+   "member": "3.10",
+   "trade": "2.70"
+  },
+  "TB-202": {
+   "retail": "5.20",
+   "member": "4.80",
+   "trade": "4.20"
+  },
+  "TB-203": {
+   "retail": "4.20",
+   "member": "3.90",
+   "trade": "3.40"
+  },
+  "TB-204": {
+   "retail": "4.20",
+   "member": "3.90",
+   "trade": "3.40"
+  },
+  "TB-205": {
+   "retail": "4.40",
+   "member": "4.00",
+   "trade": "3.50"
+  },
+  "TB-206": {
+   "retail": "3.40",
+   "member": "3.10",
+   "trade": "2.70"
+  },
+  "TB-207": {
+   "retail": "3.80",
+   "member": "3.50",
+   "trade": "3.00"
+  },
+  "TB-208": {
+   "retail": "3.40",
+   "member": "3.10",
+   "trade": "2.70"
+  },
+  "TB-209": {
+   "retail": "4.80",
+   "member": "4.40",
+   "trade": "3.80"
+  },
+  "TB-210": {
+   "retail": "3.40",
+   "member": "3.10",
+   "trade": "2.70"
+  },
+  "TB-211": {
+   "retail": "5.20",
+   "member": "4.80",
+   "trade": "4.20"
+  },
+  "TB-212": {
+   "retail": "4.20",
+   "member": "3.90",
+   "trade": "3.40"
+  },
+  "CB-301": {
+   "retail": "8.80",
+   "member": "8.10",
+   "trade": "7.00"
+  },
+  "CB-302": {
+   "retail": "6.80",
+   "member": "6.30",
+   "trade": "5.40"
+  },
+  "CB-303": {
+   "retail": "9.80",
+   "member": "9.00",
+   "trade": "7.80"
+  },
+  "CB-304": {
+   "retail": "13.30",
+   "member": "12.20",
+   "trade": "10.60"
+  },
+  "CB-305": {
+   "retail": "10.80",
+   "member": "9.90",
+   "trade": "8.60"
+  },
+  "CB-306": {
+   "retail": "11.80",
+   "member": "10.90",
+   "trade": "9.40"
+  },
+  "CB-307": {
+   "retail": "7.30",
+   "member": "6.70",
+   "trade": "5.80"
+  },
+  "CB-308": {
+   "retail": "7.80",
+   "member": "7.20",
+   "trade": "6.20"
+  },
+  "CB-309": {
+   "retail": "11.80",
+   "member": "10.90",
+   "trade": "9.40"
+  },
+  "CB-310": {
+   "retail": "12.30",
+   "member": "11.30",
+   "trade": "9.80"
+  },
+  "CB-311": {
+   "retail": "13.30",
+   "member": "12.20",
+   "trade": "10.60"
+  },
+  "CB-312": {
+   "retail": "8.80",
+   "member": "8.10",
+   "trade": "7.00"
+  },
+  "CC-401": {
+   "retail": "3.50",
+   "member": "3.20",
+   "trade": "2.80"
+  },
+  "CC-402": {
+   "retail": "4.50",
+   "member": "4.10",
+   "trade": "3.60"
+  },
+  "CC-403": {
+   "retail": "3.90",
+   "member": "3.60",
+   "trade": "3.10"
+  },
+  "CC-404": {
+   "retail": "4.80",
+   "member": "4.40",
+   "trade": "3.80"
+  },
+  "CC-405": {
+   "retail": "4.50",
+   "member": "4.10",
+   "trade": "3.60"
+  },
+  "CC-406": {
+   "retail": "4.50",
+   "member": "4.10",
+   "trade": "3.60"
+  },
+  "KT-501": {
+   "retail": "34.80",
+   "member": "32.00",
+   "trade": "27.80"
+  },
+  "KT-502": {
+   "retail": "54.80",
+   "member": "50.40",
+   "trade": "43.80"
+  },
+  "CUP-511": {
+   "retail": "8.80",
+   "member": "8.10",
+   "trade": "7.00"
+  },
+  "CUP-512": {
+   "retail": "12.80",
+   "member": "11.80",
+   "trade": "10.20"
+  },
+  "CUP-513": {
+   "retail": "9.80",
+   "member": "9.00",
+   "trade": "7.80"
+  },
+  "INF-521": {
+   "retail": "6.80",
+   "member": "6.30",
+   "trade": "5.40"
+  },
+  "INF-522": {
+   "retail": "11.80",
+   "member": "10.90",
+   "trade": "9.40"
+  },
+  "GR-531": {
+   "retail": "39.80",
+   "member": "36.60",
+   "trade": "31.80"
+  },
+  "TIN-541": {
+   "retail": "5.80",
+   "member": "5.30",
+   "trade": "4.60"
+  }
+ },
+ "combos": {
+  "BREW-KIT": "51.40",
+  "STARTER": "17.40",
+  "GRIND-KIT": "40.10",
+  "TEAPOT-SET": "61.60"
+ }
+}

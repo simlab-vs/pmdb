@@ -1,0 +1,97 @@
+{
+ "offers": [
+  {
+   "id": "TEA-3FOR2",
+   "kind": "mix",
+   "group": "loose-tea",
+   "buy": 3,
+   "free": 1,
+   "channels": [
+    "web",
+    "store"
+   ]
+  },
+  {
+   "id": "BAGS-5FOR4",
+   "kind": "mix",
+   "group": "tea-bags",
+   "buy": 5,
+   "free": 1
+  },
+  {
+   "id": "BEANS-MEMBER",
+   "kind": "mix",
+   "group": "beans",
+   "buy": 3,
+   "free": 1,
+   "tiers": [
+    "member"
+   ]
+  },
+  {
+   "id": "CAPS-6",
+   "kind": "bulk",
+   "sku": "CC-401",
+   "qty": 6,
+   "percent": "15"
+  },
+  {
+   "id": "CAPS-6B",
+   "kind": "bulk",
+   "sku": "CC-403",
+   "qty": 6,
+   "percent": "15"
+  },
+  {
+   "id": "AUTUMN-TINS",
+   "kind": "bulk",
+   "sku": "TIN-541",
+   "qty": 4,
+   "percent": "25",
+   "from": "2026-09-15",
+   "to": "2026-10-15"
+  },
+  {
+   "id": "SUMMER-ICED",
+   "kind": "mix",
+   "group": "tea-bags",
+   "buy": 3,
+   "free": 1,
+   "from": "2026-06-01",
+   "to": "2026-08-31"
+  },
+  {
+   "id": "BREW-KIT",
+   "kind": "combo",
+   "items": {
+    "KT-501": 1,
+    "CUP-512": 2
+   }
+  },
+  {
+   "id": "STARTER",
+   "kind": "combo",
+   "items": {
+    "INF-521": 1,
+    "LT-104": 1,
+    "LT-115": 1
+   }
+  },
+  {
+   "id": "GRIND-KIT",
+   "kind": "combo",
+   "items": {
+    "GR-531": 1,
+    "CB-307": 1
+   }
+  },
+  {
+   "id": "TEAPOT-SET",
+   "kind": "combo",
+   "items": {
+    "KT-502": 1,
+    "CUP-511": 2
+   }
+  }
+ ]
+}

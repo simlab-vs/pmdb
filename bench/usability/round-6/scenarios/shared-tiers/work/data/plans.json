@@ -1,0 +1,246 @@
+{
+  "plans": {
+    "starter": {
+      "name": "Starter",
+      "base_fee": 29,
+      "metrics": {
+        "api_requests": {
+          "label": "API requests",
+          "unit": "requests",
+          "model": "volume",
+          "included": 50000,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 250000,
+              "unit_price": 0.0012
+            },
+            {
+              "from": 250000,
+              "to": null,
+              "unit_price": 0.0011
+            }
+          ]
+        },
+        "storage_gb": {
+          "label": "storage",
+          "unit": "GB-months",
+          "model": "graduated",
+          "aggregate": "average",
+          "included": 10,
+          "tiers": [
+            {
+              "from": 0,
+              "to": null,
+              "unit_price": 0.025
+            }
+          ]
+        },
+        "seats": {
+          "label": "seats",
+          "unit": "seats",
+          "model": "per_unit",
+          "aggregate": "max",
+          "included": 3,
+          "unit_price": 9
+        }
+      }
+    },
+    "growth": {
+      "name": "Growth",
+      "base_fee": 249,
+      "metrics": {
+        "api_requests": {
+          "label": "API requests",
+          "unit": "requests",
+          "model": "volume",
+          "included": 200000,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 1000000,
+              "unit_price": 0.0009
+            },
+            {
+              "from": 1000000,
+              "to": 5000000,
+              "unit_price": 0.0008
+            },
+            {
+              "from": 5000000,
+              "to": null,
+              "unit_price": 0.0007
+            }
+          ]
+        },
+        "storage_gb": {
+          "label": "storage",
+          "unit": "GB-months",
+          "model": "graduated",
+          "aggregate": "average",
+          "included": 100,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 1000,
+              "unit_price": 0.023
+            },
+            {
+              "from": 1000,
+              "to": null,
+              "unit_price": 0.021
+            }
+          ]
+        },
+        "egress_gb": {
+          "label": "data transfer",
+          "unit": "GB",
+          "model": "graduated",
+          "included": 100,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 10000,
+              "unit_price": 0.08
+            },
+            {
+              "from": 10000,
+              "to": null,
+              "unit_price": 0.06
+            }
+          ]
+        },
+        "seats": {
+          "label": "seats",
+          "unit": "seats",
+          "model": "per_unit",
+          "aggregate": "max",
+          "included": 10,
+          "unit_price": 8
+        }
+      }
+    },
+    "scale": {
+      "name": "Scale",
+      "base_fee": 990,
+      "metrics": {
+        "api_requests": {
+          "label": "API requests",
+          "unit": "requests",
+          "model": "volume",
+          "included": 500000,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 2000000,
+              "unit_price": 0.0008
+            },
+            {
+              "from": 2000000,
+              "to": 10000000,
+              "unit_price": 0.0006
+            },
+            {
+              "from": 10000000,
+              "to": 50000000,
+              "unit_price": 0.00045
+            },
+            {
+              "from": 50000000,
+              "to": null,
+              "unit_price": 0.0003
+            }
+          ]
+        },
+        "storage_gb": {
+          "label": "storage",
+          "unit": "GB-months",
+          "model": "graduated",
+          "aggregate": "average",
+          "included": 500,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 5000,
+              "unit_price": 0.021
+            },
+            {
+              "from": 5000,
+              "to": 50000,
+              "unit_price": 0.019
+            },
+            {
+              "from": 50000,
+              "to": null,
+              "unit_price": 0.017
+            }
+          ]
+        },
+        "egress_gb": {
+          "label": "data transfer",
+          "unit": "GB",
+          "model": "graduated",
+          "included": 1000,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 10000,
+              "unit_price": 0.07
+            },
+            {
+              "from": 10000,
+              "to": 100000,
+              "unit_price": 0.05
+            },
+            {
+              "from": 100000,
+              "to": null,
+              "unit_price": 0.04
+            }
+          ]
+        },
+        "seats": {
+          "label": "seats",
+          "unit": "seats",
+          "model": "per_unit",
+          "aggregate": "max",
+          "included": 25,
+          "unit_price": 7
+        }
+      }
+    },
+    "legacy_pro": {
+      "name": "Pro (legacy)",
+      "base_fee": 99,
+      "retired": true,
+      "metrics": {
+        "api_requests": {
+          "label": "API requests",
+          "unit": "requests",
+          "model": "graduated",
+          "included": 100000,
+          "tiers": [
+            {
+              "from": 0,
+              "to": 1000000,
+              "unit_price": 0.001
+            },
+            {
+              "from": 1000000,
+              "to": null,
+              "unit_price": 0.0009
+            }
+          ]
+        },
+        "seats": {
+          "label": "seats",
+          "unit": "seats",
+          "model": "per_unit",
+          "aggregate": "max",
+          "included": 5,
+          "unit_price": 10
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+select build_toc(page, _) where page.blocks.any(b => b.kind == "heading" && b.id == none)
+select order_plugins(specs, enabled) -> order
+show $1
+select load_manifest(path, _) -> spec where spec.name == "toc"
+show $2

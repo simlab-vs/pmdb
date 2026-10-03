@@ -1,0 +1,4 @@
+select account_consumption(k, rs, _) -> c where c != none && c > 77.65 && c < 77.75
+show $0
+select account_consumption("AC-252187", rs, _) -> c
+show $1

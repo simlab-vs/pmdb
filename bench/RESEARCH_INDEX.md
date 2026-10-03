@@ -20,12 +20,14 @@ listed here by topic; their titles are the log's headings.
 | [3](usability/round-3/) | realistic mutants of 3 larger programs | — | abandoned: a reading agent localized every candidate | Round 3 abandoned |
 | [4](usability/round-4/) | 10 real bugs, failing tests given | Haiku, Sonnet, Opus 5.5 | no gain; tests give the cause away; models differ more than arms | Round 4: real bugs, three models |
 | [5](usability/round-5/) | 9 real bugs, issue text only, no network | Haiku, Sonnet, Opus 5.5 | pmdb almost never used without a trace; half the exercises unsolvable from the issue | Round 5: reported issues, no network, no pre-recorded trace |
+| [6](usability/round-6/) | 6 hand-designed scenarios needing runtime evidence (exploratory) | Haiku, Sonnet, Opus 5.5 | only the post-mortem scenario needed the trace (Sonnet, Opus fixed it only with pmdb) | Round 6: hand-designed scenarios (exploratory) |
 
 ## pmdb and the skill
 
 - 2026-10-01: Incorporating round 1's feedback into pmdb
 - 2026-10-02: Evaluating and revising the agent skill
 - 2026-10-02: pmdb fixes from round 4's feedback
+- pmdb changes after round 6: export, `...` among patterns, argument-shape warnings (Round 6 entry)
 - Changes after round 2 (no log entry; see git history): `raised` patterns, variadic patterns
   anywhere, brief output when not on a terminal, clearer documentation of variables and snap
   labels, the skill limited to Python; integer/float value semantics (`09c1c0d`..`c01502c`).

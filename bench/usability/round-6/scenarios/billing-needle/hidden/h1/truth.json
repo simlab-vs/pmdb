@@ -1,0 +1,16 @@
+{
+  "mdm_metered_kwh": "1211129.1",
+  "needles": [
+    {
+      "kind": "gs_legacy_to_ml",
+      "account": "AC-041547",
+      "legacy_id": "NW-45047",
+      "old_meter": "G10K557662",
+      "old_kwh": "262.60",
+      "new_meter": "ML-625331",
+      "new_kwh": "154.807",
+      "date": "2026-09-19"
+    }
+  ],
+  "readings": 3737
+}

@@ -1,0 +1,21 @@
+2026-10-01 03:10:02,392 INFO recon: payout reconciliation 3.4.1 for 2026-09
+2026-10-01 03:10:02,392 INFO recon.fx: loaded 125 FX rates from /srv/payout-recon/config/fx/2026-09.csv
+2026-10-01 03:10:02,676 INFO recon.loader: read 21633 events from /srv/exports/events-2026-09.jsonl.gz
+2026-10-01 03:10:02,676 INFO recon.loader: dropped 43 redelivered events
+2026-10-01 03:10:02,676 INFO recon.loader: dropped 429 events outside 2026-09-01T00:00:00Z .. 2026-10-01T00:00:00Z
+2026-10-01 03:10:02,812 INFO recon.checks: kestrel: 8101 charge, 451 refund, 12 dispute
+2026-10-01 03:10:02,812 INFO recon.checks: lumen: 5548 charge, 245 refund, 17 dispute, 110 other
+2026-10-01 03:10:02,813 INFO recon.checks: novapay: 6233 charge, 421 refund, 23 dispute
+2026-10-01 03:10:02,813 INFO recon.checks: converted 3196 transactions into EUR (CHF 1305, GBP 1265, PLN 208, SEK 196, USD 222)
+2026-10-01 03:10:02,813 INFO recon.checks: kestrel: 45 refunds or disputes of charges made before this period
+2026-10-01 03:10:02,813 INFO recon.checks: novapay: 35 refunds or disputes of charges made before this period
+2026-10-01 03:10:02,813 INFO recon.ledger: kestrel: booked 8344 entries (7881 charges, 451 refunds, 12 disputes); skipped 220 failed
+2026-10-01 03:10:02,813 INFO recon.ledger: lumen: booked 5582 entries (5320 charges, 245 refunds, 17 disputes); skipped 228 failed
+2026-10-01 03:10:02,813 INFO recon.ledger: novapay: booked 6454 entries (6021 charges, 410 refunds, 23 disputes); skipped 223 failed
+2026-10-01 03:10:02,813 INFO recon.report: wrote /srv/payout-recon/reports/payout-recon-2026-09.txt and /srv/payout-recon/reports/payout-recon-2026-09.json
+2026-10-01 03:10:02,813 INFO recon: kestrel net payout 414,831.05 EUR
+2026-10-01 03:10:02,813 INFO recon: lumen net payout 282,085.43 EUR
+2026-10-01 03:10:02,813 INFO recon: novapay net payout 326,640.25 EUR
+2026-10-01 03:10:02,813 INFO recon: total net payout 1,023,556.73 EUR
+2026-10-01 03:10:02,813 INFO recon: 40 FX lookups used an earlier day's rate
+2026-10-01 03:10:02,816 INFO recon: done

@@ -1,0 +1,2 @@
+$1 = <38 element(s) in 1 trace(s)>
+kind: relocate, length: 1, r1: 20, r2: 41, reverse: false, stop: S0259, v1: T-22, v2: T-44}) -> [{capacity: 1600, cost: 133.27, distance: 77.851, duration: 362.9, load_kg: 1313, stops: 18, vehicle: T-45}]

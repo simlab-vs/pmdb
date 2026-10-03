@@ -1,0 +1,74 @@
+{
+ "DE": {
+  "currency": "EUR",
+  "price_list": "eur-standard",
+  "vat": "19",
+  "shipping": {
+   "fee": "4.90",
+   "free_from": "49.00"
+  }
+ },
+ "AT": {
+  "currency": "EUR",
+  "price_list": "eur-at",
+  "vat": "20",
+  "shipping": {
+   "fee": "5.90",
+   "free_from": "59.00"
+  }
+ },
+ "FR": {
+  "currency": "EUR",
+  "price_list": "eur-standard",
+  "vat": "20",
+  "shipping": {
+   "fee": "6.90",
+   "free_from": "59.00"
+  }
+ },
+ "NL": {
+  "currency": "EUR",
+  "price_list": "eur-standard",
+  "vat": "21",
+  "shipping": {
+   "fee": "5.90",
+   "free_from": "59.00"
+  }
+ },
+ "BE": {
+  "currency": "EUR",
+  "price_list": "eur-standard",
+  "vat": "21",
+  "shipping": {
+   "fee": "5.90",
+   "free_from": "59.00"
+  }
+ },
+ "IE": {
+  "currency": "EUR",
+  "price_list": "eur-standard",
+  "vat": "23",
+  "shipping": {
+   "fee": "8.90",
+   "free_from": "79.00"
+  }
+ },
+ "CH": {
+  "currency": "CHF",
+  "price_list": "chf",
+  "vat": "8.1",
+  "shipping": {
+   "fee": "9.90",
+   "free_from": "79.00"
+  }
+ },
+ "UK": {
+  "currency": "GBP",
+  "price_list": "gbp",
+  "vat": "20",
+  "shipping": {
+   "fee": "6.50",
+   "free_from": "60.00"
+  }
+ }
+}

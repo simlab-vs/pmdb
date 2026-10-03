@@ -551,3 +551,45 @@ ending at the turn cap are now kept.
 - **Round 6 explores hand-designed scenarios where runtime evidence is essential,** in
   parallel. They are labelled as designed to favour pmdb: they test where it can help, not how
   much it helps in general.
+
+---
+
+## 2026-10-03: Round 6: hand-designed scenarios (exploratory)
+
+**Context.** At the user's request, six scenarios were built by hand to need runtime evidence
+(`usability/round-6/`):
+- a needle in a 3,000-account batch;
+- a post-mortem with a private input;
+- aliasing;
+- a wrong memoization key;
+- an intermittent failure;
+- a 2-minute run.
+
+They test where pmdb can help, not how much. Each ran once per model and arm (36 runs), with the
+pmdb arm handed a trace of the reported run.
+
+**Results** (`usability/round-6/results/REPORT.md`).
+- **Success was the same in both arms**: 14/18 each.
+- **The trace decided only the post-mortem scenario.** There, Sonnet and Opus failed without it
+  and succeeded with it. The decisive information was the private input it carried. Agents got
+  it out through a 330 MB XML export or by regex-parsing `show`, then grouped it in Python.
+- **The other five were solved without pmdb.** Their input was local and runs were cheap, so
+  arm A scripted the same evidence. The trace usually added cost.
+- **A harness bug:** some oracles needed `patch`, missing from the sandbox, so all runs were
+  graded again.
+
+**pmdb changes from this round** (`0132676`..`5824f91`):
+- **`export $N to "file"`** writes typed JSON Lines;
+- **`...` among other argument patterns;**
+- **a warning when no recorded call has a pattern's argument shape;**
+- **keywords as property names;**
+- **comment-only lines;**
+- **skill recipes** for exporting and aggregating, and for traces you are handed.
+
+**Decision.** Round 7 targets the post-mortem setting, where replay is impossible:
+- private data;
+- external state that has changed;
+- time-dependent behaviour;
+- a consumed message queue.
+
+It uses two runs per cell and the improved pmdb.

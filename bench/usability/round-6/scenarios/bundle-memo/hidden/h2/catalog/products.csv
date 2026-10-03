@@ -1,0 +1,70 @@
+sku,name,category,groups,active
+LT-101,Assam loose 100 g,tea,loose-tea,1
+LT-102,Darjeeling loose 100 g,tea,loose-tea,1
+LT-103,Ceylon loose 100 g,tea,loose-tea,1
+LT-104,Earl Grey loose 100 g,tea,loose-tea,1
+LT-105,Lapsang loose 100 g,tea,loose-tea,1
+LT-106,Sencha loose 100 g,tea,loose-tea,1
+LT-107,Gyokuro loose 100 g,tea,loose-tea,1
+LT-108,Bancha loose 100 g,tea,loose-tea,1
+LT-109,Genmaicha loose 100 g,tea,loose-tea,1
+LT-110,Oolong loose 100 g,tea,loose-tea,1
+LT-111,Pu-erh loose 100 g,tea,loose-tea,1
+LT-112,Rooibos loose 100 g,tea,loose-tea,1
+LT-113,Chai loose 100 g,tea,loose-tea,1
+LT-114,Jasmine loose 100 g,tea,loose-tea,1
+LT-115,Mint loose 100 g,tea,loose-tea,1
+LT-116,Chamomile loose 100 g,tea,loose-tea,1
+LT-117,Hibiscus loose 100 g,tea,loose-tea,1
+LT-118,Lemongrass loose 100 g,tea,loose-tea,1
+LT-119,Matcha loose 100 g,tea,loose-tea,1
+LT-120,Kukicha loose 100 g,tea,loose-tea,1
+LT-121,Keemun loose 100 g,tea,loose-tea,1
+LT-122,Yunnan loose 100 g,tea,loose-tea,1
+LT-123,Nilgiri loose 100 g,tea,loose-tea,1
+LT-124,Kenya loose 100 g,tea,loose-tea,1
+LT-125,Lady Grey loose 100 g,tea,loose-tea,1
+LT-126,Breakfast loose 100 g,tea,loose-tea,1
+LT-127,Gunpowder loose 100 g,tea,loose-tea,1
+LT-128,White Peony loose 100 g,tea,loose-tea,1
+LT-129,Silver Needle loose 100 g,tea,loose-tea,1
+LT-130,Hojicha loose 100 g,tea,loose-tea,1
+TB-201,Breakfast 20 bags,tea,tea-bags,1
+TB-202,Earl Grey 20 bags,tea,tea-bags,1
+TB-203,Mint 20 bags,tea,tea-bags,1
+TB-204,Chamomile 20 bags,tea,tea-bags,1
+TB-205,Rooibos 20 bags,tea,tea-bags,1
+TB-206,Green 20 bags,tea,tea-bags,1
+TB-207,Chai 20 bags,tea,tea-bags,1
+TB-208,Fruit 20 bags,tea,tea-bags,1
+TB-209,Ginger 20 bags,tea,tea-bags,1
+TB-210,Lemon 20 bags,tea,tea-bags,1
+TB-211,Detox 20 bags,tea,tea-bags,1
+TB-212,Night 20 bags,tea,tea-bags,1
+CB-301,Brazil beans 250 g,coffee,beans,1
+CB-302,Colombia beans 250 g,coffee,beans,1
+CB-303,Ethiopia beans 250 g,coffee,beans,1
+CB-304,Kenya beans 250 g,coffee,beans,1
+CB-305,Sumatra beans 250 g,coffee,beans,1
+CB-306,Guatemala beans 250 g,coffee,beans,1
+CB-307,Espresso beans 250 g,coffee,beans,1
+CB-308,Decaf beans 250 g,coffee,beans,1
+CB-309,Peru beans 250 g,coffee,beans,1
+CB-310,Honduras beans 250 g,coffee,beans,1
+CB-311,Yirgacheffe beans 250 g,coffee,beans,1
+CB-312,Mocca beans 250 g,coffee,beans,1
+CC-401,Lungo capsules x10,coffee,,1
+CC-402,Ristretto capsules x10,coffee,,1
+CC-403,Espresso capsules x10,coffee,,1
+CC-404,Decaf capsules x10,coffee,,1
+CC-405,Arpeggio capsules x10,coffee,,1
+CC-406,Volluto capsules x10,coffee,,1
+KT-501,Glass kettle,accessories,,1
+KT-502,Cast iron teapot,accessories,,1
+CUP-511,Tea cup,accessories,,1
+CUP-512,Double-wall glass,accessories,,1
+CUP-513,Mug,accessories,,1
+INF-521,Mesh infuser,accessories,,1
+INF-522,Infuser basket,accessories,,1
+GR-531,Hand grinder,accessories,,1
+TIN-541,Storage tin,accessories,,1
