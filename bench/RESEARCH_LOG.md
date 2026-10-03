@@ -593,3 +593,33 @@ pmdb arm handed a trace of the reported run.
 - a consumed message queue.
 
 It uses two runs per cell and the improved pmdb.
+
+---
+
+## 2026-10-03: Round 7: post-mortem scenarios, pmdb required
+
+**Context.** Round 7 (`usability/round-7/`) used 5 hand-designed post-mortem scenarios: private
+data, changed external state, the clock, and a consumed queue.
+- **pmdb required.** Arm B *had to* use pmdb on a trace of the failing run, at the user's request:
+  adoption was no longer measured.
+- **Runs:** 3 models and 2 repetitions: 60 runs.
+- **pmdb:** the version with `export` (`9e888ce`).
+
+**Results** (`usability/round-7/results/REPORT.md`).
+- **More successes with pmdb:** A 21/30 against B 26/30.
+- **Where the trace carried data nothing else had:**
+  - refund-postmortem: A 0/6, B 5/6 (Sonnet and Opus 2/2 each);
+  - payroll-postmortem: Haiku went from 0/2 at 5.1M tokens to 2/2 at 2.5M. This is the first
+    efficiency gain of the study.
+- **Elsewhere the trace only confirmed** what the log and code showed, at about twice the tokens.
+- **Every success analysed exported calls in Python.** Agents rebuilt program objects from them,
+  and Haiku runs reached for a Python API that doesn't exist.
+- **Dotted method names without slashes** were the most frequent failed query.
+
+**Decisions.**
+- **Post-mortem is pmdb's setting.** The next step is to cut its cost there.
+- **Prototype a Python library over traces.** It would give navigation, ordering, aggregation
+  and joins as Python, and values as Python objects. This follows the user's question about
+  reusing an existing language; prior work (Expositor, TraceQL, Perfetto's SQL, PQL, Daikon) is
+  summarized in the discussion that led here.
+- **Quick fixes:** `Class.method` without slashes, and the export schema in the skill.

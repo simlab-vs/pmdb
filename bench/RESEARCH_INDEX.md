@@ -21,6 +21,7 @@ listed here by topic; their titles are the log's headings.
 | [4](usability/round-4/) | 10 real bugs, failing tests given | Haiku, Sonnet, Opus 5.5 | no gain; tests give the cause away; models differ more than arms | Round 4: real bugs, three models |
 | [5](usability/round-5/) | 9 real bugs, issue text only, no network | Haiku, Sonnet, Opus 5.5 | pmdb almost never used without a trace; half the exercises unsolvable from the issue | Round 5: reported issues, no network, no pre-recorded trace |
 | [6](usability/round-6/) | 6 hand-designed scenarios needing runtime evidence (exploratory) | Haiku, Sonnet, Opus 5.5 | only the post-mortem scenario needed the trace (Sonnet, Opus fixed it only with pmdb) | Round 6: hand-designed scenarios (exploratory) |
+| [7](usability/round-7/) | 5 post-mortem scenarios, pmdb required, 2 runs per cell | Haiku, Sonnet, Opus 5.5 | B 26/30 vs A 21/30; refund A 0/6 vs B 5/6; first efficiency gain (Haiku payroll); analysis happens in Python | Round 7: post-mortem scenarios, pmdb required |
 
 ## pmdb and the skill
 
@@ -33,6 +34,9 @@ listed here by topic; their titles are the log's headings.
   labels, the skill limited to Python; integer/float value semantics (`09c1c0d`..`c01502c`).
 
 ## Open directions
+
+- A Python library over traces (navigation, ordering, aggregation, joins, values as objects), after round 7.
+- Debugging failures of added preconditions in large applications (user's suggestion): needs navigation, ordering, contrast between failing and normal calls.
 
 - Exercises where runtime evidence is needed: issue reports instead of failing tests,
   post-mortem runs that can't be replayed, performance bugs (Round 4 entry).
