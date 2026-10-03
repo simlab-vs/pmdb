@@ -90,7 +90,9 @@ Conditions:
 | `descendant=sel` | made a selected call, directly or not |
 | `before=sel` / `after=sel` | started before a selected call started / after one ended |
 
-`True` and `False` (`returned=False`) test only whether the call returned or raised.
+`True` and `False` (`returned=False`) test only whether the call returned or raised. To exclude
+the calls made during `X`, negate the condition, `~Q(ancestor="X")`, not the selector:
+`ancestor=~Q("X")` holds for any call with *some* ancestor other than `X`, such as `main`.
 
 **Calls.** A call `c` has:
 - `c["name"]`: the argument of a parameter, by name (`c["self"]` for methods), or by position
@@ -109,7 +111,7 @@ Conditions:
 **Selections.** `Calls` is a list, with `first()` and `last()` (or `None`), `one()`, `count()`,
 `values(key)`, `group_by(key)` (a dict of selections), `count_by(key)` (a `Counter`),
 `functions()`, `show(limit=20)`, and `|`, `&`, `-` between selections. A key is a parameter
-name or a function on calls. `t.roots()` are the calls made at the top level (one per thread),
+name or a function on calls; lists and dicts in keys become tuples, so they can be grouped on. `t.roots()` are the calls made at the top level (one per thread),
 and `t.snaps(label)` the snaps, each with `label`, `value` and `call`.
 
 **Values** are Python values:
