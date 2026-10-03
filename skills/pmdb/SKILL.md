@@ -1,251 +1,153 @@
 ---
 name: pmdb
-description: Debug a Python program by recording a trace of its function calls (arguments, return values, exceptions) and querying it with pmdb, instead of adding prints or stepping through a debugger. Use it whenever a program produces wrong output or a test fails with a wrong value and the cause isn't obvious from the traceback or a quick read, especially when the wrong value comes out of a long call chain, from one input among many, from recursion, or from a computation whose intermediate values you'd otherwise print. Also use it when the user mentions pmdb, traces, or a `.pmdb` file. Skip it when a traceback already points at the faulty line or the code is small enough to check by reading.
+description: Debug a Python program by recording every call it makes (arguments, return values, exceptions) and querying the recording in Python, instead of adding prints or stepping through a debugger. Use it whenever a program produces wrong output or a test fails with a wrong value and the cause isn't obvious from the traceback or a quick read, especially when the wrong value comes out of a long call chain, from one input among many, or from a computation whose intermediate values you'd otherwise print, and whenever you are given a recorded trace (a `.pmdb` file) of a run. Also use it when the user mentions pmdb or traces. Skip it when a traceback already points at the faulty line or the code is small enough to check by reading.
 ---
 
 # Debugging with pmdb
 
-pmdb records a run of a program as a tree of calls, each with its arguments, its result or
-exception, and its call site. Queries then check a hypothesis against every call at once, e.g.
-"which calls of `line_total` returned something other than quantity × price?", instead of
-printing values and re-running. Below, `<this skill>` is the directory containing this file.
+pmdb records a run of a Python program as a tree of calls: each call of the program's own
+functions, with its arguments, its result or exception, its caller and the calls it made. You
+then query the recording with the Python package `recorder`, to check a hypothesis against
+every call at once ("which calls of `line_total` returned something other than quantity ×
+price?") instead of printing values and re-running. Below, `<this skill>` is the directory
+containing this file.
 
-## 1. Record the failing run
+`recorder` is importable as is: `python3 -c 'import recorder'` should succeed. Only if it
+doesn't, add the directory `Python` of the pmdb repository to `PYTHONPATH`; other copies of
+`recorder` found on disk can be older versions.
 
-Record the smallest run that shows the bug, such as one failing input rather than a whole test
-suite, so the trace stays small and the answers readable.
+## Recording a run
 
-`<this skill>/scripts/pmdb-record` runs a Python script and records every function and method
-defined in the `.py` files of the script's directory and its packages, without editing them:
+If you were handed a trace, skip to the next section.
 
 ```
 python3 <this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
+python3 <this skill>/scripts/pmdb-record -o trace.pmdb -m pytest -q tests/test_x.py::test_y
 ```
 
+- Every call of a function or method defined in a `.py` file under the current directory is
+  recorded (test functions included), but not code in installed packages or the standard
+  library, nor lambdas and comprehensions. `--root DIR` (repeatable) records the functions under
+  `DIR` instead. Files aren't modified.
 - The program runs as usual (same output, same exit status), and the trace is written when it
-  exits, even if it raises.
-- Run it with the interpreter that has the project's dependencies (e.g. `.venv/bin/python`
-  instead of `python3`).
-- `recorder` is usually importable as is: check with
-  `python3 -c 'import recorder; print(recorder.__file__)'`. Only if that fails, add the directory
-  `Python` of the pmdb repository to `PYTHONPATH` (ask the user where it is if you can't find
-  it). Other copies found on disk can be older versions, without `load`.
-- Not recorded: lambdas, calls answered by a cache such as `functools.lru_cache`, asynchronous
-  generators, and test functions. A generator or coroutine call is recorded when it starts
-  running, and the calls it makes appear under it.
-- Record one failing test, not a test file: traces of large projects grow fast (tens of
-  thousands of calls per test).
+  exits, even if it raises. Run it with the interpreter that has the project's dependencies
+  (e.g. `.venv/bin/python` instead of `python3`).
+- Record the smallest run that shows the bug, such as one failing test: projects make tens of
+  thousands of calls per test, and the trace grows with them.
+- To record part of a program, from Python: `with recorder.recording("trace.pmdb"): run()`.
 
-To record a failing pytest test, record a driver script placed at the project root:
+**Snaps.** To record a value that isn't an argument or result (a local variable, an
+intermediate total), add `recorder.snap("label", value)` to the code and record again. It
+returns `value` (so `total = recorder.snap("total", a + b)` works) and does nothing when the
+program isn't being recorded. Remove snaps when you're done.
 
-```
-cat > pmdb_driver.py <<'EOF'
-import sys
-import pytest
-sys.exit(pytest.main(["-q", "-p", "no:cacheprovider", "tests/test_x.py::test_y"]))
-EOF
-python3 <this skill>/scripts/pmdb-record -o trace.pmdb pmdb_driver.py
-```
+## Querying a trace
 
-**How Python values are recorded:**
-
-| Python | pmdb |
-|---|---|
-| `None`, `True`, `False` | `none`, `true`, `false` |
-| `int`, `float`, `str` | integer (of any size), floating-point number, string |
-| list, tuple | array |
-| dict with string keys, named tuple | table, whose fields are read with `t.key` |
-| enum member | the string of its name |
-| anything else, including class instances, dataclasses and `self` | opaque: `<object>` or its `repr` string, which queries can't look into |
-
-If the state you care about lives in objects, add `def __pmdb__(self): return vars(self)` to
-their classes *before* recording, so they're recorded as tables of their fields, and remove it
-when you're done.
-
-## 2. Run queries
-
-`pmdb` is a command on your `PATH` (not a Python module, and not one of this skill's scripts).
-Pipe commands to it in a quoted heredoc (`'EOF'`), so the shell leaves `$`, `\` and quotes
-alone:
-
-```
-pmdb trace.pmdb <<'EOF'
-select line_total(l) -> t where t != l.quantity * l.price
-show $0
-EOF
-```
-
-- `select <query>` stores its matches in the next variable, `$0` first, then `$1`, and so on, and
-  prints their count. `show $N` prints one line per match:
-  `file:line: call f(args) -> result` (or `raised {…}`), where `file:line` is the call site.
-- `show` takes a variable (`show $0`), not a file. `show functions` lists every recorded function
-  with its number of calls: use it first to find exact names, such as `Class.method`.
-- The heredoc holds pmdb commands only. Shell pipes go after it, on the `pmdb` line:
-  `pmdb trace.pmdb <<'EOF' | head -50`, never `show $0 | head` inside it.
-- Variables last for one pmdb invocation, so a `select` and the commands using its result go in
-  the same heredoc.
-- pmdb stops at the first failing command (exit status 1), so run independent queries in separate
-  invocations.
-- Arguments print in full, so a big argument (a catalog, a config) fills every line. Shorten long
-  lines with `clip`, which keeps the function and the result, and limit the output with `head`:
-
-  ```
-  pmdb trace.pmdb <<'EOF' | <this skill>/scripts/clip | head -50
-  ```
-- `pmdb --show trace.pmdb` prints the whole call tree with results, to see what a call did inside.
-  It can be megabytes long, so filter it:
-
-  ```
-  pmdb --show trace.pmdb | <this skill>/scripts/clip | grep -n -A 15 'call price(B07'
-  ```
-
-## 3. Write queries
-
-A query is a pattern, optionally followed by `from $N` (to search earlier matches only) and
-`where <condition>`.
-
-**Patterns.** In `f(x, "B2", _)`:
-- A name (`x`) matches any value and binds it for the where clause. So `f(E0)` matches *any*
-  argument; to match the string, write `f("E0")`.
-- A literal (`10`, `2.5`, `"B2"`, `true`, `none`) matches equal values only, and never fails.
-- `_` matches any value without binding it.
-- `*` matches any number of positional arguments, `**` any number of named ones, and `...` any
-  further arguments: `f(...)` matches every call of `f`, and `f("B2", ...)` those whose first
-  argument is `"B2"`. Every argument the call passed must be matched: `f(x)` doesn't match a call
-  with two arguments, and pmdb warns when no call has the shape a pattern expects.
-
-After the arguments, `-> r` matches calls that returned, binding `r` to the result, and
-`raised e` calls that raised, binding `e` to a table with the exception's `type` and `message`
-(`str(exception)`, so a `KeyError`'s message keeps its quotes: `'b'`).
-
-| Question | Query |
-|---|---|
-| every call of `f` | `select f(...)` |
-| every call (including the recorder's own `root()`) | `select _(...)` |
-| calls with given arguments | `select rate(10)`, `select f(_, "B2", *)` |
-| calls by named argument | `select f(*, code = "BIG50", **)` |
-| calls breaking an invariant | `select f(x) -> r where r > x` |
-| calls returning a given value | `select f(...) -> none`, `select f(...) -> 0` |
-| calls that raised | `select f(...) raised e`, `select _(...) raised e where e.type == "KeyError"` |
-| calls on tables (dicts, named tuples) | `select invoice(o) where o.currency == "GBP"` |
-| … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
-| … with a default value | `select invoice(o) where (if o.has("rate") then o.rate else 0) > 0.2` |
-| calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
-| methods (`Class.method`, `self` first) | `select Parser.take(...)`, `select /.*\.take/(...)` |
-| nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
-| the last positional argument | `select f(*, last)` |
-| a subset of earlier matches | `select f(x) from $0 where x > 1` |
-
-Function names match exactly, and a regex (`/…/`) must match the whole name. When a pattern names
-no recorded function, pmdb warns and lists the recorded functions it partially matches (e.g.
-`Parser.take` for `take`).
-
-`raised` matches every recorded call that raised, including exceptions that were caught and
-handled along the way: libraries and Python itself raise and catch many (e.g. `AttributeError`
-while looking up attributes). Narrow by function or by `e.type`, and start from the exception the
-failing test reports rather than from all of them.
-
-To compare floating-point results with a tolerance, write both differences, since there is no
-`abs`: `select total(q, p) -> t where t - q * p > 0.005 || q * p - t > 0.005`.
-
-**Expressions.** `+ - * /`, `< <= > >=`, `== !=`, `&& || !`, `if c then a else b`, `t.key`,
-`xs[i]` (no negative indexes: `xs[xs.len() - 1]`), lambdas `x => …`, and the methods `xs.len()`,
-`t.len()`, `xs.all(p)`, `xs.any(p)`, `xs.count(p)` and `t.has("key")`. `&&`, `||` and `if`
-evaluate only the operands they need, so `o.has("k") && o.k > 0` never reads a missing `k`.
-Strings use double quotes. There is no `%`, `//` or `abs`, no `and`/`or`/`not`, no lookup by a
-computed key (`t[k]`, `t["key"]`), no chained comparisons (`a < b < c`), no string operations
-besides `==`, no array or table literals, and no sums over arrays.
-
-**Values are never converted implicitly, except that integers and floating-point numbers compare
-by value:**
-- `0 == 0.0` and `1 < 1.5` hold, and `f(...) -> 0` also matches calls returning `0.0`.
-- `/` always gives a floating-point number: `7 / 2 == 3.5`.
-- NaN is unequal to everything, itself included, so `x != x` finds NaNs.
-- Nothing tells an integer from a floating-point number of the same value; Python (`recorder.load`)
-  and `export` keep the distinction (`1` and `1.0`).
-- A condition (the where clause, the operands of `&& || !`, the condition of `if`, the result of
-  a lambda given to `all`, `any` or `count`) must be a Boolean: `where r` fails when `r` is a
-  number. Write `r != 0`, `r != none`, `s != ""` or `xs.len() > 0`.
-- `< <= > >=` and arithmetic take numbers only. `==` and `!=` compare two values of the same
-  type, two numbers, or anything with `none`: `"1" == 1`, `true == 1` and `true + 1` fail.
-- To convert explicitly, `int(b)` turns a Boolean into `1` or `0`, and `bool(n)` a number into
-  `false` if it is zero or NaN (unlike Python, where NaN is true), and `true` otherwise.
-
-**One failing evaluation fails the whole query**, so a where clause must work for every call the
-pattern matches. Typical failures:
-- a key missing from one table (`o.coupon`): guard with `o.has("coupon") && …`, knowing that
-  `has` itself fails on values that aren't tables;
-- a value whose type varies across calls, e.g. `x == "B2"` or `x > 0` when `x` is sometimes a
-  string and sometimes a number: put the literal in the pattern instead (`f("B2")`), or narrow
-  the pattern first and filter `from $N`;
-- `none` where a number is expected (`r > 0`): write `r != none && r > 0`;
-- a division by zero, or arithmetic mixing a floating-point number with an integer too large to
-  convert exactly (above 2^53).
-
-**Snaps.** A call's result is also stored as a snap labeled `<function>.$result`, matched by
-`select /f\.\$result/`; outcome patterns (`-> r`) are simpler.
-
-**For anything beyond a selection, query the trace in Python.** Counting, summing, grouping,
-comparing the failing calls with the others, following a call's callers or what happened before
-it, and calling the program's own functions on recorded values are all plain Python on the
-recorder's `load` (importable as for `pmdb-record`, above):
+Load the trace once per script (it takes a few seconds for tens of megabytes) and ask several
+questions in it:
 
 ```
 python3 - <<'EOF'
-import collections, recorder
+import recorder
+from recorder import Q
 t = recorder.load("trace.pmdb")
-print(t.functions())                                    # recorded functions and their call counts
-bad = t.calls("Ledger.post").raised("AssertionError").first()
-print(bad, [c.function for c in bad.path()])            # the call, and the calls it was made in
-ok = t.calls("post").returned()                         # "post" also matches Ledger.post
-print(collections.Counter(c.args[1] for c in ok).most_common(5))
-t.calls("post").before(bad).where(lambda c: c.args[1] == bad.args[1]).show()
+print(t.functions())                     # every recorded function and its number of calls
+bad = t.calls("post", raised="ValueError").first()
+print(bad, bad.path())                   # the call, and the calls it was made in, outermost first
+print(bad["txn"], bad.caller["day"])     # arguments by parameter name
+t.calls("post", before=bad, where=lambda c: c["txn"]["account"] == bad["txn"]["account"]).show()
+t.calls("post", caller=Q("close_month", where=lambda c: c["day"] == 31)).show()
+print(t.calls("post", returned=True).count_by(lambda c: c["txn"]["account"]))
 EOF
 ```
 
-- `t.calls(name)` selects by exact name, by the last component of a qualified one, by a compiled
-  regex or a predicate; without a name, all calls, in recording order.
-- A selection is a list, filtered with `where(predicate)` (calls on which the predicate raises
-  are left out), `returned(predicate)`, `raised(type)`, `within(call)`, `before(call)` and
-  `after(call)`, and summarized with `first()`, `last()`, `count()`, `group_by(key)`,
-  `functions()` and `show(limit=20)`, which prints one line per call.
-- A call has `function`, `args`, `kwargs` (as at the start of the call; a method's `self` is
-  `args[0]`), `location`, `returned` (a Boolean, unlike the selection's `returned()`), `result`,
-  `exception` (with `type` and `message`), `parent`, `children`, `ancestors()`, `descendants()`
-  and `path()`. `first()`, `last()`, `parent` and `result` can be `None`.
-- Values are Python values: tables are dicts (including named tuples and objects whose
-  `__pmdb__` returns a dict, so `v["field"]`, not `v.field`), arrays are lists (including
-  tuples), and other objects, sets among them, are `Opaque`. A dict can be passed to the
-  program's own functions, e.g. `Order(**c.args[0])`, and `unpickle()` rebuilds an `Opaque` value
-  by running the program's code. Since `where` leaves out calls on which the predicate raises,
-  check a predicate on one call first.
-- Loading takes a few seconds for tens of megabytes: load once and run several questions in one
-  script.
+When the analysis grows, keep loading and helper functions in a file (e.g. `analysis.py`) and
+import it from each new script, rather than pasting them again.
 
-pmdb's own `export $0 to "calls.jsonl"` writes a selection as JSON Lines, for other tools.
+**Selecting calls.** `t.calls(*selectors, **conditions)` returns the calls (a `Calls` list, in
+the order they started) matching every selector and condition. A selection can be narrowed
+with `.where(*selectors, **conditions)`, which takes the same arguments.
 
-**When you are handed a trace of a failing run** (rather than recording one), start from what
-it can tell that the code can't: `show functions` gives each function's number of calls, which
-you can compare with the counts in the report (e.g. one more call than there are orders); and the values
-in the report can often be recomputed from the recorded arguments and results, in Python, to
-find which calls account for a difference.
+Selectors:
+- `"post"`: calls of a function by name; `"post"` also matches `Ledger.post`, and
+  `"Ledger.post"` only that method (`t.functions()` lists the names);
+- `re.compile(r"Ledger\..*")`: names matching a regular expression;
+- a predicate on calls, such as `lambda c: c["amount"] < 0`;
+- a call, or a list of calls;
+- `Q(*selectors, **conditions)`: a reusable selection, combined with `&`, `|` and `~`, e.g.
+  `t.calls(Q("post") & ~Q(ancestor="replay"))`.
 
-## 4. What else trips queries up
+Conditions:
 
-- **Arguments are recorded as passed.** `f(1, y=2)` has one positional argument and one named
-  one (shown as `y: 2`), and omitted defaults are absent, so `f(x, y)` doesn't match it. Start
-  with `select f(...)` and `show $0` to see how calls were recorded.
-- **Methods count `self` as their first argument**, and their names include the class (see the
-  table).
-- **Arguments are recorded when the call starts**, results when it returns: a list the call
-  mutates shows its old contents in the arguments.
-- **Keys that aren't identifiers can't be read**: a key such as `"unit price"` or `"0"` has no
-  `t.…` form. Use `t.has("…")` and `show`.
-- **`from $N` searches the matched calls only**, not the calls made inside them. To look inside a
-  call, use `pmdb --show` (§2).
-- **An exception matches every recorded call it passes through**: if `f` calls `g` and `g`
-  raises, both `g(...) raised e` and `f(...) raised e` match. `show` points at the line calling
-  the raising function, not at the `raise`.
-- **Values print without quotes**: `call f(B2)` is a call with the string `"B2"`, `1` may be the
-  string `"1"`, `f()` may be a call with an empty string, and `"a, b"` looks like two arguments.
-  Python (`recorder.load`) gives typed values when it matters.
+| condition | holds for a call that |
+|---|---|
+| `where=pred` | satisfies `pred` |
+| `returned=True` / `=value` / `=pred` | returned (a value equal to `value`, or satisfying `pred`) |
+| `raised=True` / `="KeyError"` / `=pred` | raised (an exception of that type, or satisfying `pred`) |
+| `caller=sel` | was made directly by a selected call |
+| `callee=sel` | made a selected call directly |
+| `ancestor=sel` | was made during a selected call, directly or not |
+| `descendant=sel` | made a selected call, directly or not |
+| `before=sel` / `after=sel` | started before a selected call started / after one ended |
+
+`True` and `False` (`returned=False`) test only whether the call returned or raised.
+
+**Calls.** A call `c` has:
+- `c["name"]`: the argument of a parameter, by name (`c["self"]` for methods), or by position
+  (`c[0]`); `c.get("name")` returns `None` if there's no such parameter; `c.params` is the dict
+  of all of them. Arguments are recorded as they were when the call started.
+- `c.function` (qualified, e.g. `Ledger.post`), `c.location` (the call site's file and line),
+  `c.definition` (where the function is defined), `c.index` (shown as `#index`, for
+  `t.call(index)`).
+- `c.returned` and `c.raised` (Booleans), `c.result`, `c.exception` (with `type` and `message`).
+- `c.caller`, `c.callees(...)`, `c.ancestors(...)` (innermost first), `c.ancestor(...)` (the
+  innermost selected one), `c.descendants(...)`, `c.path()`; the methods take selectors and
+  conditions.
+- `c.snaps(label)` (`deep=True` to include the calls made during it), and `c.tree(depth=3)`,
+  which prints the call and the calls made during it.
+
+**Selections.** `Calls` is a list, with `first()` and `last()` (or `None`), `one()`, `count()`,
+`values(key)`, `group_by(key)` (a dict of selections), `count_by(key)` (a `Counter`),
+`functions()`, `show(limit=20)`, and `|`, `&`, `-` between selections. A key is a parameter
+name or a function on calls. `t.roots()` are the calls made at the top level (one per thread),
+and `t.snaps(label)` the snaps, each with `label`, `value` and `call`.
+
+**Values** are Python values:
+- `None`, Booleans, numbers and strings as themselves;
+- lists and tuples as lists;
+- dicts with string keys and named tuples as dicts: `c["txn"]["amount"]`, not `.amount`;
+- enum members as the strings of their names;
+- other objects (class instances, dataclasses, sets) as `Opaque` values, shown as `<Ledger>`,
+  whose `.unpickle()` rebuilds the object (the program's modules must be importable, e.g. with
+  its directory on `sys.path`); objects that can't be pickled are recorded as their `repr`
+  string.
+
+To query the fields of your own objects, define `def __pmdb__(self): return vars(self)` in their
+class before recording: they're then recorded as dicts of their fields.
+
+**Errors.** A predicate that raises stops the query with a `QueryError` naming the call it
+raised on, e.g. when a parameter doesn't exist (the error lists the call's parameters) or a value
+is `None`; handle that case in the predicate (`c.get("name")`). An unknown function name raises
+a `QueryError` too.
+
+## When you are handed a trace of a failing run
+
+The trace holds what the code and the logs don't: the actual inputs, every intermediate result,
+and how many times each function ran. `t.functions()` gives the counts, which you can compare
+with those in the report (e.g. one more call than there are orders), and the figures in the
+report can often be recomputed from recorded arguments and results, to find which calls account
+for a difference. The same recomputation, applied to your fix (e.g. calling the fixed function
+on recorded arguments), checks the fix against the figures that were reported.
+
+## What trips queries up
+
+- **An exception is recorded on every call it passes through**: if `f` calls `g` and `g`
+  raises, both `f` and `g` have `raised` set. `c.callees(raised=True)` is empty for the call
+  that raised it first.
+- **Generators and coroutines** are one call each, from when they start running to when they
+  finish, with the value they return as their result; calls made by their consumer while they
+  are suspended aren't in them.
+- **Arguments are recorded when the call starts**: a list or object the call mutates shows its
+  old contents in the arguments; the new contents are in later calls' arguments, or in a snap.
+- **Default arguments are recorded** with the parameters that received them, so `c["note"]`
+  exists even if the caller omitted `note`.

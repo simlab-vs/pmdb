@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
-"""Runs a Python program and records a pmdb trace of every call to its functions.
+"""Runs a Python program and records a pmdb trace of every call to its own functions.
 
-Usage: pmdb-record [-o TRACE] SCRIPT [ARGS...]
+Usage: pmdb-record [-o TRACE] [--root DIR]... SCRIPT [ARGS...]
+       pmdb-record [-o TRACE] [--root DIR]... -m MODULE [ARGS...]    (e.g. -m pytest tests/x.py::t)
 
-Every function and method defined in the Python files of the script's directory is recorded,
-without modifying those files. The trace is written when the program exits, even if it raises.
+Every call of a function defined in a Python file under the roots (by default, the current
+directory) is recorded, except for code in installed packages and the standard library, without
+modifying any file. The trace is written when the program exits, even if it raises.
 
 The pmdb Python recorder must be importable, e.g. by adding the directory `Python` of the pmdb
 repository to `PYTHONPATH`, unless this script is in the pmdb repository.
 """
 
 import argparse
-import ast
-import builtins
-import importlib.abc
-import importlib.util
 import os
+import runpy
 import sys
 import traceback
 
@@ -31,97 +30,65 @@ except ImportError:
     sys.exit("pmdb-record: cannot import the pmdb recorder; add the directory containing the "
              "package 'recorder' (the directory 'Python' of the pmdb repository) to PYTHONPATH")
 
-
-# The methods that the recorder may call to record a value, which can't be recorded themselves
-# because recording their calls records their argument `self` again.
-RECORDING_METHODS = {"__pmdb__", "__repr__", "__reduce__", "__reduce_ex__", "__getstate__"}
-
-
-class Instrument(ast.NodeTransformer):
-  """Adds the recording decorator to every function definition, innermost."""
-
-  def visit_FunctionDef(self, node):
-    self.generic_visit(node)
-    if node.name not in RECORDING_METHODS:
-      node.decorator_list.append(ast.Name("__pmdb_record__", ast.Load()))
-    return node
-
-  visit_AsyncFunctionDef = visit_FunctionDef
-
-
-def compile_instrumented(path):
-  with open(path, encoding="utf-8") as f:
-    tree = ast.parse(f.read(), path)
-  tree = ast.fix_missing_locations(Instrument().visit(tree))
-  return compile(tree, path, "exec", dont_inherit=True)
-
-
-class Loader(importlib.abc.Loader):
-
-  def __init__(self, path):
-    self.path = path
-
-  def create_module(self, spec):
-    return None
-
-  def exec_module(self, module):
-    exec(compile_instrumented(self.path), module.__dict__)
-
-
-class Finder(importlib.abc.MetaPathFinder):
-  """Finds the modules defined by Python files in `directory`."""
-
-  def __init__(self, directory):
-    self.directory = directory
-
-  def find_spec(self, name, path, target=None):
-    base = os.path.join(self.directory, *name.split("."))
-    candidate = base + ".py"
-    if os.path.isfile(candidate):
-      return importlib.util.spec_from_file_location(name, candidate, loader=Loader(candidate))
-    candidate = os.path.join(base, "__init__.py")
-    if os.path.isfile(candidate):
-      return importlib.util.spec_from_file_location(
-        name, candidate, loader=Loader(candidate), submodule_search_locations=[base])
-    return None
+if not hasattr(recorder, "Monitor"):
+  sys.exit(f"pmdb-record: the recorder imported from {os.path.dirname(recorder.__file__)} is an "
+           "older version; put the one next to this script first on PYTHONPATH")
 
 
 def main():
-  parser = argparse.ArgumentParser(
-    prog="pmdb-record", description="Record a pmdb trace of a Python program.")
-  parser.add_argument("-o", "--output", default="trace.pmdb", help="trace file (default: trace.pmdb)")
-  parser.add_argument("script")
-  parser.add_argument("arguments", nargs=argparse.REMAINDER)
-  args = parser.parse_args()
+  # The options of this script come first; the script or module ends them, so that the rest of
+  # the command line, options included, goes to the program.
+  args = argparse.Namespace(output="trace.pmdb", root=[], module=None, arguments=[])
+  argv = sys.argv[1:]
+  while argv:
+    a = argv.pop(0)
+    if a in ("-h", "--help"):
+      print(__doc__.strip())
+      sys.exit(0)
+    elif a in ("-o", "--output", "--root", "-m") and argv:
+      v = argv.pop(0)
+      if a == "-m":
+        args.module, args.arguments = v, argv
+        break
+      elif a == "--root":
+        args.root.append(v)
+      else:
+        args.output = v
+    elif a.startswith("-"):
+      sys.exit(f"pmdb-record: unknown option {a}\n\n{__doc__.strip()}")
+    else:
+      args.arguments = [a] + argv
+      break
+  if args.module is None and not args.arguments:
+    sys.exit(f"pmdb-record: a script or -m MODULE is required\n\n{__doc__.strip()}")
 
-  script = os.path.abspath(args.script)
-  directory = os.path.dirname(script)
-  sys.dont_write_bytecode = True
-  sys.argv = [args.script] + args.arguments
-  sys.path[0] = directory
-  sys.meta_path.insert(0, Finder(directory))
-
-  # Each recorded call adds frames to the stack, which would make deep recursions that work
-  # without recording raise `RecursionError`.
-  sys.setrecursionlimit(4 * sys.getrecursionlimit())
-
-  r = recorder.Recorder()
-  builtins.__pmdb_record__ = r.record
+  output = os.path.abspath(args.output)
+  m = recorder.Monitor(args.root or None, exclude=[os.path.dirname(os.path.realpath(__file__))])
+  if args.module is not None:
+    sys.argv = [args.module] + args.arguments
+    sys.path.insert(0, os.getcwd())
+    run = lambda: runpy.run_module(args.module, run_name="__main__", alter_sys=True)
+  else:
+    script = os.path.abspath(args.arguments[0])
+    sys.argv = args.arguments
+    sys.path[0] = os.path.dirname(script)
+    run = lambda: runpy.run_path(script, run_name="__main__")
 
   status = 0
+  m.start()
   try:
-    code = compile_instrumented(script)
-    exec(code, {"__name__": "__main__", "__file__": script, "__builtins__": builtins})
+    run()
   except SystemExit as e:
     status = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
   except BaseException:
     traceback.print_exc()
     status = 1
   finally:
+    m.stop()
     sys.stdout.flush()
-    with open(args.output, "wb") as f:
-      f.write(r.serialize().buffer)
-    print(f"pmdb-record: wrote {len(r.observations)} observations to {args.output}", file=sys.stderr)
+    m.write(output)
+    calls = sum(1 for o in m.observations[1:] if isinstance(o, recorder.recorder.Call))
+    print(f"pmdb-record: recorded {calls} calls to {args.output}", file=sys.stderr)
   sys.exit(status)
 
 

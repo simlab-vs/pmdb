@@ -481,45 +481,104 @@ func notesFunctionsThatAreNotRecorded(source: String, note: String?) async throw
   #expect(raised.hasSuffix(#""named": {"fail": 1}, "raised": {"message": "'k'", "type": "KeyError"}}"#))
 }
 
-@Test func queriesTracesInPython() async throws {
+/// Returns the trace recorded by the Python recorder's monitor while running `program`, as if it
+/// were defined in a file of the recorded directory.
+private func monitor(_ program: String) async throws -> Trace {
   let output = try await runPython(
     """
     import os, sys, tempfile, recorder
-    r = recorder.Recorder()
+    d = tempfile.mkdtemp()
+    code = compile(\(String(reflecting: program)), os.path.join(d, "program.py"), "exec")
+    with recorder.recording(os.path.join(d, "t.pmdb"), roots=[d]):
+      exec(code, {"__name__": "program"})
+    print(os.path.join(d, "t.pmdb"))
+    """)
+  return try Trace(
+    contentsOf: URL(fileURLWithPath: output.trimmingCharacters(in: .whitespacesAndNewlines)))
+}
 
+@Test func readsMonitoredTraces() async throws {
+  let trace = try await monitor(
+    """
+    import recorder
+    def numbers(n, *rest, step=1):
+      for i in range(0, n, step):
+        yield i
+      return "done"
+    def total(n):
+      recorder.snap("n", n)
+      return sum(double(x) for x in numbers(n, 9, step=2))
+    def double(x):
+      return 2 * x
+    def bad():
+      raise KeyError("k")
+    total(4)
+    try:
+      bad()
+    except KeyError:
+      pass
+    """)
+
+  // A generator's calls end when it finishes; calls made while it is suspended aren't in it.
+  let expected = """
+    * call root()
+    ├─* call total(4) -> 4
+    │ ├─* snap n = 4
+    │ ├─* call numbers(4, 9, step: 2) -> done
+    │ ├─* call double(0) -> 0
+    │ └─* call double(2) -> 4
+    └─* call bad() raised {message: 'k', type: KeyError}
+
+    """
+  #expect(trace.description == expected)
+}
+
+@Test func queriesTracesInPython() async throws {
+  let program = """
     class Ledger:
-      @r.record
       def post(self, account, amount):
         assert amount != 0, "empty entry"
         return amount
 
-    @r.record
-    def settle(ledger, entries):
+    def settle(ledger, entries, day):
       return sum(ledger.post(a, x) for a, x in entries)
 
     ledger = Ledger()
-    settle(ledger, [("a", 2), ("b", 3)])
+    settle(ledger, [("a", 2), ("b", 3)], day=30)
     try:
-      settle(ledger, [("a", 1), ("c", 0)])
+      settle(ledger, [("a", 1), ("c", 0)], day=31)
     except AssertionError:
       pass
-
-    path = os.path.join(tempfile.mkdtemp(), "t.pmdb")
-    open(path, "wb").write(r.serialize().buffer)
-    t = recorder.load(path)
-    bad = t.calls("post").raised("AssertionError").first()
-    print(bad.args[1:], bad.exception.message, [c.function for c in bad.path()])
-    print([c.args[1:] for c in t.calls("Ledger.post").returned().before(bad)])
+    """
+  let output = try await runPython(
+    """
+    import os, sys, tempfile, recorder
+    from recorder import Q
+    d = tempfile.mkdtemp()
+    with recorder.recording(os.path.join(d, "t.pmdb"), roots=[d]):
+      exec(compile(\(String(reflecting: program)), os.path.join(d, "program.py"), "exec"),
+           {"__name__": "program"})
+    t = recorder.load(os.path.join(d, "t.pmdb"))
+    bad = t.calls("post", raised="AssertionError").one()
+    print(bad["account"], bad["amount"], bad.exception.message, [c.function for c in bad.path()])
+    print(t.calls("Ledger.post", returned=True, before=bad).values("account"))
     print(t.calls("settle").first().result, t.calls("settle").last().exception.type)
-    print([c.args[1] for c in t.calls("post").within(t.calls("settle").last())])
-    print(t.functions(), {k: len(v) for k, v in t.calls("post").group_by(lambda c: c.args[1]).items()})
+    print(t.calls("post", caller=Q("settle", where=lambda c: c["day"] == 31)).values("account"))
+    print(t.calls("settle", descendant=Q("post", raised=True)).values("day"))
+    print(t.functions(), t.calls("post").count_by("account"))
+    try:
+      t.calls("post", where=lambda c: c["amonut"])
+    except recorder.QueryError as e:
+      print(str(e).split(" on ")[0])
     """)
   #expect(output == """
-    ['c', 0] empty entry ['settle', 'Ledger.post']
-    [['a', 2], ['b', 3], ['a', 1]]
+    c 0 empty entry ['settle', 'Ledger.post']
+    ['a', 'b', 'a']
     5 AssertionError
     ['a', 'c']
-    {'settle': 2, 'Ledger.post': 4} {'a': 2, 'b': 1, 'c': 1}
+    [31]
+    {'Ledger.post': 4, 'settle': 2} Counter({'a': 2, 'b': 1, 'c': 1})
+    the where predicate raised KeyError: "'amonut': Ledger.post has parameters self, account, amount"
 
     """)
 }

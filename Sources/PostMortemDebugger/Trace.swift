@@ -432,15 +432,32 @@ public struct Trace: Sendable {
     self.snaps = .init()
     self.calls = .init()
 
+    var explicitOutcomes: [(call: Int, snap: ObservationIndex)] = []
     for i in 0 ..< count {
-      switch try archive.readByte() {
+      let tag = try archive.readByte()
+      switch tag {
       case 0x01:
         observations.append(.init(snap: snaps.count))
         try snaps.append(.init(index: .init(untagged: i), value: Snap(from: &archive)))
 
-      case 0x02:
+      case 0x02, 0x04:
         observations.append(.init(call: calls.count))
-        try calls.append(.init(index: .init(untagged: i), value: Call(from: &archive)))
+        try calls.append(
+          .init(index: .init(untagged: i), value: Call(from: &archive, withParameters: tag == 0x04)))
+
+      case 0x03:
+        // The outcome of the call at an earlier index, read as a snap labeled `<function>.$result`
+        // or `<function>.$exception`.
+        let location = try archive.read(SourceLine.self)
+        let c = try Int(archive.readUnsignedLEB128())
+        let raised = try archive.readByte() != 0
+        let value = try archive.read(Value.self)
+        guard c < i, let q = observations[c].call else { throw ArchiveError.invalidInput }
+        let label = calls[q].value.function + (raised ? ".$exception" : ".$result")
+        explicitOutcomes.append((q, i))
+        observations.append(.init(snap: snaps.count))
+        snaps.append(
+          .init(index: .init(untagged: i), value: Snap(location: location, label: label, value: value)))
 
       default:
         throw ArchiveError.invalidInput
@@ -463,6 +480,7 @@ public struct Trace: Sendable {
       calls[q].value.append(i)
     }
     self.outcomes = findOutcomes()
+    for (c, j) in explicitOutcomes { outcomes[c] = j }
   }
 
   /// Returns the index of the snap recording the outcome of each call, by offset in `calls`.

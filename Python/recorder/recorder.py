@@ -99,6 +99,93 @@ class Call(Observation):
     return 0x02
 
 
+class NamedCall(Call):
+  """A record of a function application, with the names of the parameters receiving the
+  positional arguments and the location of the function's definition."""
+
+  def __init__(
+    self, source_file: str, line_number: int, function: str, definition: tuple,
+    positional: list, named: dict
+  ):
+    # `positional` is a list of pairs of a parameter name and an argument; an argument collected
+    # by a parameter `*rest` is named `*rest`.
+    super().__init__(source_file, line_number, function, [a for _, a in positional], named)
+    self.names = [k for k, _ in positional]
+    self.definition = definition
+
+  def serialize(self, archive):
+    archive.write_byte(self.tag())
+    archive.write_string(self.source_file)
+    archive.write_unsigned(self.line_number)
+    archive.write_string(self.function)
+
+    # Write where the function is defined.
+    archive.write_string(self.definition[0])
+    archive.write_unsigned(self.definition[1])
+
+    # Write the number of positional arguments followed by their names and values.
+    archive.write_unsigned(len(self.positional))
+    for k, a in zip(self.names, self.positional):
+      archive.write_string(k)
+      archive.write_bytes(a)
+
+    # Write the number of named arguments followed by their names and values.
+    archive.write_unsigned(len(self.named))
+    for k, a in sorted(self.named.items()):
+      archive.write_string(k)
+      archive.write_bytes(a)
+
+  @classmethod
+  def tag(cls):
+    return 0x04
+
+
+class Outcome(Observation):
+  """A record of the value a call returned or the exception it raised, which refers to the call
+  explicitly (unlike a snap labeled `<function>.$result`), so that it needn't follow the call
+  immediately (e.g., for a generator suspended in between)."""
+
+  def __init__(self, source_file: str, line_number: int, call: int, raised: bool, value: object):
+    super().__init__(source_file, line_number)
+    self.call = call
+    self.raised = raised
+    self.value = encode(value)
+
+  def serialize(self, archive):
+    super().serialize(archive)
+    archive.write_unsigned(self.call)
+    archive.write_byte(int(self.raised))
+    archive.write_bytes(self.value)
+
+  @classmethod
+  def tag(cls):
+    return 0x03
+
+
+def write_trace(identifier, observations, parents, archive=None):
+  """Returns `archive` (or a new archive) after writing the trace of `observations`, where the
+  parent of the `i`-th observation is the `parents[i]`-th."""
+  a = orelse(archive, Archive)
+
+  # Write the trace header, which is a magic number followed by a version number.
+  a.write_bytes(b"pmdb")
+  a.write_byte(1)
+  a.write_byte(0)
+
+  # Write the identifier of the trace.
+  a.write_bytes(identifier.bytes)
+
+  # Write the number of observations followed by their values.
+  a.write_unsigned(len(observations))
+  for o in observations:
+    a.write(o)
+
+  # Write the mapping from each observation to its parent.
+  for p in parents:
+    a.write_unsigned(p)
+  return a
+
+
 class Driven(object):
   """An awaitable running a generator, as `Recorder.drive` returns."""
 
@@ -253,25 +340,7 @@ class Recorder(object):
     self.observe(result)
 
   def serialize(self, archive=None):
-    a = orelse(archive, Archive)
-
-    # Write the trace header, which is a magic number followed by a version number.
-    a.write_bytes(b"pmdb")
-    a.write_byte(1)
-    a.write_byte(0)
-
-    # Write the identifier of the trace.
-    a.write_bytes(self.identifier.bytes)
-
-    # Write the number of observations followed by their values.
-    a.write_unsigned(len(self.observations))
-    for o in self.observations:
-      a.write(o)
-
-    # Write the mapping from each observation to its parent.
-    for p in self.parent:
-      a.write_unsigned(p)
-    return a
+    return write_trace(self.identifier, self.observations, self.parent, archive)
 
   @staticmethod
   def caller():

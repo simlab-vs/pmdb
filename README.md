@@ -96,11 +96,16 @@ Arguments, results, and snaps are recorded in the state they have when they are 
 - a class can choose how its instances are recorded by defining a method `__pmdb__` returning the value to record instead, and `pmdb.register(cls, convert)` does the same for classes one cannot modify;
 - other objects are pickled, or recorded as the string returned by `repr` if they cannot be pickled.
 
-To record every function of a program without editing it, use [`skills/pmdb/scripts/pmdb-record`](skills/pmdb/scripts/pmdb-record):
+To record every call of a program's own functions without editing it, use [`skills/pmdb/scripts/pmdb-record`](skills/pmdb/scripts/pmdb-record), which relies on `sys.monitoring` (Python 3.12 or later):
 
 ```
 PYTHONPATH=path/to/pmdb/Python skills/pmdb/scripts/pmdb-record -o trace.pmdb main.py input.json
+PYTHONPATH=path/to/pmdb/Python skills/pmdb/scripts/pmdb-record -o trace.pmdb -m pytest tests/test_x.py::test_y
 ```
+
+It records the functions defined in Python files under the current directory (or the directories given with `--root`), except code in installed packages and the standard library, lambdas and comprehensions.
+Arguments are recorded with the names of the parameters receiving them, and generators and coroutines as one call each, from when they start to when they finish.
+From Python, `with recorder.recording("trace.pmdb"): ...` records the calls made in its body, and `recorder.snap("label", value)` records a value in the call being run (and does nothing when nothing is being recorded).
 
 ### Rust
 
@@ -170,27 +175,32 @@ of a selection (counting, grouping, comparing, joining with other calls, or call
 own functions on recorded values) is ordinary Python:
 
 ```python
-import collections, recorder
+import recorder
+from recorder import Q
 
 t = recorder.load("trace.pmdb")
-bad = t.calls("Ledger.post").raised("AssertionError").first()   # the failing call
-print(bad.args, bad.location, [c.function for c in bad.path()])  # its arguments and callers
-ok = t.calls("Ledger.post").returned()                            # the calls that succeeded
-print(collections.Counter(c.args[1] for c in ok))                 # grouped by account
-print(t.calls("post").before(bad).where(lambda c: c.args[1] == bad.args[1]))
+bad = t.calls("Ledger.post", raised="AssertionError").first()    # the failing call
+print(bad["account"], bad.location, bad.path())                    # an argument, the call site, the stack
+print(t.calls("post", returned=True).count_by("account"))          # successful calls by account
+print(t.calls("post", before=bad, where=lambda c: c["account"] == bad["account"]))
+print(t.calls("post", caller=Q("settle", where=lambda c: c["day"] == 31)))
 ```
 
-- `t.calls(name)` selects calls by exact name, by the last component of a qualified name
-  (`"post"` matches `Ledger.post`), by a compiled regex, or by a predicate on names; without a
-  name, all calls. Selections are lists in recording order, filtered by `where(predicate)`,
-  `returned(predicate)`, `raised(type)`, `within(call)`, `before(call)` and `after(call)`, with
-  `first()`, `last()`, `count()`, `group_by(key)`, `functions()` and `show(limit)`.
-- A call has its `function`, `args` and `kwargs` (as they were when it started), `location`,
-  `returned`, `result`, `exception` (with `type` and `message`), `parent`, `children`,
-  `ancestors()`, `descendants()` and `path()`.
+- `t.calls(*selectors, **conditions)` selects the calls, in the order they started, matching every
+  selector (a function name, which also matches the last component of a qualified name; a
+  compiled regex; a predicate on calls; calls; or a `Q`, combined with `&`, `|` and `~`) and
+  every condition: `where`, `returned`, `raised`, and the relations `caller`, `callee`,
+  `ancestor`, `descendant`, `before` and `after`, which take selectors.
+- A selection is a list with `where`, `first()`, `last()`, `one()`, `values(key)`,
+  `group_by(key)`, `count_by(key)`, `functions()`, `show(limit)`, and `|`, `&` and `-`.
+- A call has its arguments by parameter name (`c["account"]`, `c.params`) or position (`c[0]`),
+  as they were when it started, its `function`, `location`, `definition`, `returned`, `raised`,
+  `result`, `exception` (with `type` and `message`), `caller`, `callees()`, `ancestors()`,
+  `descendants()`, `path()`, `snaps()` and `tree()`.
 - Values are Python values: tables are dicts and arrays are lists. An object the recorder
   pickled is an `Opaque` value whose `unpickle()` rebuilds it, which runs code of the program's
   modules: only do so with trusted programs whose modules are importable.
+- A predicate raising an exception stops the query with a `QueryError` naming the call.
 
 ## Query language
 
