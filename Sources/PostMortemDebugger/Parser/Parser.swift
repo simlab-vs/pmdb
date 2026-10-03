@@ -174,9 +174,14 @@ public struct Parser {
 
   /// Parses an identifier pattern.
   private mutating func parseIdentifierPattern() throws -> IdentifierPattern {
-    // Is the pattern a simple name?
+    // Is the pattern a name, possibly qualified (e.g., `Ledger.apply`)?
     if let n = take(.name) {
-      return .exactly(.init(tokens.source[n.site]))
+      var name = text(n)
+      while take(.dot) != nil {
+        let m = try take(if: { (t) in Self.wordTags.contains(t.tag) }) ?? expected("identifier")
+        name += "." + text(m)
+      }
+      return .exactly(name)
     }
 
     // Is the pattern a regex?

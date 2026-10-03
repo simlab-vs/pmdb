@@ -208,7 +208,7 @@ To select calls by their outcomes rather than the snaps recording them, use outc
 
 A **call pattern** has the form `<identifier-pattern>(<argument patterns>)`, where the identifier pattern matches the name of the function and the argument patterns, separated by commas, match the arguments.
 Identifiers and regular expressions must match the *whole* name.
-Python methods are recorded with their qualified names (e.g., `Parser.take`), so they are matched with regular expressions such as `/Parser\.take/` or `/.*\.take/`.
+Python methods are recorded with their qualified names (e.g., `Parser.take`), which a pattern can name as such, `Parser.take(...)`, or match with regular expressions such as `/.*\.take/`.
 When a query selects nothing because its identifier pattern matches no recorded function, `pmdb` says so in a warning that names the recorded functions it partially matches: those whose names end with `.` and the identifier (`take` for `Parser.take`), or that contain a match of the regular expression.
 Likewise, when no recorded call of the functions it matches has arguments of the shape of its argument patterns (their number, and the labels of named ones), the warning shows how they were called.
 

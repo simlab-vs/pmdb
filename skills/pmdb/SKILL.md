@@ -129,7 +129,7 @@ After the arguments, `-> r` matches calls that returned, binding `r` to the resu
 | … when the key may be missing | `select invoice(o) where o.has("coupon") && o.coupon == "BIG50"` |
 | … with a default value | `select invoice(o) where (if o.has("rate") then o.rate else 0) > 0.2` |
 | calls on arrays (lists, tuples) | `select spread(ws) where ws.len() > 1 && ws.any(w => w < 100)` |
-| methods (`Class.method`, `self` first) | `select /Parser\.take/(...)`, `select /.*\.take/(...)` |
+| methods (`Class.method`, `self` first) | `select Parser.take(...)`, `select /.*\.take/(...)` |
 | nested functions (`outer.<locals>.inner`) | `select /.*inner/(...)` |
 | the last positional argument | `select f(*, last)` |
 | a subset of earlier matches | `select f(x) from $0 where x > 1` |

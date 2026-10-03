@@ -363,6 +363,8 @@ func selectsCallsByArrayAndTableContents(source: String, count: Int) async throw
   ("/add/(...)",
    "no recorded function's whole name matches /add/; recorded functions with partial matches: Cart.add"),
   ("nothing(x)", "no call of 'nothing' is recorded"),
+  ("Cart.add(_, x)", nil),
+  ("Cart.nope(...)", "no call of 'Cart.nope' is recorded"),
   ("f(a, b)",
    "1 recorded call(s) of 'f', but none has arguments of the shape (a, b); they were made as f(_) (1×)"),
   ("/.*add/(x)",
