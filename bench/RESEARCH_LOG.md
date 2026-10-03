@@ -623,3 +623,33 @@ data, changed external state, the clock, and a consumed queue.
   reusing an existing language; prior work (Expositor, TraceQL, Perfetto's SQL, PQL, Daikon) is
   summarized in the discussion that led here.
 - **Quick fixes:** `Class.method` without slashes, and the export schema in the skill.
+
+---
+
+## 2026-10-03: Round 8: post-mortem scenarios, Python queries
+
+**Context.** Round 8 (`usability/round-8/`) repeated round 7's design: the same 5 post-mortem
+scenarios, with pmdb required in arm B; 60 runs.
+- **The change:** pmdb and the skill at `c9e9a61`, where the skill leads with the Python library
+  over traces (`recorder.load`).
+
+**Results** (`usability/round-8/results/REPORT.md`).
+- **The success rate held:** A 21/30 against B 26/30, the same as round 7.
+- **The cost did not drop.** B used 2.07× A's tokens: the geometric mean of the per-cell ratio of
+  medians, against 2.01 in round 7.
+  - Only Sonnet improved: 1.46× against 1.85×.
+  - Haiku lost 2 post-mortem successes.
+- **Agents adopted the library.** pmdb CLI calls fell from 278 to 113.
+- **The largest avoidable cost was setup.** The skill told agents to put the recorder on
+  `PYTHONPATH`, though it was already importable. Searching for it found a stale copy in
+  `/nix/store` without `load`. This hit 8 runs, and 2 Opus runs gave up on the library.
+- **Next, the shapes of values.** Named tuples load as dicts, sets as `Opaque`, and tuples as
+  lists, and `where` silently drops calls whose predicate raises.
+- **Haiku's failures were reasoning,** not tooling. It never checked its fix against the
+  recorded figures, which is what its one success did.
+
+**Decisions.**
+- **Fix the skill:** check `import recorder` before touching `PYTHONPATH`, and document the
+  library's value shapes and API compactly.
+- **Ask the user** about restoring Python types on load and about a replay helper. Both touch
+  the uniform encodings.
