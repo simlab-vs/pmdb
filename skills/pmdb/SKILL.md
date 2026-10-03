@@ -199,7 +199,17 @@ calls = [json.loads(l) for l in open("shipments.jsonl")]
 print(collections.Counter(c["positional"][0]["customer"] for c in calls).most_common(5))'
 ```
 
-This is much smaller and faster than printing calls with `show` and parsing them.
+Each line of the export is one call, for example:
+
+```
+{"location": "/work/shop.py:21", "function": "Cart.add", "positional": [{"$object": null}, "b", 10, 1.5], "named": {}, "returned": 2}
+```
+
+Positional arguments are in a list (methods have `self` first), named ones in an object, and the
+outcome is under `returned` or `raised`. Values keep their types: tables are objects, integers
+and floats stay distinct, and objects pmdb can't describe are `{"$object": null}`. This is much
+smaller and faster than printing calls with `show` and parsing them, and the values can be passed
+to the program's own functions, e.g. `Order(**call["positional"][0])`.
 
 **When you are handed a trace of a failing run** (rather than recording one), start from what
 it can tell that the code can't: `show functions` gives each function's number of calls, which
