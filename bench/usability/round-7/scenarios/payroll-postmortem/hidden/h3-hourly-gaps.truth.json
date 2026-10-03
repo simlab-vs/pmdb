@@ -1,0 +1,116 @@
+{
+  "seed": 7202,
+  "shapes": {
+    "change": 49,
+    "full": 508,
+    "future": 4,
+    "gap-follow": 6,
+    "gap-head": 3,
+    "gap-inner": 3,
+    "gap-rehire": 8,
+    "joiner": 14,
+    "leaver": 9,
+    "left": 29,
+    "old-gap": 17
+  },
+  "truth": {
+    "cost_centres": {
+      "CC-110": {
+        "allowances": 833250,
+        "base_salary": 29025327,
+        "employee_contributions": 5475107,
+        "employer_contributions": 5352993,
+        "gross": 29858577,
+        "headcount": 54,
+        "hourly_pay": 0,
+        "net": 19935011,
+        "premiums": 0,
+        "tax": 4448459
+      },
+      "CC-120": {
+        "allowances": 938250,
+        "base_salary": 32294263,
+        "employee_contributions": 6086450,
+        "employer_contributions": 5950400,
+        "gross": 33232513,
+        "headcount": 61,
+        "hourly_pay": 0,
+        "net": 22484757,
+        "premiums": 0,
+        "tax": 4661306
+      },
+      "CC-210": {
+        "allowances": 2001750,
+        "base_salary": 20266840,
+        "employee_contributions": 9941110,
+        "employer_contributions": 9708027,
+        "gross": 50629349,
+        "headcount": 130,
+        "hourly_pay": 26247858,
+        "net": 35634143,
+        "premiums": 2112901,
+        "tax": 5054096
+      },
+      "CC-220": {
+        "allowances": 1951500,
+        "base_salary": 22795801,
+        "employee_contributions": 10295367,
+        "employer_contributions": 10059908,
+        "gross": 54264918,
+        "headcount": 129,
+        "hourly_pay": 26921874,
+        "net": 37710830,
+        "premiums": 2595743,
+        "tax": 6258721
+      },
+      "CC-310": {
+        "allowances": 1743750,
+        "base_salary": 20848340,
+        "employee_contributions": 8871771,
+        "employer_contributions": 8666055,
+        "gross": 45833386,
+        "headcount": 118,
+        "hourly_pay": 21028258,
+        "net": 32052410,
+        "premiums": 2213038,
+        "tax": 4909205
+      },
+      "CC-410": {
+        "allowances": 900750,
+        "base_salary": 31341761,
+        "employee_contributions": 6012297,
+        "employer_contributions": 5877067,
+        "gross": 32242511,
+        "headcount": 59,
+        "hourly_pay": 0,
+        "net": 21517604,
+        "premiums": 0,
+        "tax": 4712610
+      },
+      "CC-510": {
+        "allowances": 1020000,
+        "base_salary": 37352587,
+        "employee_contributions": 7004234,
+        "employer_contributions": 6848476,
+        "gross": 38372587,
+        "headcount": 66,
+        "hourly_pay": 0,
+        "net": 25673384,
+        "premiums": 0,
+        "tax": 5694969
+      }
+    },
+    "totals": {
+      "allowances": 9389250,
+      "base_salary": 193924919,
+      "employee_contributions": 53686336,
+      "employer_contributions": 52462926,
+      "gross": 284433841,
+      "headcount": 617,
+      "hourly_pay": 74197990,
+      "net": 195008139,
+      "premiums": 6921682,
+      "tax": 35739366
+    }
+  }
+}

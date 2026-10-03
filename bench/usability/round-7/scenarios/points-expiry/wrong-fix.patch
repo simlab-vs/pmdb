@@ -1,0 +1,11 @@
+--- a/loyalty/policy.py
++++ b/loyalty/policy.py
+@@ -44,7 +44,7 @@
+     def cutoff_for(self, source, on):
+         """Points of ``source`` earned before the returned date have expired by
+         the end of the month containing ``on``."""
+-        return dates.add_months(dates.first_of_month(on), 1 - self.months_by_source[source])
++        return dates.add_months(dates.first_of_month(on), -self.months_by_source[source])
+ 
+     def due_lots(self, lots, on=None):
+         """Lots whose points expire at the end of the month containing ``on`` (default: today)."""

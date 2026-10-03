@@ -1,0 +1,51 @@
+{
+  "business_date": "2026-09-30",
+  "expiry": {
+    "closed_accounts_forfeited": 57,
+    "expired_by_source": {
+      "goodwill": 3804,
+      "promo": 86793,
+      "purchase": 651461
+    },
+    "expired_points": 742058,
+    "forfeited_points": 192095,
+    "lots_closed": 2794,
+    "members_exempt": 425,
+    "members_with_expiry": 1136
+  },
+  "generated_at": "2026-10-01T00:06:13+02:00",
+  "liability": {
+    "breakage_rate": "0.18",
+    "closed_accounts_points": 0,
+    "expiring_next_month": {
+      "on": "2026-10-31",
+      "points": 342633
+    },
+    "outstanding_by_source": {
+      "goodwill": 107318,
+      "promo": 314962,
+      "purchase": 15648744
+    },
+    "outstanding_by_tier": {
+      "basic": 7119530,
+      "gold": 2453818,
+      "platinum": 2522489,
+      "silver": 3975187
+    },
+    "outstanding_points": 16071024,
+    "point_value_eur": "0.005",
+    "value_eur": "65891.20"
+  },
+  "mode": "month-end",
+  "posting": {
+    "adjust": 29,
+    "adjust_points": 4598,
+    "burn": 289,
+    "burn_points": 453749,
+    "earn": 924,
+    "earn_points": 294846,
+    "rejected": 3
+  },
+  "programme": "Northwind Rewards",
+  "statements": 4743
+}

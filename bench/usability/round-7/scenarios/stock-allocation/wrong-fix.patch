@@ -1,0 +1,11 @@
+--- a/alloc/ledger.py
++++ b/alloc/ledger.py
+@@ -52,6 +52,8 @@
+ def reserve(sku, warehouse, qty):
+     """Take ``qty`` units of the remaining stock."""
+     key = (sku, warehouse)
++    if qty <= 0:
++        return
+     if qty > _free.get(key, 0):
+         raise OverAllocation(f"{qty} x {sku} in {warehouse}: only {_free.get(key, 0)} left")
+     _free[key] -= qty

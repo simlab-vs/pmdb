@@ -1,0 +1,5 @@
+$0 = <343 element(s) in 1 trace(s)>
+$1 = <3955 element(s) in 1 trace(s)>
+$2 = <289 element(s) in 1 trace(s)>
+dropped clearings: 343; repeating a posted network_ref: 59; network_refs never posted: 280, total 808.30
+never posted, with an auth_code: 0

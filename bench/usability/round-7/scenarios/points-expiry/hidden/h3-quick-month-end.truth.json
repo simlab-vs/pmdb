@@ -1,0 +1,45 @@
+{
+  "business_date": "2026-08-31",
+  "expiry": {
+    "closed_accounts_forfeited": 31,
+    "expired_by_source": {
+      "goodwill": 1984,
+      "promo": 42323,
+      "purchase": 314550
+    },
+    "expired_points": 358857,
+    "forfeited_points": 128812,
+    "members_with_expiry": 694
+  },
+  "liability": {
+    "closed_accounts_points": 0,
+    "expiring_next_month": {
+      "on": "2026-09-30",
+      "points": 472276
+    },
+    "outstanding_by_source": {
+      "goodwill": 81529,
+      "promo": 266098,
+      "purchase": 11980741
+    },
+    "outstanding_by_tier": {
+      "basic": 5527257,
+      "gold": 1894552,
+      "platinum": 2022422,
+      "silver": 2884137
+    },
+    "outstanding_points": 12328368,
+    "value_eur": "50546.31"
+  },
+  "mode": "month-end",
+  "posting": {
+    "adjust": 15,
+    "adjust_points": 2441,
+    "burn": 217,
+    "burn_points": 292913,
+    "earn": 694,
+    "earn_points": 221668,
+    "rejected": 3
+  },
+  "statements": 3569
+}

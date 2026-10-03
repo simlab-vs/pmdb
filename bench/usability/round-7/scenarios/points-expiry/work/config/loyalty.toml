@@ -1,0 +1,28 @@
+[programme]
+name = "Northwind Rewards"
+timezone = "Europe/Berlin"
+point_value_eur = "0.005"
+breakage_rate = "0.18"
+
+[earning.tier_multipliers]
+basic = "1.0"
+silver = "1.1"
+gold = "1.25"
+platinum = "1.5"
+
+[expiry]
+batch_size = 250
+exempt_tiers = ["platinum"]
+
+[expiry.months]
+purchase = 12
+goodwill = 12
+promo = 3
+
+[crm]
+endpoint = "https://crm.northwind.internal/api/v3/loyalty/statements"
+timeout_s = 10
+retries = 3
+
+[paths]
+report_dir = "reports"

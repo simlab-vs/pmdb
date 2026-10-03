@@ -1,0 +1,12 @@
+--- a/ledger/dedup.py
++++ b/ledger/dedup.py
+@@ -54,6 +54,9 @@
+         stats[REDELIVERY] += 1
+         return REDELIVERY
+     _message_ids.add(message.message_id)
++    if message.event_type == "clearing" and not message.data.get("auth_code"):
++        stats[NEW] += 1
++        return NEW
+     key = fingerprint(message)
+     first = _fingerprints.get(key)
+     if first is not None:

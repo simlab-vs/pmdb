@@ -1,0 +1,5 @@
+select allocate_line(l) -> a where l.order_id == "M-882837"
+show $0
+select allocatable(sku, wh, channel) -> free where free < 0
+select allocate_line(l) -> a where a.picks.any(p => p.qty < 0)
+export $2 to "negative.jsonl"

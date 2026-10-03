@@ -1,0 +1,11 @@
+--- a/payroll/salaried.py
++++ b/payroll/salaried.py
+@@ -21,6 +21,8 @@
+         segment = segment_at(employment.segments, day)
+         if segment.pay_type != SALARIED:
+             continue
++        if segment.valid_to is not None and day > segment.valid_to:
++            continue
+         earned += segment.monthly_salary
+     return round_half_up(earned, month_length)
+ 

@@ -1,0 +1,22 @@
+[job]
+programme = "Kite Prepaid EUR"
+programme_id = "KPE-01"
+currency = "EUR"
+queue_url = "https://queue-gw.internal.kite.example/v1/queues/card-events-prod"
+receive_batch = 10
+out_dir = "reports"
+
+[fees]
+# Basis points of the billing amount, charged on clearings in another currency.
+fx_fee_bp = 175
+# Charged per ATM withdrawal (MCC 6011), in the programme currency.
+atm_fee = "2.50"
+atm_fee_free_country = "DE"
+
+[mcc_groups]
+retail = ["5311", "5411", "5499", "5651", "5691", "5732", "5812", "5814", "5912", "5942", "5999"]
+travel = ["3000", "3501", "4511", "4722", "7011", "7512"]
+transport = ["4111", "4121", "4131", "4784", "7523"]
+fuel = ["5541", "5542"]
+cash = ["6011"]
+online = ["4816", "4899", "5734", "5815", "5816", "5817", "5818"]

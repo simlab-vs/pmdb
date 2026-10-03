@@ -1,0 +1,4 @@
+select segment_at(segments, day) -> s where s.valid_to != none
+export $0 to "lookups.jsonl"
+select employment_for("P10085", rows) -> e
+show $1

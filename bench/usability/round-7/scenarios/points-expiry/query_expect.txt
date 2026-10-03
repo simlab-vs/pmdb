@@ -1,0 +1,7 @@
+$0 = <12954 element(s) in 1 trace(s)>
+$1 = <4318 element(s) in 1 trace(s)>
+  2026-09-30 purchase -> 2025-10-01: 2476
+  2026-10-01 purchase -> 2025-11-01: 1842
+  2025-09 purchase: 407230
+  2025-10 purchase: 244231
+  total: 742058

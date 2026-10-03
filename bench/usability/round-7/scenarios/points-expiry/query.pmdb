@@ -1,0 +1,4 @@
+select /ExpiryPolicy\.cutoff_for/(_, source, on) -> cutoff
+export $0 to "cutoffs.jsonl"
+select /ExpiryPolicy\.due_lots/(_, lots) -> due
+export $1 to "due.jsonl"

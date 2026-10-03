@@ -1,0 +1,7 @@
+$0 = <1310 element(s) in 1 trace(s)>
+exported 1310 observation(s) of $0 to lookups.jsonl
+valid_from: 2021-02-20, valid_to: 2026-09-20, weekly_hours: 38.5}, {cost_centre: CC-210, hourly_rate: 0, id: A20200, monthly_salary: 477800, pay_type: salaried, person: P10085, valid_from: 2026-10-01, valid_to: none, weekly_hours: 38.5}]) -> {end: none, person: P10085
+9 persons paid on days after their assignment row ended
+P10085: 10 days 2026-09-21..2026-09-30 on row A20195 (ended 2026-09-20, next row from 2026-10-01, salaried)
+P11526: 8 days 2026-09-01..2026-09-08 on row A23226 (ended 2026-08-27, next row from 2026-09-09, hourly)
+salary paid for those days: 16,904.43

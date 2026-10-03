@@ -1,0 +1,11 @@
+--- a/alloc/allocator.py
++++ b/alloc/allocator.py
+@@ -44,7 +44,7 @@
+     picks = []
+     for warehouse in sources:
+         take = min(need, policy.allocatable(line.sku, warehouse, line.channel))
+-        if take:
++        if take > 0:
+             ledger.reserve(line.sku, warehouse, take)
+             picks.append(Pick(warehouse, line.sku, take))
+             need -= take
