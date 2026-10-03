@@ -23,6 +23,7 @@ listed here by topic; their titles are the log's headings.
 | [6](usability/round-6/) | 6 hand-designed scenarios needing runtime evidence (exploratory) | Haiku, Sonnet, Opus 5.5 | only the post-mortem scenario needed the trace (Sonnet, Opus fixed it only with pmdb) | Round 6: hand-designed scenarios (exploratory) |
 | [7](usability/round-7/) | 5 post-mortem scenarios, pmdb required, 2 runs per cell | Haiku, Sonnet, Opus 5.5 | B 26/30 vs A 21/30; refund A 0/6 vs B 5/6; first efficiency gain (Haiku payroll); analysis happens in Python | Round 7: post-mortem scenarios, pmdb required |
 | [8](usability/round-8/) | round 7's, skill leads with the Python library | Haiku, Sonnet, Opus 5.5 | success unchanged (B 26/30); cost still ~2× A; setup (PYTHONPATH) and value shapes dominate the avoidable cost | Round 8: post-mortem scenarios, Python queries |
+| [9](usability/round-9/) | round 7's; automatic recording; Python query library with relations required | Haiku, Sonnet, Opus 5.5 | B/A tokens 1.84 (Opus 1.72, was 2.49); B 22/30 (n.s.); 1 failure from a silent API trap; store copy of the repo exposed scenario data (unused, now hidden) | Round 9: automatic recording, Python API required |
 
 ## pmdb and the skill
 

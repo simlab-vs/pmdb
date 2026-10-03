@@ -653,3 +653,43 @@ scenarios, with pmdb required in arm B; 60 runs.
   library's value shapes and API compactly.
 - **Ask the user** about restoring Python types on load and about a replay helper. Both touch
   the uniform encodings.
+
+---
+
+## 2026-10-03: Round 9: automatic recording, Python API required
+
+**Context.** Following the user's direction, pmdb now records every call of a program's own code
+with `sys.monitoring`:
+- arguments by parameter name;
+- generators and coroutines as one call each;
+- threads;
+- `recorder.snap` for values the agent wants recorded.
+
+Traces are queried with a Python library of selectors and conditions, including the relations
+`caller`, `callee`, `ancestor`, `descendant`, `before` and `after`, and `Q` combinations
+(`29a63a1`). Round 9 (`usability/round-9/`) repeated round 7's design with the Python API
+required in arm B, a Python-only skill, and no command-line tool installed: 60 runs.
+
+**Results** (`usability/round-9/results/REPORT.md`).
+- **Cost fell.** The B/A token ratio was 1.84, against 2.07 in round 8. Opus went from 2.49 to
+  1.72, at 10/10.
+- **Successes:** B 22/30, against 26/30 in round 8 (p = 0.33), and A 21/30.
+- **One failure came from the API:** a silent wrong answer, `c.returned == value` with
+  `c.returned` a Boolean.
+- **Seven failures were reasoning:** groupings that missed filtered events, decoys, and the
+  turn limit.
+- **4 Haiku runs skipped the skill** and guessed the API.
+- **Agents used names and filters, rarely relations.**
+- **The bench exposed scenario data.** A copy of this repository in `/nix/store`, readable in
+  the sandbox, holds the scenarios' private data, ground truths and oracles. No run of any round
+  read them.
+
+**Decisions.**
+- **Fixed without design decisions (`c8cc580`):**
+  - the sandbox hides the store copies of the repository;
+  - skill notes on `returned`, on recomputing figures from unfiltered calls, and on looping;
+  - a faster `ancestor=`;
+  - suggestions for unknown attributes.
+- **Ask the user** about value shapes, `returned` naming, module selectors, a replay helper and
+  marking defaults.
+- **The next round's prompt names the skill.**
