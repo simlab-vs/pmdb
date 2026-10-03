@@ -26,8 +26,10 @@ python3 <this skill>/scripts/pmdb-record -o trace.pmdb main.py input.json
   exits, even if it raises.
 - Run it with the interpreter that has the project's dependencies (e.g. `.venv/bin/python`
   instead of `python3`).
-- If `recorder` can't be imported, add the directory `Python` of the pmdb repository to
-  `PYTHONPATH` (ask the user where it is if you can't find it).
+- `recorder` is usually importable as is: check with
+  `python3 -c 'import recorder; print(recorder.__file__)'`. Only if that fails, add the directory
+  `Python` of the pmdb repository to `PYTHONPATH` (ask the user where it is if you can't find
+  it). Other copies found on disk can be older versions, without `load`.
 - Not recorded: lambdas, calls answered by a cache such as `functools.lru_cache`, asynchronous
   generators, and test functions. A generator or coroutine call is recorded when it starts
   running, and the calls it makes appear under it.
@@ -186,7 +188,7 @@ pattern matches. Typical failures:
 **For anything beyond a selection, query the trace in Python.** Counting, summing, grouping,
 comparing the failing calls with the others, following a call's callers or what happened before
 it, and calling the program's own functions on recorded values are all plain Python on the
-recorder's `load` (with the recorder's directory on `PYTHONPATH`, as for `pmdb-record`):
+recorder's `load` (importable as for `pmdb-record`, above):
 
 ```
 python3 - <<'EOF'
@@ -207,12 +209,16 @@ EOF
   are left out), `returned(predicate)`, `raised(type)`, `within(call)`, `before(call)` and
   `after(call)`, and summarized with `first()`, `last()`, `count()`, `group_by(key)`,
   `functions()` and `show(limit=20)`, which prints one line per call.
-- A call has `function`, `args`, `kwargs` (as at the start of the call), `location`, `returned`,
-  `result`, `exception` (with `type` and `message`), `parent`, `children`, `ancestors()`,
-  `descendants()` and `path()`.
-- Values are Python values (dicts for tables, lists for arrays), so they can be passed to the
-  program's own functions, e.g. `Order(**c.args[0])`. Objects the recorder pickled are `Opaque`;
-  `unpickle()` rebuilds them by running the program's code.
+- A call has `function`, `args`, `kwargs` (as at the start of the call; a method's `self` is
+  `args[0]`), `location`, `returned` (a Boolean, unlike the selection's `returned()`), `result`,
+  `exception` (with `type` and `message`), `parent`, `children`, `ancestors()`, `descendants()`
+  and `path()`. `first()`, `last()`, `parent` and `result` can be `None`.
+- Values are Python values: tables are dicts (including named tuples and objects whose
+  `__pmdb__` returns a dict, so `v["field"]`, not `v.field`), arrays are lists (including
+  tuples), and other objects, sets among them, are `Opaque`. A dict can be passed to the
+  program's own functions, e.g. `Order(**c.args[0])`, and `unpickle()` rebuilds an `Opaque` value
+  by running the program's code. Since `where` leaves out calls on which the predicate raises,
+  check a predicate on one call first.
 - Loading takes a few seconds for tens of megabytes: load once and run several questions in one
   script.
 
