@@ -163,6 +163,35 @@ Other options:
 - `--brief` makes `show` print one line per observation, without the source code around it, and `--non-brief` makes it print the source code. By default, the output is brief iff it isn't written to a terminal; if both flags are given, the last one applies;
 - `pmdb --export-xml <trace>` prints a trace in the XML format described in [Documentation/Traces.md](Documentation/Traces.md). `pmdb` loads traces whose names end with `.xml` as XML documents.
 
+## Querying traces in Python
+
+Traces written by the Python recorder can also be loaded and queried in Python, where the analysis
+of a selection (counting, grouping, comparing, joining with other calls, or calling the program's
+own functions on recorded values) is ordinary Python:
+
+```python
+import collections, recorder
+
+t = recorder.load("trace.pmdb")
+bad = t.calls("Ledger.post").raised("AssertionError").first()   # the failing call
+print(bad.args, bad.location, [c.function for c in bad.path()])  # its arguments and callers
+ok = t.calls("Ledger.post").returned()                            # the calls that succeeded
+print(collections.Counter(c.args[1] for c in ok))                 # grouped by account
+print(t.calls("post").before(bad).where(lambda c: c.args[1] == bad.args[1]))
+```
+
+- `t.calls(name)` selects calls by exact name, by the last component of a qualified name
+  (`"post"` matches `Ledger.post`), by a compiled regex, or by a predicate on names; without a
+  name, all calls. Selections are lists in recording order, filtered by `where(predicate)`,
+  `returned(predicate)`, `raised(type)`, `within(call)`, `before(call)` and `after(call)`, with
+  `first()`, `last()`, `count()`, `group_by(key)`, `functions()` and `show(limit)`.
+- A call has its `function`, `args` and `kwargs` (as they were when it started), `location`,
+  `returned`, `result`, `exception` (with `type` and `message`), `parent`, `children`,
+  `ancestors()`, `descendants()` and `path()`.
+- Values are Python values: tables are dicts and arrays are lists. An object the recorder
+  pickled is an `Opaque` value whose `unpickle()` rebuilds it, which runs code of the program's
+  modules: only do so with trusted programs whose modules are importable.
+
 ## Query language
 
 A query has the following form:

@@ -37,6 +37,26 @@ private func record(_ program: String) async throws -> Trace {
   return try Trace(archive: result.standardOutput)
 }
 
+/// Runs the Python program `source` with the recorder importable and returns its output.
+private func runPython(_ source: String) async throws -> String {
+  #if os(Windows)
+    let python = "python"
+  #else
+    let python = "python3"
+  #endif
+  let result = try await run(
+    .name(python),
+    arguments: ["-c", source],
+    environment: .inherit.updating(
+      ["PYTHONPATH": pythonDirectory.path, "PYTHONDONTWRITEBYTECODE": "1"]),
+    output: .string(limit: 1 << 20),
+    error: .string(limit: 1 << 16))
+  if !result.terminationStatus.isSuccess {
+    throw RuntimeError("Python failed (\(result.terminationStatus)):\n\(result.standardError ?? "")")
+  }
+  return (result.standardOutput ?? "").replacingOccurrences(of: "\r\n", with: "\n")
+}
+
 /// The directory containing the Python recorder package.
 private let pythonDirectory = URL(fileURLWithPath: #filePath)
   .deletingLastPathComponent()
@@ -459,6 +479,49 @@ func notesFunctionsThatAreNotRecorded(source: String, note: String?) async throw
   #expect(returned.contains(#""named": {}, "returned": ["#))
   let raised = trace.json(call: trace.calls[2].index)
   #expect(raised.hasSuffix(#""named": {"fail": 1}, "raised": {"message": "'k'", "type": "KeyError"}}"#))
+}
+
+@Test func queriesTracesInPython() async throws {
+  let output = try await runPython(
+    """
+    import os, sys, tempfile, recorder
+    r = recorder.Recorder()
+
+    class Ledger:
+      @r.record
+      def post(self, account, amount):
+        assert amount != 0, "empty entry"
+        return amount
+
+    @r.record
+    def settle(ledger, entries):
+      return sum(ledger.post(a, x) for a, x in entries)
+
+    ledger = Ledger()
+    settle(ledger, [("a", 2), ("b", 3)])
+    try:
+      settle(ledger, [("a", 1), ("c", 0)])
+    except AssertionError:
+      pass
+
+    path = os.path.join(tempfile.mkdtemp(), "t.pmdb")
+    open(path, "wb").write(r.serialize().buffer)
+    t = recorder.load(path)
+    bad = t.calls("post").raised("AssertionError").first()
+    print(bad.args[1:], bad.exception.message, [c.function for c in bad.path()])
+    print([c.args[1:] for c in t.calls("Ledger.post").returned().before(bad)])
+    print(t.calls("settle").first().result, t.calls("settle").last().exception.type)
+    print([c.args[1] for c in t.calls("post").within(t.calls("settle").last())])
+    print(t.functions(), {k: len(v) for k, v in t.calls("post").group_by(lambda c: c.args[1]).items()})
+    """)
+  #expect(output == """
+    ['c', 0] empty entry ['settle', 'Ledger.post']
+    [['a', 2], ['b', 3], ['a', 1]]
+    5 AssertionError
+    ['a', 'c']
+    {'settle': 2, 'Ledger.post': 4} {'a': 2, 'b': 1, 'c': 1}
+
+    """)
 }
 
 @Test func recordsExceptions() async throws {
