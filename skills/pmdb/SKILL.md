@@ -159,8 +159,8 @@ by value:**
 - `0 == 0.0` and `1 < 1.5` hold, and `f(...) -> 0` also matches calls returning `0.0`.
 - `/` always gives a floating-point number: `7 / 2 == 3.5`.
 - NaN is unequal to everything, itself included, so `x != x` finds NaNs.
-- Nothing tells an integer from a floating-point number of the same value; `export` keeps the
-  distinction (`1` and `1.0`).
+- Nothing tells an integer from a floating-point number of the same value; Python (`recorder.load`)
+  and `export` keep the distinction (`1` and `1.0`).
 - A condition (the where clause, the operands of `&& || !`, the condition of `if`, the result of
   a lambda given to `all`, `any` or `count`) must be a Boolean: `where r` fails when `r` is a
   number. Write `r != 0`, `r != none`, `s != ""` or `xs.len() > 0`.
@@ -183,38 +183,45 @@ pattern matches. Typical failures:
 **Snaps.** A call's result is also stored as a snap labeled `<function>.$result`, matched by
 `select /f\.\$result/`; outcome patterns (`-> r`) are simpler.
 
-**Counting, summing and grouping** are beyond the query language: select the calls, `export`
-them, and finish in Python. `export $0 to "calls.jsonl"` writes one JSON object per call, with its
-`location`, `function`, `positional` and `named` arguments and the value it `returned` or the
-exception it `raised`, all typed:
+**For anything beyond a selection, query the trace in Python.** Counting, summing, grouping,
+comparing the failing calls with the others, following a call's callers or what happened before
+it, and calling the program's own functions on recorded values are all plain Python on the
+recorder's `load` (with the recorder's directory on `PYTHONPATH`, as for `pmdb-record`):
 
 ```
-pmdb trace.pmdb <<'EOF'
-select ship(order, carrier) where carrier != "post"
-export $0 to "shipments.jsonl"
+python3 - <<'EOF'
+import collections, recorder
+t = recorder.load("trace.pmdb")
+print(t.functions())                                    # recorded functions and their call counts
+bad = t.calls("Ledger.post").raised("AssertionError").first()
+print(bad, [c.function for c in bad.path()])            # the call, and the calls it was made in
+ok = t.calls("post").returned()                         # "post" also matches Ledger.post
+print(collections.Counter(c.args[1] for c in ok).most_common(5))
+t.calls("post").before(bad).where(lambda c: c.args[1] == bad.args[1]).show()
 EOF
-python3 -c '
-import collections, json
-calls = [json.loads(l) for l in open("shipments.jsonl")]
-print(collections.Counter(c["positional"][0]["customer"] for c in calls).most_common(5))'
 ```
 
-Each line of the export is one call, for example:
+- `t.calls(name)` selects by exact name, by the last component of a qualified one, by a compiled
+  regex or a predicate; without a name, all calls, in recording order.
+- A selection is a list, filtered with `where(predicate)` (calls on which the predicate raises
+  are left out), `returned(predicate)`, `raised(type)`, `within(call)`, `before(call)` and
+  `after(call)`, and summarized with `first()`, `last()`, `count()`, `group_by(key)`,
+  `functions()` and `show(limit=20)`, which prints one line per call.
+- A call has `function`, `args`, `kwargs` (as at the start of the call), `location`, `returned`,
+  `result`, `exception` (with `type` and `message`), `parent`, `children`, `ancestors()`,
+  `descendants()` and `path()`.
+- Values are Python values (dicts for tables, lists for arrays), so they can be passed to the
+  program's own functions, e.g. `Order(**c.args[0])`. Objects the recorder pickled are `Opaque`;
+  `unpickle()` rebuilds them by running the program's code.
+- Loading takes a few seconds for tens of megabytes: load once and run several questions in one
+  script.
 
-```
-{"location": "/work/shop.py:21", "function": "Cart.add", "positional": [{"$object": null}, "b", 10, 1.5], "named": {}, "returned": 2}
-```
-
-Positional arguments are in a list (methods have `self` first), named ones in an object, and the
-outcome is under `returned` or `raised`. Values keep their types: tables are objects, integers
-and floats stay distinct, and objects pmdb can't describe are `{"$object": null}`. This is much
-smaller and faster than printing calls with `show` and parsing them, and the values can be passed
-to the program's own functions, e.g. `Order(**call["positional"][0])`.
+pmdb's own `export $0 to "calls.jsonl"` writes a selection as JSON Lines, for other tools.
 
 **When you are handed a trace of a failing run** (rather than recording one), start from what
 it can tell that the code can't: `show functions` gives each function's number of calls, which
 you can compare with the counts in the report (e.g. one more call than there are orders); and the values
-in the report can often be recomputed from the recorded arguments and results, with `export`, to
+in the report can often be recomputed from the recorded arguments and results, in Python, to
 find which calls account for a difference.
 
 ## 4. What else trips queries up
@@ -235,4 +242,4 @@ find which calls account for a difference.
   the raising function, not at the `raise`.
 - **Values print without quotes**: `call f(B2)` is a call with the string `"B2"`, `1` may be the
   string `"1"`, `f()` may be a call with an empty string, and `"a, b"` looks like two arguments.
-  `export` writes typed values when it matters.
+  Python (`recorder.load`) gives typed values when it matters.
