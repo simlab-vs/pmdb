@@ -476,6 +476,22 @@ func showsTraces(flagFirst: Bool) async throws {
     """)
 }
 
+#if !os(Windows)
+  @Test func runsLaterCommandsWhenOutputIsNoLongerRead() async throws {
+    // `head` closes the pipe after the first line; the export must still run.
+    let r = try makeTrace()
+    let path = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).path
+    let shows = String(repeating: "show $0\n", count: 2_000)
+    _ = try await run(
+      .name("sh"), arguments: ["-c", "\"$0\" \"$1\" | head -1", pmdbExecutable.path, r.trace],
+      environment: .inherit.updating(["TERM": "dumb"]),
+      input: .fileDescriptor(
+        inputFile("select f(x)\n\(shows)export $0 to \"\(path)\"\n"), closeAfterSpawningProcess: true),
+      output: .discarded, error: .discarded)
+    #expect(FileManager.default.fileExists(atPath: path))
+  }
+#endif
+
 /// The snap recording that `f` returned 2.
 private let resultOfF = """
   <pmdb:snap location="a.py:3" label="f.$result">\

@@ -64,6 +64,12 @@ import PostMortemDebugger
 
   /// Executes the command.
   public mutating func run() async throws {
+    // Keep executing commands when the reader of the output stops reading (e.g., `| head`), so
+    // that later commands, such as an export, still take effect.
+    #if !os(Windows)
+      signal(SIGPIPE, SIG_IGN)
+    #endif
+
     // Should we just show the contents of the traces?
     if show {
       for u in inputs {
