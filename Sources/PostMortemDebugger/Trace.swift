@@ -426,6 +426,15 @@ public struct Trace: Sendable {
     let header = try archive.read(TraceHeader.self)
     self.identity = header.identifier
 
+    // Read the table of values, from version 1.1 on, whose values refer to earlier ones.
+    let table = ValueTable()
+    var context: Any = table
+    if (header.major, header.minor) >= (1, 1) {
+      let n = try Int(archive.readUnsignedLEB128())
+      table.values.reserveCapacity(n)
+      for _ in 0 ..< n { try table.values.append(archive.read(Value.self, in: &context)) }
+    }
+
     // Parse the trace's contents.
     let count = try Int(archive.readUnsignedLEB128())
     self.observations = .init(minimumCapacity: count)
@@ -438,12 +447,12 @@ public struct Trace: Sendable {
       switch tag {
       case 0x01:
         observations.append(.init(snap: snaps.count))
-        try snaps.append(.init(index: .init(untagged: i), value: Snap(from: &archive)))
+        try snaps.append(.init(index: .init(untagged: i), value: Snap(from: &archive, in: &context)))
 
       case 0x02, 0x04:
         observations.append(.init(call: calls.count))
         try calls.append(
-          .init(index: .init(untagged: i), value: Call(from: &archive, withParameters: tag == 0x04)))
+          .init(index: .init(untagged: i), value: Call(from: &archive, withParameters: tag == 0x04, in: &context)))
 
       case 0x03:
         // The outcome of the call at an earlier index, read as a snap labeled `<function>.$result`
@@ -451,7 +460,7 @@ public struct Trace: Sendable {
         let location = try archive.read(SourceLine.self)
         let c = try Int(archive.readUnsignedLEB128())
         let raised = try archive.readByte() != 0
-        let value = try archive.read(Value.self)
+        let value = try archive.read(Value.self, in: &context)
         guard c < i, let q = observations[c].call else { throw ArchiveError.invalidInput }
         let label = calls[q].value.function + (raised ? ".$exception" : ".$result")
         explicitOutcomes.append((q, i))

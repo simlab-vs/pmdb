@@ -19,11 +19,11 @@ public struct Snap: Observation {
     self.value = value
   }
 
-  /// Reads an instance from `archive`.
-  public init<T>(from archive: inout ReadableArchive<T>) throws {
+  /// Reads an instance from `archive`, whose values may refer to the table of values `context`.
+  public init<T>(from archive: inout ReadableArchive<T>, in context: inout Any) throws {
     self.location = try archive.read(SourceLine.self)
     self.label = try archive.read(String?.self)
-    self.value = try archive.read(Value.self)
+    self.value = try archive.read(Value.self, in: &context)
   }
 
 }

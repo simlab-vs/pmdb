@@ -223,5 +223,63 @@ class QueryTests(unittest.TestCase):
       sys.path.remove(d)
 
 
+class ValueTableTests(unittest.TestCase):
+
+  def test_what_goes_in_the_table(self):
+    from recorder.archive import ValueTable
+    from recorder.recorder import encode
+    table = ValueTable()
+    for v in [None, True, 3, 2 ** 80, 1.5, "", "1234567"]:
+      encode(v, table)
+    self.assertEqual(table.entries, [])
+    for v in ["12345678", [1], {"a": 1}, (1, 2), "12345678", [1]]:
+      encode(v, table)
+    self.assertEqual(len(table.entries), 4)
+    # Elements are entries of their own, so a value shared by several containers is stored once.
+    encode([["x" * 10], ["x" * 10, 1]], table)
+    self.assertEqual(len(table.entries), 8)
+
+  def test_equal_values_are_stored_once(self):
+    t = record(
+      "config = {'currency': 'EUR', 'rounding': 'half-even', 'accounts': list(range(100))}\n"
+      "items = []\n"
+      "def add(config, items, x):\n"
+      "  items.append(x)\n"
+      "  return config['currency']\n"
+      "for i in range(50):\n"
+      "  add(config, items, i)\n")
+    adds = t.calls("add")
+    self.assertEqual(len(adds), 50)
+    self.assertEqual(adds[7]["config"]["accounts"][99], 99)
+    # Arguments are recorded as they were when each call started.
+    self.assertEqual(adds[3]["items"], [0, 1, 2])
+    self.assertEqual(adds.values(lambda c: c.result), ["EUR"] * 50)
+    # Decoded values aren't shared between calls.
+    adds[0]["config"]["currency"] = "USD"
+    self.assertEqual(adds[1]["config"]["currency"], "EUR")
+
+  def test_reads_traces_without_a_table(self):
+    from recorder.archive import Archive
+    from recorder.recorder import Call, Snapshot
+    import uuid
+    a = Archive()
+    a.write_bytes(b"pmdb")
+    a.write_byte(1)
+    a.write_byte(0)
+    a.write_bytes(uuid.uuid4().bytes)
+    observations = [Call("<root>", 0, "root", [], {}), Call("m.py", 3, "f", [[1, "long string"]], {}),
+                    Snapshot("m.py", 3, "f.$result", {"total": 2})]
+    a.write_unsigned(len(observations))
+    for o in observations:
+      a.write(o)
+    for p in [0, 0, 0]:
+      a.write_unsigned(p)
+    path = os.path.join(tempfile.mkdtemp(), "old.pmdb")
+    with open(path, "wb") as f:
+      f.write(a.buffer)
+    f = recorder.load(path).calls("f").one()
+    self.assertEqual((f.args, f.result), ([[1, "long string"]], {"total": 2}))
+
+
 if __name__ == "__main__":
   unittest.main()

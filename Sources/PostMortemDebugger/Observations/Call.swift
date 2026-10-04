@@ -31,8 +31,11 @@ public struct Call: Observation {
   }
 
   /// Reads an instance from `archive`, where it was written with the name of the parameter of each
-  /// positional argument and the location of the function's definition iff `withParameters`.
-  public init<T>(from archive: inout ReadableArchive<T>, withParameters: Bool = false) throws {
+  /// positional argument and the location of the function's definition iff `withParameters`, and
+  /// whose values may refer to the table of values `context`.
+  public init<T>(
+    from archive: inout ReadableArchive<T>, withParameters: Bool = false, in context: inout Any
+  ) throws {
     self.location = try archive.read(SourceLine.self)
     self.function = try archive.read(String.self)
     self.children = []
@@ -45,7 +48,7 @@ public struct Call: Observation {
     var positional: [Value] = .init(minimumCapacity: m)
     for _ in 0 ..< m {
       if withParameters { _ = try archive.read(String.self) }
-      try positional.append(archive.read(Value.self))
+      try positional.append(archive.read(Value.self, in: &context))
     }
     self.positional = positional
 
@@ -54,7 +57,7 @@ public struct Call: Observation {
     var named: SortedDictionary<String, Value> = .init(minimumCapacity: n)
     for _ in 0 ..< n {
       let k = try archive.read(String.self)
-      let v = try archive.read(Value.self)
+      let v = try archive.read(Value.self, in: &context)
       try modify(&named[k]) { (w) in
         if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
       }

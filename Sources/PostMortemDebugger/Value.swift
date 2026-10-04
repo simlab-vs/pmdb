@@ -18,6 +18,8 @@ public enum ValueTag: UInt8, Hashable, Sendable {
 
   case boolean  = 0x06
 
+  case reference = 0x07
+
   case function = 0xfe
 
   case object   = 0xff
@@ -32,6 +34,18 @@ public enum Builtin: String, Hashable, Sendable {
 
   /// Converts a number to `false` if it is zero or NaN, or `true` otherwise.
   case bool
+
+}
+
+/// The values of a trace stored once and referred to by their position, which a value read from an
+/// archive can refer to when the table is its context.
+public final class ValueTable {
+
+  /// The values, in the order of their positions.
+  public var values: [Value] = []
+
+  /// Creates an empty instance.
+  public init() {}
 
 }
 
@@ -124,7 +138,7 @@ extension Value: Archivable {
       let n = try Int(archive.readUnsignedLEB128())
       var elements: [Value] = []
       elements.reserveCapacity(n)
-      for _ in 0 ..< n { try elements.append(archive.read(Value.self)) }
+      for _ in 0 ..< n { try elements.append(archive.read(Value.self, in: &context)) }
       self = .array(elements)
 
     case ValueTag.table.rawValue:
@@ -132,7 +146,7 @@ extension Value: Archivable {
       var entries = SortedDictionary<String, Value>(minimumCapacity: n)
       for _ in 0 ..< n {
         let k = try archive.read(String.self)
-        let v = try archive.read(Value.self)
+        let v = try archive.read(Value.self, in: &context)
         try modify(&entries[k]) { (w) in
           if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
         }
@@ -141,6 +155,14 @@ extension Value: Archivable {
 
     case ValueTag.function.rawValue:
       self = try .function(archive.read(String.self))
+
+    case ValueTag.reference.rawValue:
+      // A value of the trace's table of values, which `context` holds.
+      let i = try Int(archive.readUnsignedLEB128())
+      guard let table = context as? ValueTable, i < table.values.count else {
+        throw ArchiveError.invalidInput
+      }
+      self = table.values[i]
 
     case ValueTag.object.rawValue:
       let n = try archive.readUnsignedLEB128()

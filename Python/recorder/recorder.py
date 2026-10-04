@@ -4,13 +4,14 @@ import sys
 import typing
 import uuid
 
-from .archive import Archive, describe
+from .archive import Archive, ValueTable, describe
 from .utilities import orelse
 
 
-def encode(value) -> bytes:
-  """Returns the serialization of `value` in its current state."""
-  archive = Archive()
+def encode(value, table=None) -> bytes:
+  """Returns the serialization of `value` in its current state, whose values other than numbers
+  and short strings are added to `table`, if given, and referred to."""
+  archive = Archive(table)
   archive.write_object(value)
   return bytes(archive.buffer)
 
@@ -38,13 +39,14 @@ class Snapshot(Observation):
   """A record of an expression having been evaluated."""
 
   def __init__(
-    self, source_file: str, line_number: int, label: typing.Optional[str], value: object
+    self, source_file: str, line_number: int, label: typing.Optional[str], value: object,
+    table=None
   ):
     super().__init__(source_file, line_number)
     self.label = label
 
     # Values are encoded right away because they might be mutated later.
-    self.value = encode(value)
+    self.value = encode(value, table)
 
   def serialize(self, archive):
     super().serialize(archive)
@@ -68,14 +70,15 @@ class Call(Observation):
   """A record of a function application."""
 
   def __init__(
-    self, source_file: str, line_number: int, function: str, positional: list, named: dict
+    self, source_file: str, line_number: int, function: str, positional: list, named: dict,
+    table=None
   ):
     super().__init__(source_file, line_number)
     self.function = function
 
     # Arguments are encoded right away because they might be mutated during the call.
-    self.positional = [encode(a) for a in positional]
-    self.named = {k: encode(a) for k, a in named.items()}
+    self.positional = [encode(a, table) for a in positional]
+    self.named = {k: encode(a, table) for k, a in named.items()}
 
   def serialize(self, archive):
     super().serialize(archive)
@@ -105,11 +108,12 @@ class NamedCall(Call):
 
   def __init__(
     self, source_file: str, line_number: int, function: str, definition: tuple,
-    positional: list, named: dict
+    positional: list, named: dict, table=None
   ):
     # `positional` is a list of pairs of a parameter name and an argument; an argument collected
     # by a parameter `*rest` is named `*rest`.
-    super().__init__(source_file, line_number, function, [a for _, a in positional], named)
+    super().__init__(
+      source_file, line_number, function, [a for _, a in positional], named, table)
     self.names = [k for k, _ in positional]
     self.definition = definition
 
@@ -145,11 +149,13 @@ class Outcome(Observation):
   explicitly (unlike a snap labeled `<function>.$result`), so that it needn't follow the call
   immediately (e.g., for a generator suspended in between)."""
 
-  def __init__(self, source_file: str, line_number: int, call: int, raised: bool, value: object):
+  def __init__(
+    self, source_file: str, line_number: int, call: int, raised: bool, value: object, table=None
+  ):
     super().__init__(source_file, line_number)
     self.call = call
     self.raised = raised
-    self.value = encode(value)
+    self.value = encode(value, table)
 
   def serialize(self, archive):
     super().serialize(archive)
@@ -162,18 +168,25 @@ class Outcome(Observation):
     return 0x03
 
 
-def write_trace(identifier, observations, parents, archive=None):
+def write_trace(identifier, observations, parents, table, archive=None):
   """Returns `archive` (or a new archive) after writing the trace of `observations`, where the
-  parent of the `i`-th observation is the `parents[i]`-th."""
+  parent of the `i`-th observation is the `parents[i]`-th, and whose values refer to `table`."""
   a = orelse(archive, Archive)
 
-  # Write the trace header, which is a magic number followed by a version number.
+  # Write the trace header, which is a magic number followed by a version number. Version 1.1
+  # has a table of values.
   a.write_bytes(b"pmdb")
   a.write_byte(1)
-  a.write_byte(0)
+  a.write_byte(1)
 
   # Write the identifier of the trace.
   a.write_bytes(identifier.bytes)
+
+  # Write the number of values in the table followed by their encodings, each of which only
+  # refers to values before it.
+  a.write_unsigned(len(table.entries))
+  for e in table.entries:
+    a.write_bytes(e)
 
   # Write the number of observations followed by their values.
   a.write_unsigned(len(observations))
@@ -203,6 +216,7 @@ class Recorder(object):
     """Creates a new instance."""
     self.identifier = orelse(identifier, uuid.uuid4)
     self.observations = [orelse(root, Recorder.root)]
+    self.values = ValueTable()
     self.parent = [0]
     self.active = 0
 
@@ -258,7 +272,8 @@ class Recorder(object):
     """Records the start of a call to `f` made at the frame `caller` and makes it the active
     observation, returning the name under which it is recorded."""
     callee = f.__qualname__
-    call = self.encoded(Call, caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs)
+    call = self.encoded(
+      Call, caller.f_code.co_filename, caller.f_lineno, callee, args, kwargs, self.values)
     self.step_into(call)
     return callee
 
@@ -271,8 +286,8 @@ class Recorder(object):
       label = callee + ".$exception"
     else:
       value, label = outcome["returned"], callee + ".$result"
-    self.step_out(
-      self.encoded(Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value))
+    self.step_out(self.encoded(
+      Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value, self.values))
 
   def drive(self, f, args, kwargs, iterator):
     """Runs the generator `iterator(f(*args, **kwargs))`, recording the call to `f`, and returns
@@ -312,7 +327,8 @@ class Recorder(object):
 
   def snapshot(self, label, value):
     caller = Recorder.caller()
-    self.observe(self.encoded(Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value))
+    self.observe(self.encoded(
+      Snapshot, caller.f_code.co_filename, caller.f_lineno, label, value, self.values))
 
   def encoded(self, make, *args):
     """Returns `make(*args)`, which encodes values, without recording the calls it makes."""
@@ -340,7 +356,7 @@ class Recorder(object):
     self.observe(result)
 
   def serialize(self, archive=None):
-    return write_trace(self.identifier, self.observations, self.parent, archive)
+    return write_trace(self.identifier, self.observations, self.parent, self.values, archive)
 
   @staticmethod
   def caller():

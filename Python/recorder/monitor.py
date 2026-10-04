@@ -23,6 +23,7 @@ import threading
 import uuid
 
 from .archive import describe
+from .archive import ValueTable
 from .recorder import Call, NamedCall, Outcome, Snapshot, write_trace
 
 PACKAGE = os.path.dirname(os.path.abspath(__file__))
@@ -69,6 +70,7 @@ class Monitor(object):
       self.directory(paths[k]) for k in ("stdlib", "platstdlib", "purelib", "platlib")
       if k in paths] + [self.directory(PACKAGE)]
     self.observations = [Call("<root>", 0, "root", [], {})]
+    self.values = ValueTable()
     self.parent = [0]
     self.stacks = {}      # thread identifier -> [(frame, index of its call)]
     self.suspended = {}   # frame of a generator or coroutine -> index of its call
@@ -139,7 +141,7 @@ class Monitor(object):
   def write(self, path):
     """Writes the trace to `path`."""
     with open(path, "wb") as f:
-      f.write(write_trace(self.identifier, self.observations, self.parent).buffer)
+      f.write(write_trace(self.identifier, self.observations, self.parent, self.values).buffer)
 
   def encoded(self, make, *args):
     """Returns `make(*args)`, which encodes values, without recording the calls it makes."""
@@ -179,8 +181,8 @@ class Monitor(object):
       raise TypeError(f"a snap's label must be a string, not {type(label).__name__}")
     s = self.stack()
     parent = s[-1][1] if s else 0
-    self.append(self.encoded(Snapshot, frame.f_code.co_filename, frame.f_lineno, label, value),
-                parent)
+    self.append(self.encoded(Snapshot, frame.f_code.co_filename, frame.f_lineno, label, value,
+                             self.values), parent)
 
   # Callbacks of `sys.monitoring`. They return `DISABLE` for code that isn't recorded, so that
   # it is no longer monitored, and record their failures rather than raising them in the program.
@@ -199,7 +201,7 @@ class Monitor(object):
                     else (code.co_filename, code.co_firstlineno))
       positional, named = self.arguments(code, frame.f_locals)
       call = self.encoded(NamedCall, file, line, code.co_qualname,
-                          (code.co_filename, code.co_firstlineno), positional, named)
+                          (code.co_filename, code.co_firstlineno), positional, named, self.values)
       index = self.append(call, parent)
       s.append((frame, index))
       if code.co_flags & SUSPENDABLE:
@@ -276,7 +278,7 @@ class Monitor(object):
         return
       def make():
         v = {"type": type(value).__qualname__, "message": describe(value, str)} if raised else value
-        return Outcome(code.co_filename, frame.f_lineno, index, raised, v)
+        return Outcome(code.co_filename, frame.f_lineno, index, raised, v, self.values)
       outcome = self.encoded(make)
       self.append(outcome, self.parent[index])
     except Exception:

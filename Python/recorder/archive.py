@@ -14,14 +14,45 @@ class TypeIdentifier(Enum):
   Array     = 0x04
   Table     = 0x05
   Boolean   = 0x06
+  Reference = 0x07
   Function  = 0xfe
   Object    = 0xff
 
 
-class Archive(object):
+def inline(o):
+  """Returns whether `o` is written in place rather than in the table of values: `None`, a
+  Boolean, a number, or a string of fewer than 8 characters."""
+  return o is None or type(o) in (bool, int, float) or (type(o) is str and len(o) < 8)
+
+
+class ValueTable(object):
+  """The values of a trace that aren't written in place, each stored once and referred to by its
+  position.
+
+  Values are compared by their encoding, so equal values are stored once whatever the objects
+  that had them.
+  """
 
   def __init__(self):
+    self.positions = {}
+    self.entries = []
+
+  def intern(self, encoding):
+    """Returns the position of the value whose encoding is `encoding`, adding it if needed."""
+    i = self.positions.get(encoding)
+    if i is None:
+      i = self.positions[encoding] = len(self.entries)
+      self.entries.append(encoding)
+    return i
+
+
+class Archive(object):
+  """A buffer of encoded values. Values other than those written in place (see `inline`) are
+  added to `table`, if given, and written as references to it."""
+
+  def __init__(self, table=None):
     self.buffer = bytearray()
+    self.table = table
 
   def write(self, item):
     item.serialize(self)
@@ -70,6 +101,21 @@ class Archive(object):
     """
     Writes `o`, which is contained in the arrays and tables whose identities are in `enclosing`.
     """
+    if self.table is None or inline(o):
+      self.write_contents(o, enclosing)
+      return
+    contents = Archive(self.table)
+    contents.write_contents(o, enclosing)
+    encoding = bytes(contents.buffer)
+    if inline_encoding(encoding):
+      # E.g., an object whose conversion is a number.
+      self.write_bytes(encoding)
+    else:
+      self.write_byte(TypeIdentifier.Reference.value)
+      self.write_unsigned(self.table.intern(encoding))
+
+  def write_contents(self, o, enclosing):
+    """Writes `o` in place, its elements being written with `write_object`."""
     # Handle the absence of a value.
     if o is None:
       self.write_byte(TypeIdentifier.Null.value)
@@ -116,7 +162,7 @@ class Archive(object):
 
     # Handle objects whose type defines how they are recorded, unless they contain themselves.
     elif (convert := conversion(type(o))) is not None and id(o) not in enclosing:
-      self.write_object(convert(o), enclosing | {id(o)})
+      self.write_contents(convert(o), enclosing | {id(o)})
 
     # Handle enumerations, which are recorded as the names of their members.
     elif isinstance(o, enum.Enum) and isinstance(o.name, str):
@@ -135,6 +181,25 @@ class Archive(object):
         self.write_byte(TypeIdentifier.Object.value)
         self.write_unsigned(len(bs))
         self.write_bytes(bs)
+
+
+def inline_encoding(encoding):
+  """Returns whether `encoding` is that of a value written in place (see `inline`)."""
+  tag = encoding[0]
+  if tag in (0x00, 0x01, 0x02, 0x06):
+    return True
+  if tag != TypeIdentifier.String.value:
+    return False
+  n = shift = 0
+  i = 1
+  while True:
+    b = encoding[i]
+    n |= (b & 0x7f) << shift
+    shift += 7
+    i += 1
+    if not b & 0x80:
+      break
+  return len(encoding[i:i + n].decode("utf-8")) < 8
 
 
 conversions = {}

@@ -119,12 +119,64 @@ class Raised(dict):
     return f"{self.type}({self.message!r})"
 
 
+class _Ref(object):
+  """A reference to a value of the trace's table of values, not decoded yet."""
+
+  __slots__ = ("index",)
+
+  def __init__(self, index):
+    self.index = index
+
+
 class Reader(object):
   """Decodes the archive written by `recorder.archive.Archive`."""
 
   def __init__(self, data):
     self.data = memoryview(data)
     self.i = 0
+    self.offsets = []   # the offset of each value of the table of values
+
+  def read_table(self):
+    """Reads the table of values, only recording where each value starts."""
+    for _ in range(self.unsigned()):
+      self.offsets.append(self.i)
+      self.skip()
+
+  def skip(self):
+    """Moves past a value."""
+    tag = self.byte()
+    if tag in (0x01, 0x07):
+      while self.byte() & 0x80:
+        pass
+    elif tag == 0x02:
+      self.i += 8
+    elif tag in (0x03, 0xfe, 0xff):
+      n = self.unsigned()  # read before `self.i`, which `+=` would load before the call
+      self.i += n
+    elif tag == 0x04:
+      for _ in range(self.unsigned()):
+        self.skip()
+    elif tag == 0x05:
+      for _ in range(self.unsigned()):
+        n = self.unsigned()
+        self.i += n
+        self.skip()
+    elif tag == 0x06:
+      self.i += 1
+    elif tag != 0x00:
+      raise ValueError(f"unknown value tag {tag:#x} at offset {self.i - 1}")
+
+  def entry(self, index):
+    """Decodes the value at `index` in the table of values."""
+    saved, self.i = self.i, self.offsets[index]
+    try:
+      return self.value()
+    finally:
+      self.i = saved
+
+  def resolve(self, value):
+    """`value`, decoded from the table of values if it refers to it."""
+    return self.entry(value.index) if isinstance(value, _Ref) else value
 
   def byte(self):
     b = self.data[self.i]
@@ -164,7 +216,9 @@ class Reader(object):
     self.i += n
     return s
 
-  def value(self):
+  def value(self, lazy=False):
+    """Decodes a value; a reference to the table of values is decoded too, unless `lazy`, in which
+    case it is returned as a `_Ref`."""
     tag = self.byte()
     if tag == 0x00:
       return None
@@ -187,6 +241,9 @@ class Reader(object):
       return Function(self.string())
     if tag == 0xff:
       return Opaque(pickled=self.bytes(self.unsigned()))
+    if tag == 0x07:
+      index = self.unsigned()
+      return _Ref(index) if lazy else self.entry(index)
     raise ValueError(f"unknown value tag {tag:#x} at offset {self.i - 1}")
 
 
@@ -209,9 +266,9 @@ class Call(object):
   """A recorded call: its function, its arguments as they were when it started, its outcome and
   its place in the tree of calls."""
 
-  __slots__ = ("trace", "index", "location", "function", "definition", "args", "names",
-               "kwargs", "parent_index", "children_indices", "finish", "_outcome", "end_location",
-               "depth", "snap_indices")
+  __slots__ = ("trace", "index", "location", "function", "definition", "_args", "names",
+               "_kwargs", "_decoded", "parent_index", "children_indices", "finish", "_outcome",
+               "end_location", "depth", "snap_indices")
 
   def __init__(self, trace, index, location, function, definition, args, names, kwargs,
                parent_index, depth):
@@ -220,14 +277,15 @@ class Call(object):
     self.location = location      # (file, line) of the call site
     self.function = function      # qualified name, e.g. `Ledger.post`
     self.definition = definition  # (file, line) of the function's definition, if recorded
-    self.args = args              # positional arguments (a method's `self` first)
+    self._args = args             # positional arguments (a method's `self` first), not decoded
     self.names = names            # the parameter receiving each positional argument, if recorded
-    self.kwargs = kwargs          # named arguments
+    self._kwargs = kwargs         # named arguments, not decoded
+    self._decoded = False
     self.parent_index = parent_index
     self.children_indices = []
     self.snap_indices = []
     self.finish = index           # index of the observation recording its end (see `load`)
-    self._outcome = None          # ("returned", value) or ("raised", Raised)
+    self._outcome = None          # ["returned" or "raised", value, whether it is decoded]
     self.end_location = None      # (file, line) where the call returned or raised, if recorded
     self.depth = depth
 
@@ -235,6 +293,26 @@ class Call(object):
     _no_attribute(self, name)
 
   # Arguments.
+
+  def _decode(self):
+    resolve = self.trace._reader.resolve
+    self._args = [resolve(a) for a in self._args]
+    self._kwargs = {k: resolve(a) for k, a in self._kwargs.items()}
+    self._decoded = True
+
+  @property
+  def args(self):
+    """The positional arguments, as they were when the call started (a method's `self` first)."""
+    if not self._decoded:
+      self._decode()
+    return self._args
+
+  @property
+  def kwargs(self):
+    """The named arguments, as they were when the call started."""
+    if not self._decoded:
+      self._decode()
+    return self._kwargs
 
   @property
   def params(self):
@@ -283,15 +361,24 @@ class Call(object):
     """Whether the call raised an exception."""
     return self._outcome is not None and self._outcome[0] == "raised"
 
+  def _outcome_value(self):
+    o = self._outcome
+    if not o[2]:
+      value = self.trace._reader.resolve(o[1])
+      if o[0] == "raised" and isinstance(value, dict):
+        value = Raised(value)
+      o[1], o[2] = value, True
+    return o[1]
+
   @property
   def result(self):
     """The value the call returned, or `None` if it didn't return."""
-    return self._outcome[1] if self.returned else None
+    return self._outcome_value() if self.returned else None
 
   @property
   def exception(self):
     """The exception the call raised (a `Raised`, with `type` and `message`), or `None`."""
-    return self._outcome[1] if self.raised else None
+    return self._outcome_value() if self.raised else None
 
   # Relations.
 
@@ -397,11 +484,18 @@ class Call(object):
 class Snap(object):
   """A value recorded with a label, by `recorder.snap`."""
 
-  __slots__ = ("trace", "index", "location", "label", "value", "parent_index")
+  __slots__ = ("trace", "index", "location", "label", "_value", "parent_index")
 
   def __init__(self, trace, index, location, label, value, parent_index):
     self.trace, self.index, self.location, self.label = trace, index, location, label
-    self.value, self.parent_index = value, parent_index
+    self._value, self.parent_index = value, parent_index
+
+  @property
+  def value(self):
+    """The recorded value."""
+    if isinstance(self._value, _Ref):
+      self._value = self.trace._reader.resolve(self._value)
+    return self._value
 
   @property
   def call(self):
@@ -749,6 +843,7 @@ class Trace(object):
     self._snaps_by_index = {}
     self._functions = {}
     self._selections = {}
+    self._reader = None
 
   def calls(self, *selectors, **conditions):
     """The calls selected by every selector and satisfying every condition (see the module's
@@ -782,8 +877,11 @@ def load(path):
   r = Reader(data)
   if r.bytes(4) != b"pmdb":
     raise ValueError(f"{path} isn't a pmdb trace")
-  r.bytes(2)  # the version
+  major, minor = r.byte(), r.byte()
   trace = Trace(r.bytes(16).hex())
+  trace._reader = r
+  if (major, minor) >= (1, 1):
+    r.read_table()
   n = r.unsigned()
   raw = []
   for _ in range(n):
@@ -791,7 +889,7 @@ def load(path):
     location = (r.string(), r.unsigned())
     if tag == 0x01:
       label = r.string() if r.byte() else None
-      raw.append(("snap", location, label, r.value()))
+      raw.append(("snap", location, label, r.value(lazy=True)))
     elif tag == 0x02 or tag == 0x04:
       function = r.string()
       definition = (r.string(), r.unsigned()) if tag == 0x04 else None
@@ -799,16 +897,16 @@ def load(path):
       for _ in range(r.unsigned()):
         if tag == 0x04:
           names.append(r.string())
-        args.append(r.value())
+        args.append(r.value(lazy=True))
       kwargs = {}
       for _ in range(r.unsigned()):
         k = r.string()
-        kwargs[k] = r.value()
+        kwargs[k] = r.value(lazy=True)
       raw.append(("call", location, function, definition, args, names, kwargs))
     elif tag == 0x03:
       call = r.unsigned()
       raised = bool(r.byte())
-      raw.append(("outcome", location, call, raised, r.value()))
+      raw.append(("outcome", location, call, raised, r.value(lazy=True)))
     else:
       raise ValueError(f"unknown observation tag {tag:#x}")
   parents = [r.unsigned() for _ in range(n)]
@@ -830,9 +928,7 @@ def load(path):
       c = by_index.get(o[2])
       if c is not None and c._outcome is None:
         c.finish = i
-        value = o[4]
-        c._outcome = ("raised", Raised(value) if isinstance(value, dict) else value) if o[3] \
-          else ("returned", value)
+        c._outcome = ["raised" if o[3] else "returned", o[4], False]
         c.end_location = o[1]
       last_child[p] = ("outcome", i)
     else:
@@ -845,10 +941,10 @@ def load(path):
       if previous is not None and previous[0] == "call":
         c = by_index[previous[1]]
         if c._outcome is None and label == c.function + ".$result":
-          c._outcome, c.finish = ("returned", value), i
+          c._outcome, c.finish = ["returned", value, False], i
           continue
         if c._outcome is None and label == c.function + ".$exception":
-          c._outcome, c.finish = ("raised", Raised(value) if isinstance(value, dict) else value), i
+          c._outcome, c.finish = ["raised", value, False], i
           continue
       s = Snap(trace, i, o[1], label, value, p)
       snaps.append(s)
