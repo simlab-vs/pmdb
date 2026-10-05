@@ -37,10 +37,11 @@ Each cell: success (✓ or ✗), tokens / tool calls.
   - With any form of access, Sonnet and Opus repaired it.
   - Haiku failed it in all four conditions.
 - **On the other two exercises, the trace mainly added cost.** Sonnet and Opus repaired them in
-  every condition, at roughly 1.1–4.9× the baseline's tokens.
+  every condition, at 1.0–4.9× the baseline's tokens.
 - **Among the three forms of access, success is indistinguishable** (7, 6 and 7 of 9). Costs
-  were ordered query language < Python library < format specification for Sonnet in every
-  exercise, and the medians follow that order.
+  were ordered query language < Python library < format specification for Sonnet on
+  card-ledger-queue and payroll-postmortem (not on refund-postmortem), and the medians follow
+  that order.
   - This reverses the order seen across rounds 10 and 11, where the format specification was the
     cheaper. With one run per cell, neither ordering is established.
 - **How the trace was used:**
