@@ -693,3 +693,33 @@ required in arm B, a Python-only skill, and no command-line tool installed: 60 r
 - **Ask the user** about value shapes, `returned` naming, module selectors, a replay helper and
   marking defaults.
 - **The next round's prompt names the skill.**
+
+---
+
+## 2026-10-05: Round 10: the trace and its format only, no pmdb
+
+**Context.** At the user's request, a quick round (`usability/round-10/`) gave agents a trace and
+a 358-word description of its binary format in the prompt. There was no pmdb, no skill, and no
+recorder package; agents wrote their own readers.
+- **Scenarios:** three post-mortems where the pmdb arms did worst (card-ledger-queue,
+  payroll-postmortem, refund-postmortem).
+- **Runs:** 3 models, 2 repetitions: 18 runs, 8 in parallel.
+- **The format text** was checked first: a reader written only from it parsed a trace to the last
+  byte.
+
+**Results** (`usability/round-10/results/REPORT.md`).
+- **Successes:** 14/18, against B 15, 14 and 10 in rounds 7–9, and A 9/18 in each round.
+- **Cost:** a median of 1,359k tokens, the lowest of any arm with a trace on these scenarios
+  (round 9's B: 1,738k).
+- **First:** Haiku's card-ledger runs succeeded both times, which no arm had done before.
+- **The readers:**
+  - Opus wrote a 40-line reader in one step and reused it;
+  - Sonnet and Haiku wrote readers of 160–330 lines;
+  - two Haiku readers needed one fix each;
+  - no run was misled by its reader.
+- **The four failures are Haiku's,** with the reasoning failures seen before.
+
+**Decisions.**
+- **A documented trace format plus Python is the baseline** pmdb's query layer must beat.
+- **The format's description is worth shipping with traces.**
+- **A powered B-against-C comparison is needed** before drawing conclusions.
