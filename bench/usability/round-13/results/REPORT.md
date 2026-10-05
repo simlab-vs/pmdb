@@ -70,7 +70,7 @@ Sonnet and Opus runs).
   - **Sonnet:** 1.3–1.6×.
   - **On individual exercises:** on billing-postmortem, points-expiry and stock-allocation, which
     both models also repaired without the trace, the overhead was often under 1.5×, and in some
-    cases below the baseline (stock-allocation, Sonnet: 0.31–0.53×).
+    cases below the baseline (stock-allocation, Sonnet: 0.31–0.52×).
 - **The forms of access differ little.** Within the variance of one or two runs per combination,
   no condition is better at success.
   - The Python library was cheapest for Opus in both rounds.
