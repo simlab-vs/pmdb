@@ -723,3 +723,31 @@ recorder package; agents wrote their own readers.
 - **A documented trace format plus Python is the baseline** pmdb's query layer must beat.
 - **The format's description is worth shipping with traces.**
 - **A powered B-against-C comparison is needed** before drawing conclusions.
+
+---
+
+## 2026-10-05: Round 11: the trace with pmdb's query language, no skill
+
+**Context.** At the user's request, a quick round (`usability/round-11/`) with round 10's design.
+The agent got the trace and the pmdb command-line tool, with a 344-word query-language reference
+in the prompt (including `export`). There was no skill, no Python library, and no trace format:
+18 runs.
+
+**Results** (`usability/round-11/results/REPORT.md`).
+- **Successes:** D 13/18, against C 14/18 (round 10, format only), B 15/18 (round 7, CLI + skill),
+  B 10/18 (round 9, Python library) and A 9/18.
+- **Cost:** a median of 1,572k tokens and 42 tool calls, against C's 1,359k and 36.
+- **Sonnet and Opus fixed all 12 runs,** including refund (0/12 without a trace). Haiku fixed
+  1/6.
+- **Every run used `export`** and analysed in Python. Failed pmdb commands were mostly Haiku's:
+  pipes inside the heredoc, and variables across invocations.
+- **A harness defect:** one run's transcript had two result events, and the harness counted only
+  the last. That run's usage is corrected in the results.
+
+**Decisions.**
+- **On these post-mortems, how the trace is accessed matters less than having it.** A documented
+  format is as good as pmdb's query language.
+- **The next question for pmdb's query layer** is where it beats a hand-written reader: traces too
+  large to load, or relations that are hard to code by hand. Those belong in the large-codebase
+  rounds.
+- **Fix the harness to sum usage over all result events.**

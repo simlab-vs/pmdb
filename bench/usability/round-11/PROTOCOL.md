@@ -43,4 +43,9 @@ Also measured: the number of pmdb commands, failed commands, and the use of `exp
 
 ## Changes after the start
 
-None yet.
+- **One run's cost was undercounted by the harness, and is corrected in `results/runs.jsonl`.**
+  - Run `12-payroll-postmortem-D-sonnet-2` started a background task, and its transcript has two
+    result events (35 turns and 1,220k tokens, then 1 turn and 63k). The harness kept only the
+    last one.
+  - `results/runs.jsonl` sums both, keeping the reported usage as `usage_reported`.
+  - No other run of rounds 9–11 has more than one result event.
