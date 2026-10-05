@@ -1,6 +1,7 @@
 # Round 13: four forms of access to an execution trace, six exercises (protocol)
 
-This protocol was written before any run of the study.
+This protocol was written before the runs, except the analysis of refund-postmortem, which was
+added after them.
 
 The document has two parts:
 - **Background** relates this round to the earlier rounds of the usability study and explains why
@@ -74,49 +75,42 @@ alone.
 
 ### Exercises
 
-**Design.** Each exercise describes a batch job that ran in production and produced incorrect
-figures. The execution cannot be reproduced, because the data it processed is no longer available:
-- it was private and deleted after use;
-- it was held only by an external system whose state has since changed;
-- it depended on the time of day at which the job ran;
-- or it was consumed from a message queue.
-
-The agent receives:
+Each exercise describes a batch job that ran in production and produced incorrect figures, and
+whose execution cannot be reproduced because the data it processed is no longer available. The
+agent receives:
 - the program's source code;
 - the job's log and the reports it produced;
 - a defect report written as a user would write it, giving the incorrect figures, the expected
   figures, and the reason the input cannot be provided.
 
-**Origin.** The exercises were designed and written for this study by Claude Opus 5.5. Each
-consists of:
+The exercises were designed and written for this study by Claude Opus 5.5. The study uses all six:
+
+| exercise | why the execution cannot be reproduced | reported symptom | class of defect | affected records |
+|---|---|---|---|---|
+| billing-postmortem | the data extract (customer register, meter readings) was deleted after billing | consumption 77.7 kWh short of the meter data system's total | inconsistent keys across modules | 1 of 3,070 accounts |
+| card-ledger-queue | the card processor's queue messages were consumed | debits €808.30 short of the bank's, on 202 cards | incomplete identity key | 280 transactions on 202 cards |
+| payroll-postmortem | the private HR export was deleted after payment | salaries €16,904.43 above HR's preview | unchecked invariant on intervals | 9 of about 650 persons |
+| points-expiry | the job's behaviour depended on the clock, and it ran across midnight | 273,353 loyalty points expired too early | inconsistent reading of the clock | 1,842 of 4,800 members |
+| refund-postmortem | the payment provider's export does not leave the production system | NovaPay refunds €5,027.67 (42%) too high | change in an external data model | 103 of 328 NovaPay refunds |
+| stock-allocation | the inventory service's stock levels at the time of the run have since changed | short picks and over-shipped marketplace lines, although every check passed | sign error across modules | 116 of 5,123 order lines |
+
+**Components.** Each exercise consists of:
 - a program of 900–1,200 lines of Python in 11 to 18 modules, in a realistic business domain;
 - a seeded generator of the private input, and a ground truth;
 - the production log and reports, produced by running the program on the private input;
 - the defect report;
 - a reference repair;
-- for five of the six exercises, one or more plausible but incorrect repairs;
-- an oracle.
+- an oracle;
+- for card-ledger-queue, payroll-postmortem, points-expiry and stock-allocation, one or two
+  plausible but incorrect repairs, which the oracle must reject.
 
-A validation script verifies, for each exercise, that:
-- the reported symptom is reproduced by the original program;
-- the oracle rejects the original program, accepts the reference repair, and rejects each
-  incorrect repair;
+A validation script checks, for each exercise, that:
+- the original program reproduces the reported symptom;
+- the oracle rejects the original program, accepts the reference repair, and rejects the
+  incorrect repairs;
 - recording a trace leaves the exercise's files unchanged.
 
-**Selection.** The study uses every exercise constructed in this way, six in all:
-
-| exercise | why the execution cannot be reproduced | reported symptom |
-|---|---|---|
-| billing-postmortem | the data extract (customer register and meter readings) was deleted after billing | consumption 77.7 kWh short of the meter data system's total |
-| card-ledger-queue | the card processor's queue messages were consumed | debits €808.30 short of the bank's figures, on 202 cards |
-| payroll-postmortem | the private HR export was deleted after payment | salaries €16,904.43 above HR's preview |
-| points-expiry | the job's behaviour depended on the clock while it ran, around midnight | 273,353 loyalty points expired too early |
-| refund-postmortem | the payment provider's export does not leave the production system | NovaPay refunds €5,027.67 (42%) too high |
-| stock-allocation | the inventory service's stock levels at the time of the run have since changed | short picks and over-shipped marketplace lines, although every check passed |
-
-### Defects
-
-Each exercise contains exactly one defect, with these properties:
+**Defects.** Each exercise contains exactly one defect, with these properties:
 - the code is correct for the common case;
 - a condition present in a minority of the input records, or of the moments of execution, makes
   the program produce incorrect totals;
@@ -124,32 +118,53 @@ Each exercise contains exactly one defect, with these properties:
 - the condition is visible only in the execution, which the trace records and the agent otherwise
   lacks.
 
-| exercise | class of defect | mechanism | affected records |
-|---|---|---|---|
-| billing-postmortem | inconsistent keys across modules | Readings are merged in order of the account identifier as delivered, but grouped by the resolved identifier, flushing a batch when it changes. An account whose old meter reports under a legacy identifier is therefore settled twice, and its second bill overwrites the first. | 1 of 3,070 accounts |
-| card-ledger-queue | incomplete identity key | Duplicate messages are detected by a fingerprint of transaction fields that omits the network reference. Offline card transactions (transit fares, tolls) carry no authorization code and only a date, so distinct transactions on the same day share a fingerprint, and all but the first are discarded as duplicates. | 280 transactions on 202 cards |
-| payroll-postmortem | unchecked invariant on intervals | A person's employment is taken to span from the start of their first contract row to the end of their last. Gaps between rows therefore count as employed days, affecting salary, allowances and contribution ceilings. | 9 of about 650 persons |
-| points-expiry | inconsistent reading of the clock | The job fixes its business date when it starts, but the expiry policy reads the current date again for each member. Members processed after midnight receive the next month's cutoffs. | 1,842 of 4,800 members |
-| refund-postmortem | change in an external data model | A new version of the provider's interface sends one event per status change of a refund (pending, then succeeded or failed), with the same refund identifier. The program books every event as a separate refund. | 103 of 354 refunds |
-| stock-allocation | sign error across modules | The quantity available to marketplace lines is the stock left minus a safety stock, which is negative for locations below their safety stock. A test for non-zero rather than positive quantities lets negative picks through, creating phantom stock and over-shipping from the next warehouse. | 116 of 5,123 order lines |
+The defects make localization by reading costly without making it impossible: the defective code
+is documented and appears deliberate, the triggering condition is not apparent from the code, and
+the logs report only aggregates. For each exercise:
 
-**Reference repairs:**
-- **billing-postmortem:** collect each account's readings before settling it.
-- **card-ledger-queue:** add the network reference to the fingerprint (one line).
-- **payroll-postmortem:** bound employment by each row's end date, in the shared employment
-  functions.
-- **points-expiry:** pass the job's business date to the expiry policy (one line).
-- **refund-postmortem:** keep the last event of each refund, and count a refund only if its final
-  status is "succeeded".
-- **stock-allocation:** take only positive quantities (one line).
-
-**What makes the defects hard to find by reading.** Several features of each exercise make
-localization by reading costly without making it impossible:
-- the defective code is documented and appears deliberate;
-- the triggering condition is not apparent from the code;
-- most exercises contain plausible alternative causes, e.g. the handling of out-of-order messages,
-  the proration of salaries, the conversion of multipacks, and refunds still pending at month end;
-- the logs report only aggregates.
+- **billing-postmortem.**
+  - **Mechanism:** readings are merged in order of the account identifier as delivered, but
+    grouped by the resolved identifier. An account whose old meter reports under a legacy
+    identifier is settled twice, and its second bill overwrites the first.
+  - **Repair:** collect each account's readings before settling it.
+  - **Plausible alternative causes:** rounding, meter rollover, the filtering of duplicate
+    readings, estimation.
+- **card-ledger-queue.**
+  - **Mechanism:** duplicate messages are detected by a fingerprint of transaction fields that
+    omits the network reference. Offline transactions (transit fares, tolls) have no
+    authorization code and only a date, so distinct transactions on the same day share a
+    fingerprint, and all but the first are discarded.
+  - **Repair:** add the network reference to the fingerprint (one line).
+  - **Plausible alternative causes:** out-of-order clearings parked and never posted, late
+    presentments.
+- **payroll-postmortem.**
+  - **Mechanism:** a person's employment is taken to span from the start of their first contract
+    row to the end of their last, so gaps between rows count as employed days. This affects
+    salary, allowances and contribution ceilings.
+  - **Repair:** bound employment by each row's end date, in the shared employment functions.
+  - **Plausible alternative cause:** the divisor used to prorate salaries.
+- **points-expiry.**
+  - **Mechanism:** the job fixes its business date when it starts, but the expiry policy reads the
+    current date again for each member. Members processed after midnight receive the next month's
+    cutoffs.
+  - **Repair:** pass the job's business date to the expiry policy (one line).
+  - **Plausible alternative cause:** the arithmetic of the cutoff dates.
+- **refund-postmortem.**
+  - **Mechanism:** a new version of the provider's interface sends one event per status change of
+    a refund (pending, then succeeded or failed), with the same refund identifier. The program
+    books every event as a separate refund.
+  - **Repair:** keep the last event of each refund, and count a refund only if its final status
+    is "succeeded".
+  - **Plausible alternative causes:** refunds of earlier months' charges, currency conversion,
+    and excluding pending refunds, which repairs only part of the difference.
+- **stock-allocation.**
+  - **Mechanism:** the quantity available to marketplace lines is the stock left minus a safety
+    stock, which is negative for locations below their safety stock. A test for a non-zero rather
+    than a positive quantity lets negative picks through, creating phantom stock and
+    over-shipping from the next warehouse.
+  - **Repair:** take only positive quantities (one line).
+  - **Plausible alternative cause:** the conversion of multipacks (the defect report's example is
+    a 3-pack).
 
 ### Conditions
 
@@ -272,9 +287,11 @@ status sequences and reproduced the expected figure exactly.
     trace can help, not how often real defects have this form.
   - Their naming, structure and decoys may favour these models.
   - One exercise (billing-postmortem) was converted from an exercise in which the input was
-    available. Its program and defect were not designed for the absence of the input, and it has
-    no incorrect repairs to reject.
-- **Sample size.** Six exercises with one defect each and one run per combination are still few.
+    available, so its program and defect were not designed for the absence of the input.
+  - Two exercises (billing-postmortem, refund-postmortem) have no incorrect repairs for the
+    validation to reject. Their oracles still reject partial repairs through hidden inputs with
+    variants of the triggering condition.
+- **Sample size.** Six exercises with one defect each and one run per combination are few.
   The particularities of individual exercises, and the run-to-run variance (which is large for
   Haiku), weigh heavily.
 - **Mandatory use of the trace.** Agents in conditions 2–4 must use the trace, and so incur its
