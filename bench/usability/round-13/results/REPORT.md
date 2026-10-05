@@ -59,23 +59,6 @@ Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
 | 3. Python library | 6/6 | 118k | 1.11× | 1.07× (5) | 130k |
 | 4. format specification | 6/6 | 148k | 1.48× | 1.46× (5) | 173k |
 
-## Rounds 12 and 13 combined
-
-Rounds 12 and 13 used the same conditions, prompts and software. For the three exercises they
-share, there are two runs per combination of exercise, model and condition. Successes below are
-therefore out of 6 runs per model and condition: 3 exercises × 2 runs, one from each round. That
-is not the same 6 as in the table above, which counts 6 exercises × 1 run.
-
-| condition | successes: Haiku / Sonnet / Opus | tokens relative to the baseline, all runs: Haiku / Sonnet / Opus |
-|---|---|---|
-| 1. baseline | 3/6, 4/6, 4/6 | 1 |
-| 2. query language | 2/6, 6/6, 6/6 | 2.99×, 1.94×, 1.50× |
-| 3. Python library | 0/6, 6/6, 6/6 | 3.05×, 2.22×, 1.07× |
-| 4. format specification | 1/6, 6/6, 6/6 | 3.10×, 2.53×, 1.74× |
-
-On refund-postmortem, the baseline repaired 0 of 6 runs, and each trace condition 4 of 6 (all
-Sonnet and Opus runs).
-
 ## Findings
 
 - **Sonnet and Opus: with any form of access to the trace, every run succeeded** (36 of 36 in
@@ -93,24 +76,17 @@ Sonnet and Opus runs).
   - **On individual exercises:** on billing-postmortem, points-expiry and stock-allocation, which
     both models also repaired without the trace, the overhead was often under 1.5×, and in some
     cases below the baseline (stock-allocation, Sonnet: 0.31–0.52×).
-- **The forms of access differ little.** Within the variance of one or two runs per combination,
-  no condition is better at success.
-  - Over all runs, the Python library was the cheapest for Opus in both rounds (1.07× and 1.11×
-    the baseline's tokens). In round 13, counting only exercises that both runs repaired, it was
-    the cheapest for Sonnet and Opus (1.06× and 1.07×).
-  - Over all runs, the format specification was the most expensive for Sonnet in both rounds, and
-    for Opus in round 12 (tied with the query language in round 13). Each agent first writes and
-    debugs its own reader.
-- **Haiku does not benefit from the trace.** Its successes:
-
-  | condition | round 13 (6 exercises × 1 run) | rounds 12+13 (3 shared exercises × 2 runs) |
-  |---|---|---|
-  | baseline | 4/6 | 3/6 |
-  | query language | 3/6 | 2/6 |
-  | Python library | 3/6 | 0/6 |
-  | format specification | 2/6 | 1/6 |
-
-  The trace costs it 2.3–3.1× the baseline's tokens. With the trace, it spends its effort on
+- **The forms of access differ little.** With one run per combination, no condition is better at
+  success.
+  - The Python library was the cheapest for Opus: 1.11× the baseline's tokens over all runs. On
+    the exercises that both runs repaired, it was the cheapest for Sonnet and Opus (1.06× and
+    1.07×).
+  - The format specification was the most expensive for Sonnet (1.62×), and for Opus about as
+    expensive as the query language (1.48× and 1.47×). Each agent first writes and debugs its own
+    reader.
+- **Haiku does not benefit from the trace.** It repaired 4 of 6 exercises in the baseline, but
+  3, 3 and 2 of 6 with the query language, the Python library and the format specification. The
+  trace costs it 2.3–2.8× the baseline's tokens. With the trace, it spends its effort on
   analyses that lead to decoys, and more often reaches the turn limit.
 - **The new exercise, billing-postmortem, did not require the trace.** Sonnet and Opus repaired
   it in every condition, including the baseline. Like points-expiry and stock-allocation, it is
@@ -134,4 +110,10 @@ Sonnet and Opus runs).
 
 ## Revision
 
-On 2026-10-05, at the user's request, the cost summaries pooled across models (medians and ratios over all runs of all models) were replaced by per-model figures. The per-run data and table are unchanged.
+On 2026-10-05, at the user's request:
+- the cost summaries pooled across models (medians and ratios over all runs of all models) were
+  replaced by per-model figures;
+- the section combining rounds 12 and 13 on their three shared exercises was removed, so that the
+  report covers round 13's six exercises only.
+
+The per-run data and table are unchanged.
