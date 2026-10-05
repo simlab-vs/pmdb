@@ -26,6 +26,7 @@ listed here by topic; their titles are the log's headings.
 | [9](usability/round-9/) | round 7's; automatic recording; Python query library with relations required | Haiku, Sonnet, Opus 5.5 | B/A tokens 1.84 (Opus 1.72, was 2.49); B 22/30 (n.s.); 1 failure from a silent API trap; store copy of the repo exposed scenario data (unused, now hidden) | Round 9: automatic recording, Python API required |
 | [10](usability/round-10/) | 3 of round 7's post-mortems; trace + 358-word format description only, no pmdb (quick) | Haiku, Sonnet, Opus 5.5 | C 14/18 (B: 15, 14, 10 in rounds 7–9; A 9/18) at the lowest median tokens; readers cheap (Opus: 40 lines, one step); failures are Haiku reasoning | Round 10: the trace and its format only, no pmdb |
 | [11](usability/round-11/) | round 10's 3 post-mortems; trace + pmdb CLI with a 344-word query-language reference, no skill (quick) | Haiku, Sonnet, Opus 5.5 | D 13/18 (C 14/18), median 1,572k tokens; Sonnet+Opus 12/12, Haiku 1/6; every run exported to Python | Round 11: the trace with pmdb's query language, no skill |
+| [12](usability/round-12/) | 3 post-mortems × 4 conditions (baseline, query language, Python library, format spec; references in the prompt, no skill), 1 run per cell, same day | Haiku, Sonnet, Opus 5.5 | 5/9, 7/9, 6/9, 7/9; trace decides refund; forms of access indistinguishable at this sample size | Round 12: four forms of access to a trace, side by side |
 
 ## pmdb and the skill
 

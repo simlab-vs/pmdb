@@ -82,8 +82,8 @@ from a message queue. The agent receives:
 - a defect report written as a user would write it, giving the incorrect figures, the expected
   figures, and the reason the input cannot be provided.
 
-**Origin.** The exercises were not sourced from real incidents, but designed and written for this
-study by a model of the family under evaluation. Each consists of:
+**Origin.** The exercises were designed and written for this
+study by Claude Opus 5.5. Each consists of:
 - a program of 1,000–1,100 lines of Python in 13 to 18 modules, in a realistic business domain;
 - a seeded generator of the private input, and a ground truth;
 - the production log and report, produced by running the program on the private input;

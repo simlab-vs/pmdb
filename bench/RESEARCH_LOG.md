@@ -751,3 +751,31 @@ in the prompt (including `export`). There was no skill, no Python library, and n
   large to load, or relations that are hard to code by hand. Those belong in the large-codebase
   rounds.
 - **Fix the harness to sum usage over all result events.**
+
+---
+
+## 2026-10-05: Round 12: four forms of access to a trace, side by side
+
+**Context.** Rounds 7–11 compared forms of access to a trace across days and prompts. Round 12
+(`usability/round-12/`) ran four conditions on the same day, with prompts differing in one
+paragraph and no skill:
+1. baseline;
+2. query language with a reference;
+3. Python library with a reference;
+4. format specification.
+
+The trace was recorded automatically in conditions 2–4. The design was 3 exercises × 3 models ×
+1 run: 36 runs in about 25 minutes.
+
+**Results** (`usability/round-12/results/REPORT.md`).
+- **Successes:** 5/9, 7/9, 6/9 and 7/9 for conditions 1–4.
+- **Median tokens:** 582k, 1,191k, 1,888k and 2,469k.
+- **Refund-postmortem:** the baseline failed it with every model; Sonnet and Opus repaired it in
+  every trace condition.
+- **The cost order** among the trace conditions (query < library < format) reverses the order
+  seen across rounds 10–11. With one run per cell, neither is established.
+
+**Decisions.**
+- **Double the exercises to six** (round 13): the five post-mortems plus round 6's billing-needle
+  converted into a post-mortem.
+- **The methodology is written to be read independently** of earlier rounds, as the user asked.
