@@ -441,7 +441,8 @@ class Call(object):
         for d in c.callees():
           visit(d, level + 1)
       elif c.children_indices:
-        lines.append("  " * (level + 1) + f"… {len(c.descendants())} calls")
+        n = len(c.descendants())
+        lines.append("  " * (level + 1) + f"… {n} call{'' if n == 1 else 's'}")
 
     visit(self, 0)
     for line in lines[:limit]:

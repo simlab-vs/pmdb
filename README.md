@@ -170,6 +170,8 @@ Other options:
 
 ## Querying traces in Python
 
+The full documentation, with an example, is in [Documentation/Python.md](Documentation/Python.md).
+
 Traces written by the Python recorder can also be loaded and queried in Python, where the analysis
 of a selection (counting, grouping, comparing, joining with other calls, or calling the program's
 own functions on recorded values) is ordinary Python:
