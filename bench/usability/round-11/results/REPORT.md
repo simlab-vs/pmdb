@@ -52,7 +52,7 @@ Each run: ✓ or ✗, tokens / tool calls.
   Python on the JSON Lines (1–32 scripts). The query language served as a selection and export
   front end, as in round 7.
   - **Opus** ran 3–5 pmdb commands per run, and **Sonnet** 4–7.
-  - There were 20 failed pmdb commands in all, 15 of them in Haiku runs.
+  - There were 20 failed pmdb commands in all, 17 of them in Haiku runs.
 - **Against writing one's own reader (round 10):** about the same.
   - **Successes:** 13 against 14, with Sonnet and Opus identical.
   - **Cost:** slightly higher, 1,572k against 1,359k median tokens and 42 against 36 calls.
