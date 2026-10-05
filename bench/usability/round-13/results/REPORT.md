@@ -2,7 +2,8 @@
 
 72 runs: 4 conditions × 6 exercises × 3 models × 1 repetition.
 - **Duration:** 26 minutes (17:36–18:02), 36 runs at a time.
-- **Completeness:** no run was interrupted or reached the time limit.
+- **Completeness:** no run was interrupted or reached the 24-minute limit. One run (Haiku,
+  payroll-postmortem, Python library) reached the 80-turn limit.
 - **Design:** the protocol is in [../PROTOCOL.md](../PROTOCOL.md). Conditions are numbered as
   there: 1 baseline (no trace), 2 query language, 3 Python library, 4 format specification.
 - **Data:** `runs.jsonl`, `behaviour.md` and `transcripts.tar.xz` are next to this file.
@@ -35,8 +36,8 @@ Each cell: success (✓ or ✗), tokens / tool calls.
 Costs are given per model, as the models differ by an order of magnitude.
 - **Ratios to the baseline:** each run's tokens divided by the baseline run's for the same
   exercise and model, then the geometric mean over exercises. "All runs" includes failed runs;
-  "pairs" only counts exercises where both runs succeeded, so it measures the overhead of using
-  the trace when it was not needed.
+  "pairs" only counts exercises where both runs succeeded (their number is in parentheses), so it
+  measures the overhead of using the trace when it was not needed.
 - **Tokens per success:** all tokens of the condition divided by its successes.
 
 Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
@@ -61,11 +62,11 @@ Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
 
 ## Findings
 
-- **Sonnet and Opus: with any form of access to the trace, every run succeeded** (36 of 36 in
-  round 13). Their only failures were in the baseline, on refund-postmortem.
-  - Without the data, Opus identified the mechanism (each status change is re-sent). Its repair
-    still counted refunds that were pending at month end, and was €782.29 too high.
-  - The existence and handling of such refunds could only be determined from the data.
+- **Sonnet and Opus: with any form of access to the trace, every run succeeded** (36 of 36).
+  Their only failures were in the baseline, on refund-postmortem.
+  - Without the data, Opus identified the mechanism (each status change is re-sent), but its
+    repair still counted refunds still pending at month end. It was €782.29 too high: exactly
+    the 20 such refunds, which only the data shows exist.
 - **For Sonnet and Opus, the trace costs little.** Relative to the baseline, over all runs:
   - **Opus:** 1.11× with the Python library, about 1.5× with the query language or the format
     specification.
@@ -73,24 +74,25 @@ Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
 
   Counting only exercises that both runs repaired, the figures are 1.07–1.46× for Opus and
   1.06–1.44× for Sonnet.
-  - **On individual exercises:** on billing-postmortem, points-expiry and stock-allocation, which
-    both models also repaired without the trace, the overhead was often under 1.5×, and in some
-    cases below the baseline (stock-allocation, Sonnet: 0.31–0.52×).
+
+  On individual exercises, the ratios vary widely. Sonnet ranges from 0.31× (stock-allocation,
+  Python library) to 2.86× (card-ledger-queue, format specification), and Opus from 0.88× to
+  1.97×.
 - **The forms of access differ little.** With one run per combination, no condition is better at
   success.
   - The Python library was the cheapest for Opus: 1.11× the baseline's tokens over all runs. On
     the exercises that both runs repaired, it was the cheapest for Sonnet and Opus (1.06× and
     1.07×).
   - The format specification was the most expensive for Sonnet (1.62×), and for Opus about as
-    expensive as the query language (1.48× and 1.47×). Each agent first writes and debugs its own
-    reader.
+    expensive as the query language (1.48× and 1.47×). Each agent first writes its own reader.
 - **Haiku does not benefit from the trace.** It repaired 4 of 6 exercises in the baseline, but
   3, 3 and 2 of 6 with the query language, the Python library and the format specification. The
-  trace costs it 2.3–2.8× the baseline's tokens. With the trace, it spends its effort on
-  analyses that lead to decoys, and more often reaches the turn limit.
+  trace costs it 2.3–2.8× the baseline's tokens. Its failures, with or without the trace, are
+  wrong mechanisms, often a decoy: the salary proration divisor, the handling of parked
+  clearings and holds, the deduplication of readings, or excluding pending refunds.
 - **The new exercise, billing-postmortem, did not require the trace.** Sonnet and Opus repaired
-  it in every condition, including the baseline. Like points-expiry and stock-allocation, it is
-  solvable from the code, the log and the report.
+  it in every condition, including the baseline. Like every exercise except
+  refund-postmortem, it is solvable from the code, the log and the report.
 - **One of six exercises is decisive.** Refund-postmortem is the only exercise where the trace
   changed the outcome for Sonnet and Opus. It is decisive because its defect's exact effect
   depends on data shapes (pending, reversed, re-sent refunds) that the agent cannot infer from
@@ -100,9 +102,11 @@ Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
 
 - **Having the trace matters, and the form of access matters much less.** For capable models
   (Sonnet, Opus), the trace makes the data-dependent exercise solvable, at a modest cost
-  elsewhere. All three forms of access achieve this, with the Python library the cheapest for
-  Opus, and the self-written reader the most expensive.
-- **For a weaker model (Haiku), the trace is a net cost:** more tokens, and no more successes.
+  elsewhere. All three forms of access achieve this. The Python library is the cheapest for
+  Opus; the self-written reader is the most expensive for Sonnet, and as expensive as the query
+  language for Opus.
+- **For a weaker model (Haiku), the trace is a net cost:** more tokens, and no more successes
+  (2–3 of 6 with the trace, against 4 of 6 without).
 - **Five of the six exercises can be solved without runtime data** by Sonnet and Opus. The
   exercise set says little about how often traces are decisive in practice. More exercises of the
   refund kind would be needed to measure that, where the repair depends on data the code doesn't
@@ -115,5 +119,11 @@ On 2026-10-05, at the user's request:
   replaced by per-model figures;
 - the section combining rounds 12 and 13 on their three shared exercises was removed, so that the
   report covers round 13's six exercises only.
+
+Also on 2026-10-05, a review corrected:
+- the per-exercise overhead, which overstated how often it stayed under 1.5×;
+- the list of exercises solvable without the trace;
+- the account of the turn limit;
+- the attribution of Opus's €782.29, now checked against the trace.
 
 The per-run data and table are unchanged.
