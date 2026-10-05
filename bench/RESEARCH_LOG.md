@@ -807,3 +807,34 @@ to six: the five post-mortems, and round 6's billing-needle converted into a pos
   Opus, and a self-written reader the most expensive.
 - **To measure how often traces are decisive,** exercises are needed whose repair depends on data
   shapes the code doesn't reveal.
+
+---
+
+## 2026-10-05: Costs are reported per model
+
+**Context.** The user pointed out that token medians pooled across models are meaningless. The
+models differ by an order of magnitude: Opus spends about 100–200k tokens per run, while Haiku
+often spends 2–5M. A pooled median lands on whichever run is in the middle.
+
+**Decision.**
+- **Costs are reported per model only,** in three ways:
+  - median tokens;
+  - the geometric mean of each run's tokens relative to the baseline run of the same exercise and
+    model, over all runs, and over the exercises where both runs succeeded;
+  - tokens per success.
+- **Rounds 12 and 13's reports were revised accordingly,** each with a dated note.
+
+**Round 13's costs, per model** (relative to the baseline, all runs / where both succeeded):
+
+| condition | Opus | Sonnet | Haiku |
+|---|---|---|---|
+| query language | 1.47× / 1.33× | 1.33× / 1.20× | 2.47× / 1.61× |
+| Python library | 1.11× / 1.07× | 1.36× / 1.06× | 2.33× / 1.25× |
+| format specification | 1.48× / 1.46× | 1.62× / 1.44× | 2.83× / 2.93× |
+
+**Superseded figures.** The pooled medians and pooled ratios quoted in earlier entries are
+superseded by per-model figures:
+- the B/A ratios of rounds 7–9;
+- the arm medians of rounds 10–12.
+
+Those entries stay as written.

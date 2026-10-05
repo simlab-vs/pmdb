@@ -23,12 +23,30 @@ Each cell: success (✓ or ✗), tokens / tool calls.
 | refund-postmortem | Sonnet | ✗ 826k / 30 | ✓ 3,032k / 59 | ✓ 2,136k / 50 | ✓ 3,298k / 56 |
 | refund-postmortem | Opus | ✗ 271k / 11 | ✓ 223k / 12 | ✓ 127k / 7 | ✓ 300k / 15 |
 
-| condition | successes (Haiku / Sonnet / Opus) | median tokens / tool calls |
-|---|---|---|
-| 1. baseline | 5/9 (1 / 2 / 2) | 582k / 23 |
-| 2. query language | 7/9 (1 / 3 / 3) | 1,191k / 35 |
-| 3. Python library | 6/9 (0 / 3 / 3) | 1,888k / 42 |
-| 4. format specification | 7/9 (1 / 3 / 3) | 2,469k / 48 |
+Costs are given per model, as the models differ by an order of magnitude.
+- **Ratios to the baseline:** each run's tokens divided by the baseline run's for the same
+  exercise and model, then the geometric mean over exercises. "All runs" includes failed runs;
+  "pairs" only counts exercises where both runs succeeded, so it measures the overhead of using
+  the trace when it was not needed.
+- **Tokens per success:** all tokens of the condition divided by its successes.
+
+| condition | successes | median tokens | tokens relative to the baseline, all runs | the same, runs where both succeeded (pairs) | tokens per success |
+|---|---|---|---|---|---|
+| **Haiku** | | | | | |
+| 1. baseline | 1/3 | 1,138k | 1 | 1 | 3,148k |
+| 2. query language | 1/3 | 3,418k | 3.31× | – (0) | 10,013k |
+| 3. Python library | 0/3 | 4,823k | 3.60× | – (0) | – |
+| 4. format specification | 1/3 | 3,118k | 3.69× | 2.18× (1) | 11,152k |
+| **Sonnet** | | | | | |
+| 1. baseline | 2/3 | 826k | 1 | 1 | 1,062k |
+| 2. query language | 3/3 | 1,191k | 2.21× | 1.72× (2) | 1,712k |
+| 3. Python library | 3/3 | 1,909k | 2.44× | 2.37× (2) | 1,711k |
+| 4. format specification | 3/3 | 2,469k | 3.20× | 2.87× (2) | 2,333k |
+| **Opus** | | | | | |
+| 1. baseline | 2/3 | 145k | 1 | 1 | 246k |
+| 2. query language | 3/3 | 147k | 1.16× | 1.37× (2) | 170k |
+| 3. Python library | 3/3 | 166k | 1.07× | 1.63× (2) | 156k |
+| 4. format specification | 3/3 | 300k | 1.84× | 2.38× (2) | 280k |
 
 ## Findings
 
@@ -40,8 +58,7 @@ Each cell: success (✓ or ✗), tokens / tool calls.
   every condition, at 1.0–4.9× the baseline's tokens.
 - **Among the three forms of access, success is indistinguishable** (7, 6 and 7 of 9). Costs
   were ordered query language < Python library < format specification for Sonnet on
-  card-ledger-queue and payroll-postmortem (not on refund-postmortem), and the medians follow
-  that order.
+  card-ledger-queue and payroll-postmortem (not on refund-postmortem).
   - This reverses the order seen across rounds 10 and 11, where the format specification was the
     cheaper. With one run per cell, neither ordering is established.
 - **How the trace was used:**
@@ -59,3 +76,7 @@ Each cell: success (✓ or ✗), tokens / tool calls.
 - The result of rounds 7–11 holds under identical conditions: having the trace matters, and the
   form of access to it matters much less than the run-to-run variance.
 - A larger sample is needed to rank the forms of access. Round 13 doubles the exercises, to six.
+
+## Revision
+
+On 2026-10-05, at the user's request, the cost summaries pooled across models (medians and ratios over all runs of all models) were replaced by per-model figures. The per-run data and table are unchanged.
