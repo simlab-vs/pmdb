@@ -30,6 +30,8 @@ Costs are given per model, as the models differ by an order of magnitude.
   the trace when it was not needed.
 - **Tokens per success:** all tokens of the condition divided by its successes.
 
+Successes are out of 3 runs per model and condition: 3 exercises × 1 run.
+
 | condition | successes | median tokens | tokens relative to the baseline, all runs | the same, runs where both succeeded (pairs) | tokens per success |
 |---|---|---|---|---|---|
 | **Haiku** | | | | | |

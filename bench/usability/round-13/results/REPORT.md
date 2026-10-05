@@ -39,6 +39,8 @@ Costs are given per model, as the models differ by an order of magnitude.
   the trace when it was not needed.
 - **Tokens per success:** all tokens of the condition divided by its successes.
 
+Successes are out of 6 runs per model and condition: 6 exercises × 1 run.
+
 | condition | successes | median tokens | tokens relative to the baseline, all runs | the same, runs where both succeeded (pairs) | tokens per success |
 |---|---|---|---|---|---|
 | **Haiku** | | | | | |
@@ -60,7 +62,9 @@ Costs are given per model, as the models differ by an order of magnitude.
 ## Rounds 12 and 13 combined
 
 Rounds 12 and 13 used the same conditions, prompts and software. For the three exercises they
-share, there are two runs per combination of exercise, model and condition:
+share, there are two runs per combination of exercise, model and condition. Successes below are
+therefore out of 6 runs per model and condition: 3 exercises × 2 runs, one from each round. That
+is not the same 6 as in the table above, which counts 6 exercises × 1 run.
 
 | condition | successes: Haiku / Sonnet / Opus | tokens relative to the baseline, all runs: Haiku / Sonnet / Opus |
 |---|---|---|
@@ -99,7 +103,7 @@ Sonnet and Opus runs).
     debugs its own reader.
 - **Haiku does not benefit from the trace.** Its successes:
 
-  | condition | round 13 | rounds 12+13, shared exercises |
+  | condition | round 13 (6 exercises × 1 run) | rounds 12+13 (3 shared exercises × 2 runs) |
   |---|---|---|
   | baseline | 4/6 | 3/6 |
   | query language | 3/6 | 2/6 |
