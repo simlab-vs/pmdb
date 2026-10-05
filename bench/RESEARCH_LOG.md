@@ -838,3 +838,33 @@ superseded by per-model figures:
 - the arm medians of rounds 10–12.
 
 Those entries stay as written.
+
+---
+
+## 2026-10-05: Round 14: the same exercises without defect reports
+
+**Context.** At the user's request, round 14 (`usability/round-14/`) repeated round 13 (6
+exercises × 4 conditions × 3 models, 72 runs) without the defect reports. The prompt only said
+"There may be a bug in the Python program in /work." Success still required the oracle to pass,
+that is, the planted defect to be found and repaired.
+
+**Results** (`usability/round-14/results/REPORT.md`). Successes per model, round 14 against round
+13 (with defect reports), for conditions baseline / query language / Python library / format
+specification:
+
+| model | round 14 | round 13 |
+|---|---|---|
+| Opus | 5 / 5 / 5 / 5 | 5 / 6 / 6 / 6 |
+| Sonnet | 3 / 5 / 5 / 4 | 5 / 6 / 6 / 6 |
+| Haiku | 1 / 1 / 1 / 1 | 4 / 3 / 3 / 2 |
+
+- **Opus found the planted defects by reading,** without a symptom or a trace.
+- **The trace raised Sonnet's localizations** from 3 to 5–6 of 6.
+- **No run repaired refund-postmortem.** With the trace, Sonnet and Opus localized it in every
+  condition, but without the expected figures they chose wrong counting rules (€782.29 and €368.71
+  too high).
+
+**Decisions.**
+- **Without a symptom, the trace helps a mid-sized model find the defect.**
+- **The defect report's expected figures carry information the trace does not.**
+- **The planted defects are visible to a strong reader** once it reads the right files.
