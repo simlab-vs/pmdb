@@ -151,6 +151,18 @@ localization by reading costly without making it impossible:
   the proration of salaries, the conversion of multipacks, and refunds still pending at month end;
 - the logs report only aggregates.
 
+**The outlier: refund-postmortem** (added after the runs). In five exercises, the defect report
+and the log (exact differences, which totals are unaffected, an example record, timestamps) admit
+only one mechanism in the code, and the repair follows from the code alone. In refund-postmortem,
+the mechanism can also be inferred: each status change of a refund arrives as a separate event.
+The correct repair cannot, because it depends on facts about the input:
+- which status sequences occur: refunds still pending at month end, refunds reversed after
+  succeeding, intermediate statuses;
+- how each of them must be counted.
+
+Without the trace, agents repaired the mechanism but counted wrongly. With it, they read the
+status sequences and reproduced the expected figure exactly.
+
 ### Conditions
 
 The four conditions differ only in one paragraph of the prompt, in whether a trace is supplied, and
