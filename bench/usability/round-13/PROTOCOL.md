@@ -151,7 +151,9 @@ localization by reading costly without making it impossible:
   the proration of salaries, the conversion of multipacks, and refunds still pending at month end;
 - the logs report only aggregates.
 
-**The outlier: refund-postmortem** (added after the runs). In five exercises, the defect report
+**The outlier: refund-postmortem.** (This paragraph was written after the runs, to explain their
+results; refund-postmortem itself has been part of the exercise set since round 6.) In five
+exercises, the defect report
 and the log (exact differences, which totals are unaffected, an example record, timestamps) admit
 only one mechanism in the code, and the repair follows from the code alone. In refund-postmortem,
 the mechanism can also be inferred: each status change of a refund arrives as a separate event.
