@@ -1,0 +1,15 @@
+Billing run 2026-09
+  bills issued                   2,188
+    on actual readings           2,123
+    on estimates                    65
+  metered consumption      1,578,948.4 kWh
+  estimated consumption       36,282.9 kWh
+  net amount                459,371.72 GBP
+  VAT                        62,671.66 GBP
+  gross amount              522,043.38 GBP
+  bills by tariff:
+    BUS-HV                          27
+    BUS-SME                        193
+    DOM-FIX24                      589
+    DOM-GREEN                      183
+    DOM-STD                      1,196

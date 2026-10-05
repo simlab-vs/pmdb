@@ -1,0 +1,73 @@
+{
+  "tariffs": {
+    "DOM-STD": {
+      "description": "Standard variable (domestic)",
+      "standing_charge_per_day": 0.5122,
+      "tiers": [
+        {
+          "up_to_kwh": 180,
+          "rate": 0.3104
+        },
+        {
+          "up_to_kwh": null,
+          "rate": 0.2756
+        }
+      ],
+      "vat_rate": 0.05
+    },
+    "DOM-FIX24": {
+      "description": "Fixed price 24 months (domestic)",
+      "standing_charge_per_day": 0.487,
+      "tiers": [
+        {
+          "up_to_kwh": null,
+          "rate": 0.265
+        }
+      ],
+      "vat_rate": 0.05
+    },
+    "DOM-GREEN": {
+      "description": "Renewable fixed (domestic)",
+      "standing_charge_per_day": 0.499,
+      "tiers": [
+        {
+          "up_to_kwh": null,
+          "rate": 0.2788
+        }
+      ],
+      "vat_rate": 0.05
+    },
+    "BUS-SME": {
+      "description": "Small business",
+      "standing_charge_per_day": 1.095,
+      "tiers": [
+        {
+          "up_to_kwh": 1500,
+          "rate": 0.269
+        },
+        {
+          "up_to_kwh": 6000,
+          "rate": 0.248
+        },
+        {
+          "up_to_kwh": null,
+          "rate": 0.231
+        }
+      ],
+      "levy_per_kwh": 0.00775,
+      "vat_rate": 0.2
+    },
+    "BUS-HV": {
+      "description": "Large business, half-hourly settled",
+      "standing_charge_per_day": 4.85,
+      "tiers": [
+        {
+          "up_to_kwh": null,
+          "rate": 0.2105
+        }
+      ],
+      "levy_per_kwh": 0.00775,
+      "vat_rate": 0.2
+    }
+  }
+}
