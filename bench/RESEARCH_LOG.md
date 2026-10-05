@@ -779,3 +779,31 @@ The trace was recorded automatically in conditions 2–4. The design was 3 exerc
 - **Double the exercises to six** (round 13): the five post-mortems plus round 6's billing-needle
   converted into a post-mortem.
 - **The methodology is written to be read independently** of earlier rounds, as the user asked.
+
+---
+
+## 2026-10-05: Round 13: four forms of access to a trace, six exercises
+
+**Context.** At the user's request, round 13 (`usability/round-13/`) doubled round 12's exercises
+to six: the five post-mortems, and round 6's billing-needle converted into a post-mortem
+(`billing-postmortem`). The design was otherwise identical: 4 conditions × 6 exercises × 3 models
+× 1 run, 72 runs in 26 minutes, 36 at a time.
+
+**Results** (`usability/round-13/results/REPORT.md`).
+- **Successes:** baseline 14/18, query language 15/18, Python library 15/18, format specification
+  14/18.
+- **Sonnet and Opus succeeded in all 36 trace runs.** Their only failures were the baseline's
+  refund-postmortem runs. One of them, Opus, found the mechanism but over-counted refunds pending
+  at month end, which only the data reveals.
+- **Cost relative to the baseline** (geometric mean of per-exercise ratios): Opus 1.11× with the
+  library and about 1.5× otherwise; Sonnet 1.3–1.6×; Haiku 2.3–2.8×.
+- **Haiku succeeded less often with the trace than without it:** baseline 4/6, trace conditions
+  2–3/6. In rounds 12–13 combined, on the shared exercises: 3/6 against 0–2/6.
+- **billing-postmortem was solvable without the trace** by Sonnet and Opus. Refund-postmortem
+  remains the only exercise where the trace decides the outcome.
+
+**Decisions.**
+- **The form of access matters less than having the trace.** The library is the cheapest for
+  Opus, and a self-written reader the most expensive.
+- **To measure how often traces are decisive,** exercises are needed whose repair depends on data
+  shapes the code doesn't reveal.
