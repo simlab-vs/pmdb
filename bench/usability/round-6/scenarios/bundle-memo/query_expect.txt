@@ -1,0 +1,2 @@
+call best_price({TB-203: 3}, {channel: web, currency: EUR, customer: C-1054, date: 2026-09-30, region: BE, tier: retail}) -> {lines: [{amount: 470, offer: , units: {TB-203: 1}}, {amount: 470, offer: , units: {TB-203: 1}}, {amount: 420, offer: , units: {TB-203: 1}}], total: 1360}
+call unit_price(TB-203, {channel: web, currency: EUR, customer: C-1295, date: 2026-09-30, region: AT, tier: retail}) -> 470

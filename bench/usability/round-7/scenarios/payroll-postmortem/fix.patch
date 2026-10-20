@@ -1,0 +1,16 @@
+--- a/payroll/employment.py
++++ b/payroll/employment.py
+@@ -30,7 +30,12 @@
+     """The period's days (ISO dates) on which the person is employed."""
+     first = max(employment.start, period.first)
+     last = period.last if employment.end is None else min(employment.end, period.last)
+-    return [day for day in period_days(period) if first <= day <= last]
++    return [day for day in period_days(period) if first <= day <= last and covered(employment.segments, day)]
++
++
++def covered(segments, day):
++    """True if one of the assignment rows is in force on ``day``."""
++    return any(s.valid_from <= day and (s.valid_to is None or day <= s.valid_to) for s in segments)
+ 
+ 
+ def segment_at(segments, day):

@@ -1,0 +1,21 @@
+Settlement summary 2026-09-28  Kite Prepaid EUR (KPE-01)
+Currency: EUR
+
+posting          count          amount
+clearing          3955      306,793.51
+refund              81        6,140.28
+topup              791       81,991.11
+fx_fee             455          697.92
+atm_fee              9           22.50
+--------------------------------------
+net movement               -219,382.54
+held at close      446       42,070.62
+
+Clearings by merchant group
+group            count          amount
+cash                94        8,460.00
+fuel               376       21,551.00
+online             474       38,390.42
+retail            1949      130,980.44
+transport          673       13,779.57
+travel             389       93,632.08

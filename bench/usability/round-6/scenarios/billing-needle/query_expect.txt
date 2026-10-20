@@ -1,0 +1,5 @@
+$1 = <2 element(s) in 1 trace(s)>
+call account_consumption(AC-252187, [{account: AC-252187, dials: 0, kind: install, meter: ML-D5F26F
+call account_consumption(AC-252187, [{account: NW-43185, dials: 5, kind: routine, meter: TX7278945
+-> 77.671
+-> 110.1

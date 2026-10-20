@@ -1,0 +1,4 @@
+select apply_move(p, mv) -> rs where mv.v1 == "T-44" || mv.v2 == "T-44"
+show $0
+select apply_move(p, mv) -> rs where rs.all(s => s.vehicle != mv.v2)
+show $1

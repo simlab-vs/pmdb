@@ -1,0 +1,11 @@
+--- a/ledger/dedup.py
++++ b/ledger/dedup.py
+@@ -27,7 +27,7 @@
+ REDELIVERY = "redelivery"
+ RESEND = "resend"
+ 
+-IDENTITY_FIELDS = ("card", "amount", "currency", "transaction_time", "auth_code")
++IDENTITY_FIELDS = ("card", "amount", "currency", "transaction_time", "auth_code", "network_ref")
+ 
+ _message_ids = set()
+ _fingerprints = {}

@@ -1,0 +1,6 @@
+$0 = <2 element(s) in 1 trace(s)>
+order_id: M-882837, ordered: 1, picks: [{qty: -10, sku: HM-1128, warehouse: LEJ}, {qty: 11, sku: HM-1128, warehouse: RTM}]
+$1 = <143 element(s) in 1 trace(s)>
+$2 = <116 element(s) in 1 trace(s)>
+116 lines with a negative pick, by channel: {'marketplace': 116}
+negative units by warehouse: {'LEE': 28, 'LEJ': 250, 'MAD': 17, 'RTM': 191}

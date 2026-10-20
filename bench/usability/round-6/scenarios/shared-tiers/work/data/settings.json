@@ -1,0 +1,31 @@
+{
+  "seller_country": "DE",
+  "base_currency": "EUR",
+  "invoice_prefix": "INV",
+  "minimum_invoice": 5,
+  "payment_terms_days": 30,
+  "eu_countries": [
+    "AT",
+    "BE",
+    "DE",
+    "ES",
+    "FR",
+    "IE",
+    "IT",
+    "NL",
+    "PL",
+    "SE"
+  ],
+  "vat_rates": {
+    "AT": 0.2,
+    "BE": 0.21,
+    "DE": 0.19,
+    "ES": 0.21,
+    "FR": 0.2,
+    "IE": 0.23,
+    "IT": 0.22,
+    "NL": 0.21,
+    "PL": 0.23,
+    "SE": 0.25
+  }
+}

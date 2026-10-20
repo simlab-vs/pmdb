@@ -1,0 +1,65 @@
+[
+  {
+    "id": "K-2024-100",
+    "customer": "C10447",
+    "metric": "api_requests",
+    "committed_units": 60000000,
+    "discount_pct": 8,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2025-101",
+    "customer": "C11078",
+    "metric": "api_requests",
+    "committed_units": 60000000,
+    "discount_pct": 12,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2026-102",
+    "customer": "C10549",
+    "metric": "api_requests",
+    "committed_units": 20000000,
+    "discount_pct": 8,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2024-103",
+    "customer": "C10754",
+    "metric": "api_requests",
+    "committed_units": 10000000,
+    "discount_pct": 10,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2025-104",
+    "customer": "C10267",
+    "metric": "api_requests",
+    "committed_units": 30000000,
+    "discount_pct": 10,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2026-105",
+    "customer": "C10713",
+    "metric": "api_requests",
+    "committed_units": 60000000,
+    "discount_pct": 10,
+    "start": "2026-01-01",
+    "end": "2026-12-31"
+  },
+  {
+    "id": "K-2023-077",
+    "customer": "C10013",
+    "metric": "api_requests",
+    "committed_units": 5000000,
+    "discount_pct": 5,
+    "start": "2023-01-01",
+    "end": "2025-12-31"
+  }
+]

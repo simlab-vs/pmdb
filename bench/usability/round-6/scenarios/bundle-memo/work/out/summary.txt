@@ -1,0 +1,9 @@
+Quote run 2026-09-30
+
+CHF: 66 quotes, total CHF 3208.20, savings CHF 546.00
+EUR: 681 quotes, total €32308.26, savings €4589.62
+GBP: 53 quotes, total £2151.83, savings £310.04
+
+Quotes per region: AT 45, BE 60, CH 66, DE 422, FR 47, IE 44, NL 63, UK 53
+Offers used: AUTUMN-TINS 2, BAGS-5FOR4 12, BEANS-MEMBER 18, CAPS-6 1, CAPS-6B 1, TEA-3FOR2 583
+Rejected: 0

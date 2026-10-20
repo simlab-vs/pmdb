@@ -1,0 +1,28 @@
+Northwind Rewards: nightly points run
+Business date: 2026-09-30 (month-end)
+Generated: 2026-10-01T00:06:13+02:00
+
+Posting
+  earn records             924   points        294,846
+  burn records             289   points        453,749
+  adjustments               29   points          4,598
+  rejected                   3
+
+Month end
+  expired points                        742,058
+    goodwill                            3,804
+    promo                              86,793
+    purchase                          651,461
+  members with expiry                     1,136
+  forfeited (closed accounts)           192,095
+  statements pushed                       4,743
+
+Liability
+  outstanding points                 16,071,024
+    basic                           7,119,530
+    silver                          3,975,187
+    gold                            2,453,818
+    platinum                        2,522,489
+  closed accounts (to forfeit)                0
+  expiring 2026-10-31                 342,633
+  value (EUR, after breakage)          65891.20

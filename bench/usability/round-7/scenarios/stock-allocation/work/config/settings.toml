@@ -1,0 +1,53 @@
+[job]
+out_dir = "out"
+report_dir = "reports"
+catalog_dir = "catalog"
+wave_size = 40
+
+[inventory]
+url = "https://inventory.prod.internal:8443/v2"
+timeout = 30
+page_size = 500
+
+[policy]
+# Safety stock is kept for our own shop and for B2B customers.
+protect_safety_stock_from = ["marketplace"]
+express_first = true
+
+[warehouses.LEE]
+name = "Leeds"
+country = "GB"
+hazmat = true
+bulky = true
+express_cutoff = "15:00"
+
+[warehouses.RTM]
+name = "Rotterdam"
+country = "NL"
+hazmat = true
+bulky = true
+express_cutoff = "16:00"
+
+[warehouses.LEJ]
+name = "Leipzig"
+country = "DE"
+hazmat = true
+bulky = true
+express_cutoff = "16:00"
+
+[warehouses.MAD]
+name = "Madrid"
+country = "ES"
+hazmat = false
+bulky = false
+express_cutoff = "14:00"
+
+[routing]
+default = ["RTM", "LEJ"]
+
+[routing.routes]
+"GB,IE" = ["LEE", "RTM"]
+"NL,BE,LU,DK" = ["RTM", "LEJ"]
+"DE,AT,PL,CZ,CH" = ["LEJ", "RTM"]
+"FR" = ["RTM", "LEJ", "MAD"]
+"ES,PT,IT" = ["MAD", "RTM", "LEJ"]

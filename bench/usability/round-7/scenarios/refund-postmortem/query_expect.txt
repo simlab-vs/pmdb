@@ -1,0 +1,5 @@
+$0 = <103 element(s) in 1 trace(s)>
+$1 = <3 element(s) in 1 trace(s)>
+ref: npr_h63pf8nscp87we, settle_amount: 2864, status: pending, ts: 1789806247}) -> true
+ref: npr_h63pf8nscp87we, settle_amount: 2864, status: succeeded, ts: 1789857106}) -> true
+ref: npr_h63pf8nscp87we, settle_amount: 2864, status: failed, ts: 1789879482}) -> false

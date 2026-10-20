@@ -1,0 +1,13 @@
+{
+  "mdm_metered_kwh": "1031027.3",
+  "needles": [
+    {
+      "kind": "mixed_closing",
+      "account": "AC-233590",
+      "legacy_id": "NW-26865",
+      "meter": "G48K312789",
+      "kwh": "365.80"
+    }
+  ],
+  "readings": 3099
+}

@@ -1,0 +1,5 @@
+$0 = <29 element(s) in 1 trace(s)>
+call volume_charge(1017477, [{start: 50000000, unit_price: 0.0003, upto: none}
+call best_rate_reached([{start: 0, unit_price: 0.0008, upto: 2000000}
+advisor.py:20: call ranked([{start: 0, unit_price: 0.0008, upto: 2000000}
+upto: none}], key: <object>) -> [{start: 50000000, unit_price: 0.0003, upto: none}

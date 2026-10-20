@@ -1,7 +1,10 @@
 import Archivist
+import BigInt
 
 /// A tag identifying the type of a value.
 public enum ValueTag: UInt8, Hashable, Sendable {
+
+  case null     = 0x00
 
   case integer  = 0x01
 
@@ -13,17 +16,53 @@ public enum ValueTag: UInt8, Hashable, Sendable {
 
   case table    = 0x05
 
+  case boolean  = 0x06
+
+  case reference = 0x07
+
   case function = 0xfe
 
   case object   = 0xff
 
 }
 
+/// A function predefined by the query language.
+public enum Builtin: String, Hashable, Sendable {
+
+  /// Converts a Boolean to `1` if it is `true` or `0` otherwise.
+  case int
+
+  /// Converts a number to `false` if it is zero or NaN, or `true` otherwise.
+  case bool
+
+}
+
+/// The values of a trace stored once and referred to by their position, which a value read from an
+/// archive can refer to when the table is its context.
+public final class ValueTable {
+
+  /// The values, in the order of their positions.
+  public var values: [Value] = []
+
+  /// Creates an empty instance.
+  public init() {}
+
+}
+
 /// A value stored in a trace.
 public enum Value: Hashable, Sendable {
 
-  /// A signed integer.
-  case integer(Int64)
+  /// The absence of a value (e.g., `None` in Python or `null` in JavaScript), written `none` in
+  /// queries.
+  ///
+  /// This case isn't named `none` to avoid confusions with `Optional.none`.
+  case null
+
+  /// A Boolean.
+  case boolean(Bool)
+
+  /// A signed integer of arbitrary precision.
+  case integer(BigInt)
 
   /// A floating-point number.
   case float(Double)
@@ -40,46 +79,33 @@ public enum Value: Hashable, Sendable {
   /// A term abstraction and its environment.
   case lambda(Expression.Lambda, [String: Value])
 
+  /// A function predefined by the query language.
+  case builtin(Builtin)
+
   /// A function.
   case function(String)
 
   /// An arbitrary object.
   case object([UInt8])
 
-  /// Creates a truthy value if `b` is `true` or a falsy value otherwise.
+  /// Creates a Boolean value.
   public init(_ b: Bool) {
-    self = .integer(b ? 1 : 0)
+    self = .boolean(b)
   }
 
   /// A textual description of the type of this value.
   public var type: String {
     switch self {
+    case .null: "none"
+    case .boolean: "boolean"
     case .integer: "integer"
     case .float: "float"
     case .string: "string"
     case .array: "array"
     case .table: "table"
-    case .lambda: "lambda"
+    case .lambda, .builtin: "lambda"
     case .function: "function"
     case .object: "object"
-    }
-  }
-
-  /// Returns `true` iff `self` is interpreted as a truthy value when it appears as a condition.
-  public var isTruthy: Bool {
-    switch self {
-    case .integer(let v):
-      return v != 0
-    case .float(let v):
-      return v != 0.0
-    case .string(let v):
-      return !v.isEmpty
-    case .array(let v):
-      return !v.isEmpty
-    case .table(let v):
-      return !v.isEmpty
-    case .lambda, .function, .object:
-      return false
     }
   }
 
@@ -89,14 +115,54 @@ extension Value: Archivable {
 
   public init<T>(from archive: inout ReadableArchive<T>, in context: inout Any) throws {
     switch try archive.readByte() {
+    case ValueTag.null.rawValue:
+      self = .null
+
+    case ValueTag.boolean.rawValue:
+      switch try archive.readByte() {
+      case 0: self = .boolean(false)
+      case 1: self = .boolean(true)
+      default: throw ArchiveError.invalidInput
+      }
+
     case ValueTag.integer.rawValue:
-      self = try .integer(archive.readSignedLEB128(as: Int64.self))
+      self = try .integer(Self.readSignedLEB128(from: &archive))
+
+    case ValueTag.float.rawValue:
+      self = try .float(archive.read(Double.self, endianness: .little))
 
     case ValueTag.string.rawValue:
       self = try .string(archive.read(String.self))
 
+    case ValueTag.array.rawValue:
+      let n = try Int(archive.readUnsignedLEB128())
+      var elements: [Value] = []
+      elements.reserveCapacity(n)
+      for _ in 0 ..< n { try elements.append(archive.read(Value.self, in: &context)) }
+      self = .array(elements)
+
+    case ValueTag.table.rawValue:
+      let n = try Int(archive.readUnsignedLEB128())
+      var entries = SortedDictionary<String, Value>(minimumCapacity: n)
+      for _ in 0 ..< n {
+        let k = try archive.read(String.self)
+        let v = try archive.read(Value.self, in: &context)
+        try modify(&entries[k]) { (w) in
+          if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
+        }
+      }
+      self = .table(entries)
+
     case ValueTag.function.rawValue:
       self = try .function(archive.read(String.self))
+
+    case ValueTag.reference.rawValue:
+      // A value of the trace's table of values, which `context` holds.
+      let i = try Int(archive.readUnsignedLEB128())
+      guard let table = context as? ValueTable, i < table.values.count else {
+        throw ArchiveError.invalidInput
+      }
+      self = table.values[i]
 
     case ValueTag.object.rawValue:
       let n = try archive.readUnsignedLEB128()
@@ -110,6 +176,33 @@ extension Value: Archivable {
     }
   }
 
+  /// Reads an integer of arbitrary precision encoded with the signed LEB128 encoding.
+  private static func readSignedLEB128<T>(from archive: inout ReadableArchive<T>) throws -> BigInt {
+    // Accumulate the first 63 bits in a machine integer, which is enough for most values.
+    var bits: UInt64 = 0
+    var wide = BigInt(0)
+    var shift = 0
+    while true {
+      let b = try archive.readByte()
+      if shift < 63 {
+        bits |= UInt64(b & 0x7f) << shift
+      } else {
+        if shift == 63 { wide = BigInt(bits) }
+        wide |= BigInt(b & 0x7f) << shift
+      }
+      shift += 7
+      if b & 0x80 != 0 { continue }
+
+      let negative = b & 0x40 != 0
+      if shift <= 63 {
+        let n = Int64(bitPattern: negative ? bits | (~0 << shift) : bits)
+        return BigInt(n)
+      } else {
+        return negative ? wide - (BigInt(1) << shift) : wide
+      }
+    }
+  }
+
   public func write<T>(to archive: inout Archivist.WriteableArchive<T>, in context: inout Any) {
     fatalError("not implemented")
   }
@@ -120,6 +213,10 @@ extension Value: CustomStringConvertible {
 
   public var description: String {
     switch self {
+    case .null:
+      return "none"
+    case .boolean(let v):
+      return v.description
     case .integer(let v):
       return v.description
     case .float(let v):
@@ -127,15 +224,92 @@ extension Value: CustomStringConvertible {
     case .string(let v):
       return v
     case .array(let v):
-      return v.description
+      return "[\(v.map(String.init(describing:)).joined(separator: ", "))]"
     case .table(let v):
-      return "{\(v.map(String.init(describing:)).joined(separator: ", "))}"
+      return "{\(v.map({ (e) in "\(e.key): \(e.value)" }).joined(separator: ", "))}"
     case .lambda(let d, _):
       return d.description
+    case .builtin(let f):
+      return f.rawValue
     case .function:
       return "<function>"
     case .object:
       return "<object>"
+    }
+  }
+
+}
+
+extension Value {
+
+  /// The result of comparing two numbers.
+  enum NumericOrder {
+
+    /// The left operand is less than the right one.
+    case less
+
+    /// The operands are equal.
+    case equal
+
+    /// The left operand is greater than the right one.
+    case greater
+
+    /// One of the operands is NaN.
+    case unordered
+
+  }
+
+  /// Returns how `self` compares to `other` by value iff both are numbers, or `nil` otherwise.
+  ///
+  /// Integers and floating-point numbers are compared exactly, without converting one to the
+  /// other.
+  func numericOrder(_ other: Value) -> NumericOrder? {
+    switch (self, other) {
+    case (.integer(let a), .integer(let b)):
+      return a < b ? .less : a > b ? .greater : .equal
+    case (.float(let a), .float(let b)):
+      return a < b ? .less : a > b ? .greater : a == b ? .equal : .unordered
+    case (.integer(let a), .float(let b)):
+      return Self.compare(a, b)
+    case (.float(let a), .integer(let b)):
+      switch Self.compare(b, a) {
+      case .less: return .greater
+      case .greater: return .less
+      case let o: return o
+      }
+    default:
+      return nil
+    }
+  }
+
+  /// Returns how `a` compares to `b`.
+  private static func compare(_ a: BigInt, _ b: Double) -> NumericOrder {
+    if b.isNaN { return .unordered }
+    if b.isInfinite { return b < 0 ? .greater : .less }
+    let n = BigInt(exactly: b.rounded(.down))!
+    if a < n { return .less }
+    if a > n { return .greater }
+    return b == b.rounded(.down) ? .equal : .less
+  }
+
+  /// Returns `true` iff `self` is equal to `other`.
+  ///
+  /// Numbers are equal iff they have the same value, NaN being equal to nothing. Arrays and tables
+  /// are equal iff their contents are. Other values are equal iff they have the same type and
+  /// contents, except lambdas, which are never equal.
+  func isEqual(to other: Value) -> Bool {
+    switch (self, other) {
+    case (.integer, _), (.float, _):
+      return numericOrder(other) == .equal
+    case (.array(let a), .array(let b)):
+      return a.count == b.count && zip(a, b).allSatisfy({ (x, y) in x.isEqual(to: y) })
+    case (.table(let a), .table(let b)):
+      return a.count == b.count
+        && zip(a, b).allSatisfy({ (x, y) in x.key == y.key && x.value.isEqual(to: y.value) })
+    case (.lambda, _), (.builtin, _):
+      return false
+    default:
+      return self == other
     }
   }
 

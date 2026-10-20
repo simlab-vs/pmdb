@@ -1,0 +1,20 @@
+2026-09-30 23:50:02,000 INFO loyalty: nightly points job 2.7.3
+2026-09-30 23:50:02,096 INFO loyalty: business date 2026-09-30 (month-end run)
+2026-09-30 23:50:02,096 INFO loyalty: 4800 members (57 closed accounts)
+2026-09-30 23:50:02,096 INFO loyalty: posting 1245 activity records of 2026-09-30
+2026-09-30 23:50:31,136 INFO loyalty.posting: rejected burn POS-21240986 of M230014: 4810 points exceed the balance
+2026-09-30 23:50:58,352 INFO loyalty.posting: rejected burn POS-49925974 of M221799: 1693 points exceed the balance
+2026-09-30 23:51:24,080 INFO loyalty.posting: rejected burn POS-25456694 of M231923: 3911 points exceed the balance
+2026-09-30 23:52:56,624 INFO loyalty: posted 924 earn (294,846 points), 289 burn (453,749 points), 29 adjustments; 3 rejected
+2026-09-30 23:52:56,624 INFO loyalty: 41 records of later business dates left for their runs
+2026-09-30 23:52:56,624 INFO loyalty: month end: expiry and statements for 4800 members in 20 batches
+2026-09-30 23:55:35,552 INFO loyalty: batch 4/20 done: 1000 members, 986 statements pushed
+2026-09-30 23:58:15,537 INFO loyalty: batch 8/20 done: 2000 members, 1969 statements pushed
+2026-10-01 00:00:56,817 INFO loyalty: batch 12/20 done: 3000 members, 2958 statements pushed
+2026-10-01 00:03:53,889 INFO loyalty: batch 16/20 done: 4000 members, 3949 statements pushed
+2026-10-01 00:06:13,329 INFO loyalty: batch 20/20 done: 4800 members, 4743 statements pushed
+2026-10-01 00:06:13,329 INFO loyalty: expired 742,058 points (goodwill 3,804, promo 86,793, purchase 651,461) of 1136 members; 425 platinum members exempt
+2026-10-01 00:06:13,329 INFO loyalty: forfeited 192,095 points of 57 closed accounts
+2026-10-01 00:06:13,329 INFO loyalty: outstanding 16,071,024 points, EUR 65891.20 after breakage; 342,633 points expire on 2026-10-31
+2026-10-01 00:06:13,377 INFO loyalty.report: wrote /srv/loyalty/nightly/reports/nightly-2026-09-30.json, /srv/loyalty/nightly/reports/nightly-2026-09-30.txt, /srv/loyalty/nightly/reports/liability-2026-09.txt
+2026-10-01 00:06:13,425 INFO loyalty: done

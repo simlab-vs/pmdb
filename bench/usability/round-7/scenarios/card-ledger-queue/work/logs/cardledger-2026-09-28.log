@@ -1,0 +1,12 @@
+2026-09-29 04:10:02,381 INFO cardledger: card ledger 2.7.3 for business date 2026-09-28
+2026-09-29 04:10:16,581 INFO cardledger: received 9455 messages in 946 batches from card-events-prod
+2026-09-29 04:10:16,581 INFO cardledger: dropped 157 queue redeliveries and 421 processor re-sends
+2026-09-29 04:10:16,581 INFO cardledger: applied 3866 authorizations, 147 reversals, 3955 clearings (521 offline), 81 refunds, 791 top-ups
+2026-09-29 04:10:16,581 INFO cardledger: skipped 37 notifications of other programmes
+2026-09-29 04:10:16,621 INFO cardledger: parked 260 events ahead of their authorization, 189 matched later; 71 late presentments posted without a hold, 0 reversals of unknown authorizations
+2026-09-29 04:10:16,621 INFO ledger.checks: 47 cards moved more than 500.00 out today
+2026-09-29 04:10:16,661 INFO cardledger: fees: 455 FX fees 697.92, 9 ATM fees 22.50
+2026-09-29 04:10:16,701 INFO cardledger: holds: 446 open, 42,070.62 held at close
+2026-09-29 04:10:17,261 INFO cardledger: wrote /srv/cardledger/reports/eod-balances-2026-09-28.csv, /srv/cardledger/reports/settlement-2026-09-28.json and /srv/cardledger/reports/settlement-2026-09-28.txt
+2026-09-29 04:10:17,301 INFO cardledger: clearings 306,793.51, refunds 6,140.28, top-ups 81,991.11, net movement -219,382.54 EUR over 2113 cards
+2026-09-29 04:10:17,301 INFO cardledger: done

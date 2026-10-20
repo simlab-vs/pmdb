@@ -1,11 +1,12 @@
 # Traces
 
-`pmdb` traces can stored using either a binary or human-readable format.
+`pmdb` traces can be stored using either a binary or human-readable format.
 The former is optimized to minimize space and parsing time.
 The latter can be used for debugging or to help with the developement of new features.
 
-The human-readable formatis based on XML.
+The human-readable format is based on XML.
 A schema definition is provided.
+A binary trace can be converted to XML with `pmdb --export-xml <trace>`, which prints the XML document to the standard output.
 
 ## Structure of a trace
 
@@ -17,25 +18,29 @@ Each observation is associated with a line in a source file, describing where in
 A snap additionaly contains a recorded value with an optional label.
 A call additionally contains the name of the function being called, the arguments passed to that function, and a list of observation that occurred during the call.
 
+The outcome of a call is recorded as the snap that immediately follows it, under the same parent.
+That snap is labeled `<function>.$result` and holds the returned value if the call returned, or is labeled `<function>.$exception` and holds a table with the `type` and the `message` of the exception if the call raised one, where `<function>` is the name of the function being called.
+`pmdb` shows such snaps as the outcomes of the calls they follow (e.g., `call f(3) -> 6`), and matches them against the result patterns of queries (e.g., `f(x) -> r`).
+The recorders for Python and Rust record the outcome of every call they record.
+
 ### Values
 
-`pmdb` supports 6 types of values to record snaps and call arguments, namely:
+`pmdb` supports 9 types of values to record snaps and call arguments, namely:
 
-1. integers,
-2. floating-point numbers,
-3. character strings,
-4. arrays (i.e., ordered collection of values),
-5. tables (i.e., mappings from strings to values), and
-6. arbitrary objects, represented as raw sequence of bytes.
+1. the absence of a value (e.g., `None` in Python or `null` in JavaScript),
+2. Booleans,
+3. integers,
+4. floating-point numbers,
+5. character strings,
+6. arrays (i.e., ordered collection of values),
+7. tables (i.e., mappings from strings to values),
+8. functions, represented by their names, and
+9. arbitrary objects, represented as raw sequence of bytes.
 
-`pmdb` internally represents integers using 64 signed bits and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
-This particular choice has a couple of noteworthy consequences:
-
-- One cannot load integer values that are not representable as a two's complement 64-bit integer.
-- The semantics of where clauses depend on the specifics of these representations. For example, computing `x + 1` in a context where `x` is equal to `0xff` will result in `0x100` even if the value of `x` was recorded from a program manipulating bytes.
+`pmdb` represents integers with arbitrary precision and floating-point numbers using the double-precision format of IEEE 754 (aka `double` in most programming languages).
+As a consequence, the semantics of where clauses don't depend on the width of the integers recorded: computing `x + 1` in a context where `x` is equal to `0xff` results in `0x100` even if the value of `x` was recorded from a program manipulating bytes.
 
 One should store values as objects in situations where a finer control is necessary.
-For example, one can store a 128 bit integer as a raw sequence of 16 bytes.
 
 ## XML representation
 
@@ -81,7 +86,7 @@ The following illustrate with an observation recording `f(42, pi = 42)`.
 
 A value is expressed by a `pmdb:value` tag containing a single element representing its contents.
 There is one element per type of value supported by `pmdb`.
-Payloads are written in plain text except for arrays which are sequences of values, tables which are sequence of labeled values, and objects whose contents are written using a base64 enoding.
+Payloads are written in plain text, Booleans being written `true` or `false`, except for arrays which are sequences of values, tables which are sequence of labeled values, and objects whose contents are written using a base64 enoding.
 For example, the following describes an array containing an integer and an object.
 
 ```xml

@@ -1,0 +1,42 @@
+{
+  "name": "Swift 6.2.4",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Ubuntu 24.04 images come with a non-root `ubuntu` user, whose UID is updated to match the host.
+  "remoteUser": "ubuntu",
+
+  // The host and the container must not share `.build`. SourceKit-LSP always indexes into
+  // `.build/index-build`, whose output file maps list the source paths of whichever side prepared
+  // them last. Compiling against maps with the other side's paths writes outputs to the workspace
+  // root. Pin the workspace path so that the `.build` mount point exists in the image.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/pytrace-recorder,type=bind",
+  "workspaceFolder": "/workspaces/pytrace-recorder",
+  "mounts": [
+    {
+      "source": "pytrace-recorder-build-${devcontainerId}",
+      "target": "/workspaces/pytrace-recorder/.build",
+      "type": "volume"
+    }
+  ],
+
+  "postCreateCommand": "swift package resolve",
+
+  // Allow LLDB to debug processes.
+  "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
+
+  "containerEnv": {
+    // See the matching setting in `flake.nix`.
+    "SWT_SWIFT_ERROR_BACKTRACING_ENABLED": "0"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "swiftlang.swift-vscode",
+        "ms-python.python"
+      ]
+    }
+  }
+}

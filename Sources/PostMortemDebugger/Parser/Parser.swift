@@ -42,6 +42,8 @@ public struct Parser {
       return try parseSelect()
     case .show:
       return try parseShow()
+    case .name where text(head) == "export":
+      return try parseExport()
     default:
       throw Diagnostic(.error, "unknown command '\(text(head))'", at: head.site)
     }
@@ -98,8 +100,18 @@ public struct Parser {
         diagnostics.append(w)
       }
 
+      // Is there a pattern for the outcome?
+      let outcome: Query.OutcomePattern? =
+        if take(operator: "->") != nil {
+          try .returned(parseOutcomePattern())
+        } else if take(contextual: "raised") != nil {
+          try .raised(parseOutcomePattern())
+        } else {
+          nil
+        }
+
       let (source, filter) = try parseQueryClauses()
-      return .call(identifier, xs, from: source, where: filter)
+      return .call(identifier, xs, outcome: outcome, from: source, where: filter)
     }
 
     // Otherwise, expect we're parsing identifiers in snapshots.
@@ -134,6 +146,17 @@ public struct Parser {
     }
   }
 
+  /// Parses an export command, `export $N to "path"`.
+  private mutating func parseExport() throws -> Command {
+    _ = try take(contextual: "export") ?? expected("'export'")
+    let n = try take(.variable) ?? expected("a variable such as $0")
+    _ = try take(contextual: "to") ?? expected("'to'")
+    guard case .string(let path) = try parseOptionalLiteral() else {
+      throw expected("the path of a file, as a string")
+    }
+    return .export(text(n), to: path)
+  }
+
   /// Parses a show command.
   private mutating func parseShow() throws -> Command {
     _ = try take(.show) ?? expected("'show'")
@@ -142,16 +165,23 @@ public struct Parser {
       return .show(text(n))
     } else if take(contextual: "variables") != nil {
       return .showConvenienceVariables
+    } else if take(contextual: "functions") != nil {
+      return .showFunctions
     } else {
-      throw expected("variable")
+      throw expected("a variable such as $0, 'variables', or 'functions'")
     }
   }
 
   /// Parses an identifier pattern.
   private mutating func parseIdentifierPattern() throws -> IdentifierPattern {
-    // Is the pattern a simple name?
+    // Is the pattern a name, possibly qualified (e.g., `Ledger.apply`)?
     if let n = take(.name) {
-      return .exactly(.init(tokens.source[n.site]))
+      var name = text(n)
+      while take(.dot) != nil {
+        let m = try take(if: { (t) in Self.wordTags.contains(t.tag) }) ?? expected("identifier")
+        name += "." + text(m)
+      }
+      return .exactly(name)
     }
 
     // Is the pattern a regex?
@@ -171,16 +201,28 @@ public struct Parser {
   /// Parses a comma-separated list of argument patterns.
   private mutating func parseArgumentPatternList() throws -> ArgumentPatternList {
     // Is tha pattern universal?
+    var head: [ArgumentPattern] = []
     if take(.ellipsis) != nil {
-      return .init([.universal])
+      if next(is: .rightParenthesis) { return .init([.universal]) }
+      head = [.positionalVariadic(binding: nil), .namedVariadic(binding: nil)]
+      _ = try take(.comma) ?? expected("',' or ')'")
     }
 
-    // Otherwise, parse a list of patterns.
+    // Otherwise, parse a list of patterns, in which `...` stands for any further arguments.
     let (xs, _) = try commaSeparated(until: Token.hasTag(.rightParenthesis)) { (me) in
-      try me.parseArgumentPattern()
+      if me.take(.ellipsis) != nil {
+        return [ArgumentPattern.positionalVariadic(binding: nil), .namedVariadic(binding: nil)]
+      } else {
+        return try [me.parseArgumentPattern()]
+      }
     }
-    return .init(xs)
+    return .init(head + xs.flatMap(\.self))
   }
+
+  /// The tags of the tokens that are words: names and keywords.
+  private static let wordTags: Set<Token.Tag> = [
+    .name, .else, .exit, .false, .if, .load, .noneLiteral, .pmdb, .select, .show, .then, .true,
+  ]
 
   /// Parses an argument pattern.
   private mutating func parseArgumentPattern() throws -> ArgumentPattern {
@@ -190,6 +232,8 @@ public struct Parser {
           return .named(label: text(n), binding: text(v))
         } else if take(.underscore) != nil {
           return .named(label: text(n), binding: nil)
+        } else if let v = try parseOptionalLiteral() {
+          return .namedLiteral(label: text(n), value: v)
         } else {
           throw expected("identifier")
         }
@@ -206,8 +250,36 @@ public struct Parser {
       return .positionalVariadic(binding: nil)
     } else if take(operator: "**") != nil {
       return .namedVariadic(binding: nil)
+    } else if let v = try parseOptionalLiteral() {
+      return .positionalLiteral(v)
     } else {
       throw expected("identifier")
+    }
+  }
+
+  /// Parses the pattern matching the value returned or the exception raised by a call, which is a
+  /// positional argument pattern.
+  private mutating func parseOutcomePattern() throws -> ArgumentPattern {
+    if let n = take(.name) {
+      return .positional(binding: text(n))
+    } else if take(.underscore) != nil {
+      return .positional(binding: nil)
+    } else if let v = try parseOptionalLiteral() {
+      return .positionalLiteral(v)
+    } else {
+      throw expected("outcome pattern")
+    }
+  }
+
+  /// Parses a Boolean, numeric, or string literal, or `none`, iff the next token is one, returning
+  /// the value it denotes.
+  private mutating func parseOptionalLiteral() throws -> Value? {
+    switch peek()?.tag {
+    case .true, .false, .noneLiteral, .integerLiteral, .floatingPointLiteral, .stringLiteral:
+      var environment: [String: Value] = [:]
+      return try parsePrimaryExpression().evaluate(in: &environment)
+    default:
+      return nil
     }
   }
 
@@ -237,7 +309,7 @@ public struct Parser {
     minimumPrecedence p: PrecedenceGroup = .disjunction
   ) throws -> Expression {
     let s = nextTokenStart()
-    var l = try parseCompoundExpression()
+    var l = try parsePrefixExpression()
 
     // Can we parse an operator with enough precedence?
     while p < .max, let (o, q) = try parseOptionalInfixOperator(notTighterThan: p) {
@@ -248,6 +320,14 @@ public struct Parser {
 
     // Done.
     return l
+  }
+
+  /// Parses an expression optionally prefixed by an operator.
+  private mutating func parsePrefixExpression() throws -> Expression {
+    guard let o = take(.operator) else { return try parseCompoundExpression() }
+    let e = try parseCompoundExpression()
+    let f = Expression(syntax: .identifier(text(o)), site: o.site)
+    return .init(syntax: .apply(.init(callee: f, arguments: [e])), site: span(from: o))
   }
 
   /// Parses an expression made of one or more components.
@@ -293,7 +373,8 @@ public struct Parser {
   /// `head`. Otherwise, returns `nil`.
   private mutating func appendPropertySelection(to head: Expression) throws -> Expression? {
     if take(.dot) == nil { return nil }
-    let n = try take(.name) ?? expected("identifier")
+    // Keywords such as `load` can name properties too.
+    let n = try take(if: { (t) in Self.wordTags.contains(t.tag) }) ?? expected("identifier")
     let x = Parsed(text(n), at: n.site)
     let s = span(from: head.site.lowerBound)
     return .init(syntax: .property(.init(table: head, name: x)), site: s)
@@ -317,6 +398,9 @@ public struct Parser {
     switch peek()?.tag {
     case .true, .false:
       return try parseBooleanLiteral()
+    case .noneLiteral:
+      let head = take()!
+      return .init(syntax: .noneLiteral, site: head.site)
     case .integerLiteral:
       return try parseIntegerLiteral()
     case .floatingPointLiteral:
@@ -361,7 +445,27 @@ public struct Parser {
   /// Parses a string literal.
   private mutating func parseStringLiteral() throws -> Expression {
     let head = try take(.stringLiteral) ?? expected("string literal")
-    return .init(syntax: .string(text(head)), site: head.site)
+    let contents = tokens.source[head.site].dropFirst().dropLast()
+
+    var v = ""
+    var escaped = false
+    for c in contents {
+      if escaped {
+        switch c {
+        case "n": v.append("\n")
+        case "t": v.append("\t")
+        case "\\", "\"": v.append(c)
+        default:
+          throw Diagnostic(.error, "invalid escape sequence '\\\(c)'", at: head.site)
+        }
+        escaped = false
+      } else if c == "\\" {
+        escaped = true
+      } else {
+        v.append(c)
+      }
+    }
+    return .init(syntax: .string(v), site: head.site)
   }
 
   /// Parses a simple identifier.

@@ -1,0 +1,31 @@
+--- a/billing/cycle.py
++++ b/billing/cycle.py
+@@ -14,8 +14,7 @@
+     ``identifiers`` maps the canonical form of every identifier the meter
+     operators use to the register's account identifier.
+     """
+-    current = None
+-    batch = []
++    batches = {}
+     unknown = set()
+     for reading in readings:
+         account_id = identifiers.get(canonical_id(reading.account))
+@@ -24,13 +23,10 @@
+                 log.warning("readings for unknown account %r skipped", reading.account)
+                 unknown.add(reading.account)
+             continue
+-        if account_id != current:
+-            if batch:
+-                yield current, batch
+-            current, batch = account_id, []
+-        batch.append(reading)
+-    if batch:
+-        yield current, batch
++        batches.setdefault(account_id, []).append(reading)
++    for account_id, batch in batches.items():
++        batch.sort(key=lambda reading: (reading.meter, reading.taken_at))
++        yield account_id, batch
+ 
+ 
+ def billing_days(account, period):
+Only in b/billing: cycle.py.orig

@@ -1,0 +1,288 @@
+{
+ "kinds": {
+  "van": {
+   "capacity": 1000,
+   "cost_per_km": 0.45,
+   "fixed_cost": 60.0
+  },
+  "truck": {
+   "capacity": 1600,
+   "cost_per_km": 0.62,
+   "fixed_cost": 85.0
+  }
+ },
+ "vehicles": [
+  {
+   "id": "V-01",
+   "kind": "van"
+  },
+  {
+   "id": "V-02",
+   "kind": "van"
+  },
+  {
+   "id": "V-03",
+   "kind": "van"
+  },
+  {
+   "id": "V-04",
+   "kind": "van"
+  },
+  {
+   "id": "V-05",
+   "kind": "van"
+  },
+  {
+   "id": "V-06",
+   "kind": "van"
+  },
+  {
+   "id": "V-07",
+   "kind": "van"
+  },
+  {
+   "id": "V-08",
+   "kind": "van"
+  },
+  {
+   "id": "V-09",
+   "kind": "van"
+  },
+  {
+   "id": "V-10",
+   "kind": "van"
+  },
+  {
+   "id": "V-11",
+   "kind": "van"
+  },
+  {
+   "id": "V-12",
+   "kind": "van"
+  },
+  {
+   "id": "V-13",
+   "kind": "van"
+  },
+  {
+   "id": "V-14",
+   "kind": "van"
+  },
+  {
+   "id": "V-15",
+   "kind": "van"
+  },
+  {
+   "id": "V-16",
+   "kind": "van"
+  },
+  {
+   "id": "V-17",
+   "kind": "van"
+  },
+  {
+   "id": "V-18",
+   "kind": "van"
+  },
+  {
+   "id": "V-19",
+   "kind": "van"
+  },
+  {
+   "id": "V-20",
+   "kind": "van"
+  },
+  {
+   "id": "V-21",
+   "kind": "van"
+  },
+  {
+   "id": "V-22",
+   "kind": "van"
+  },
+  {
+   "id": "V-23",
+   "kind": "van"
+  },
+  {
+   "id": "V-24",
+   "kind": "van"
+  },
+  {
+   "id": "V-25",
+   "kind": "van"
+  },
+  {
+   "id": "V-26",
+   "kind": "van"
+  },
+  {
+   "id": "V-27",
+   "kind": "van"
+  },
+  {
+   "id": "V-28",
+   "kind": "van"
+  },
+  {
+   "id": "V-29",
+   "kind": "van"
+  },
+  {
+   "id": "V-30",
+   "kind": "van"
+  },
+  {
+   "id": "V-31",
+   "kind": "van"
+  },
+  {
+   "id": "V-32",
+   "kind": "van"
+  },
+  {
+   "id": "V-33",
+   "kind": "van"
+  },
+  {
+   "id": "V-34",
+   "kind": "van"
+  },
+  {
+   "id": "V-35",
+   "kind": "van"
+  },
+  {
+   "id": "V-36",
+   "kind": "van"
+  },
+  {
+   "id": "V-37",
+   "kind": "van"
+  },
+  {
+   "id": "V-38",
+   "kind": "van"
+  },
+  {
+   "id": "V-39",
+   "kind": "van"
+  },
+  {
+   "id": "V-40",
+   "kind": "van"
+  },
+  {
+   "id": "V-41",
+   "kind": "van"
+  },
+  {
+   "id": "V-42",
+   "kind": "van"
+  },
+  {
+   "id": "V-43",
+   "kind": "van"
+  },
+  {
+   "id": "V-44",
+   "kind": "van"
+  },
+  {
+   "id": "V-45",
+   "kind": "van"
+  },
+  {
+   "id": "V-46",
+   "kind": "van"
+  },
+  {
+   "id": "V-47",
+   "kind": "van"
+  },
+  {
+   "id": "V-48",
+   "kind": "van"
+  },
+  {
+   "id": "V-49",
+   "kind": "van"
+  },
+  {
+   "id": "V-50",
+   "kind": "van"
+  },
+  {
+   "id": "T-01",
+   "kind": "truck"
+  },
+  {
+   "id": "T-02",
+   "kind": "truck"
+  },
+  {
+   "id": "T-03",
+   "kind": "truck"
+  },
+  {
+   "id": "T-04",
+   "kind": "truck"
+  },
+  {
+   "id": "T-05",
+   "kind": "truck"
+  },
+  {
+   "id": "T-06",
+   "kind": "truck"
+  },
+  {
+   "id": "T-07",
+   "kind": "truck"
+  },
+  {
+   "id": "T-08",
+   "kind": "truck"
+  },
+  {
+   "id": "T-09",
+   "kind": "truck"
+  },
+  {
+   "id": "T-10",
+   "kind": "truck"
+  },
+  {
+   "id": "T-11",
+   "kind": "truck"
+  },
+  {
+   "id": "T-12",
+   "kind": "truck"
+  },
+  {
+   "id": "T-13",
+   "kind": "truck"
+  },
+  {
+   "id": "T-14",
+   "kind": "truck"
+  },
+  {
+   "id": "T-15",
+   "kind": "truck"
+  },
+  {
+   "id": "T-16",
+   "kind": "truck"
+  },
+  {
+   "id": "T-17",
+   "kind": "truck"
+  },
+  {
+   "id": "T-18",
+   "kind": "truck"
+  }
+ ]
+}

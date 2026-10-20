@@ -1,0 +1,7 @@
+2026-10-01 06:00:34,385 INFO    billing.accounts: register: 3100 accounts (353 with a legacy number)
+2026-10-01 06:00:34,385 INFO    billing.tariffs: tariffs: BUS-HV, BUS-SME, DOM-FIX24, DOM-GREEN, DOM-STD
+2026-10-01 06:00:34,423 INFO    billing.feeds: telemetrix: 3303 readings from 1 file(s) (0 duplicates, 0 outside 2026-09)
+2026-10-01 06:00:34,430 INFO    billing.feeds: gridsense: 1583 readings from 1 file(s) (10 duplicates, 0 outside 2026-09)
+2026-10-01 06:00:34,439 INFO    billing.feeds: meterline: 1532 readings from 1 file(s) (0 duplicates, 0 outside 2026-09)
+2026-10-01 06:00:34,441 INFO    billing.feeds: feeds: 6418 readings in total
+2026-10-01 06:00:34,492 INFO    billing.cycle: cycle 2026-09: 3070 bills, 104 on estimates

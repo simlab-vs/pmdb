@@ -1,0 +1,4 @@
+# Match the two-space indentation used by the Swift and Python sources of this repository.
+tab_spaces = 2
+max_width = 100
+fn_params_layout = "Compressed"

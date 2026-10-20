@@ -1,0 +1,3 @@
+select /Ledger\.apply_refund/(_, _, t) where t.status != "succeeded"
+select /Ledger\.apply/(_, t) -> booked where t.ref == "npr_h63pf8nscp87we"
+show $1

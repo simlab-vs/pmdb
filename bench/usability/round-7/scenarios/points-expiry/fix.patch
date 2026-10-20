@@ -1,0 +1,11 @@
+--- a/loyalty/expiry.py
++++ b/loyalty/expiry.py
+@@ -43,7 +43,7 @@
+     if policy.exempt(member):
+         return result
+     expired = Counter()
+-    for lot in policy.due_lots(lots):
++    for lot in policy.due_lots(lots, posted_on):
+         store.close_lot(conn, lot.id, posted_on)
+         store.insert_ledger(conn, member.id, posted_on, LEDGER_EXPIRE, -lot.remaining, lot.id, audit.stamp())
+         expired[lot.source] += lot.remaining

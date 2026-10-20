@@ -1,0 +1,4 @@
+select best_price(cart, ctx) -> p where ctx.customer == "C-1054"
+show $0
+select unit_price("TB-203", ctx) -> u where u == 470
+show $1

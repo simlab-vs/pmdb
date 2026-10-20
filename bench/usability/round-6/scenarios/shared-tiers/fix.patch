@@ -1,0 +1,12 @@
+diff -ruN a/invoicing/advisor.py b/invoicing/advisor.py
+--- a/invoicing/advisor.py
++++ b/invoicing/advisor.py
+@@ -17,7 +17,7 @@
+ 
+ def best_rate_reached(tiers, units):
+     """The lowest unit price among the tiers that ``units`` reach."""
+-    by_price = ranked(tiers, key=attrgetter("unit_price"))
++    by_price = sorted(tiers, key=attrgetter("unit_price"))
+     return first(by_price, lambda tier: units > tier.start, default=by_price[-1])
+ 
+ 

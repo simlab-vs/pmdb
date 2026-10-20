@@ -1,0 +1,35 @@
+{
+  "month": "2026-09",
+  "currency": "EUR",
+  "generated_at": "2026-10-01 03:10:03 UTC",
+  "providers": {
+    "kestrel": {
+      "gross": 44110733,
+      "fees": 832577,
+      "refunds": 1732318,
+      "disputes": 62733,
+      "net": 41483105
+    },
+    "lumen": {
+      "gross": 29593418,
+      "fees": 434060,
+      "refunds": 817028,
+      "disputes": 133787,
+      "net": 28208543
+    },
+    "novapay": {
+      "gross": 35069574,
+      "fees": 646468,
+      "refunds": 1696645,
+      "disputes": 62436,
+      "net": 32664025
+    }
+  },
+  "total": {
+    "gross": 108773725,
+    "fees": 1913105,
+    "refunds": 4245991,
+    "disputes": 258956,
+    "net": 102355673
+  }
+}

@@ -1,0 +1,5 @@
+select classify(m) -> "resend" where m.event_type == "clearing"
+select classify(m) -> "new" where m.event_type == "clearing"
+export $0 to "dropped.jsonl"
+export $1 to "posted.jsonl"
+select classify(m) -> "resend" from $0 where !m.data.has("auth_code")

@@ -1,0 +1,6 @@
+select volume_charge(q, ts) where ts[0].start > 0
+show $0
+select best_rate_reached(ts, u)
+show $1
+select ranked(items, **) where items.len() == 4 && items[0].has("unit_price")
+show $2

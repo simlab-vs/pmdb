@@ -1,0 +1,6 @@
+[job]
+settlement_currency = "EUR"
+providers = ["kestrel", "lumen", "novapay"]
+ignored_statuses = ["failed", "canceled"]
+fx_dir = "config/fx"
+report_dir = "reports"

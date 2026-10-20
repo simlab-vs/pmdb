@@ -1,0 +1,2692 @@
+{
+ "backorder_reasons": {
+  "no warehouse stocks it": 67,
+  "not enough stock": 243,
+  "partly in stock": 67
+ },
+ "backorders": [
+  {
+   "line_no": 3,
+   "order_id": "W-3104515",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3111535",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "HM-1041"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882598",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1136"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107141",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "BT-1008"
+  },
+  {
+   "line_no": 4,
+   "order_id": "W-3110569",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1119"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107866",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2004"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3111493",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1032"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885076",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "HM-1118"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106841",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1086"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-885078",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "TL-1055"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3109791",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1015"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107798",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2000"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109120",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "HM-1006"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-885470",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "BT-1129"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-885390",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "HM-1095"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108872",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-883546",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1050"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884892",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2010"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882589",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2003"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884031",
+   "qty": 9,
+   "reason": "partly in stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884137",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1024"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-884137",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1013"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883562",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1136"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884076",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "BT-1148"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882770",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2000"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881972",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1135"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882886",
+   "qty": 8,
+   "reason": "partly in stock",
+   "sku": "HM-1041"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882238",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108058",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1044"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882700",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51860",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51911",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1074"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52997",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "BT-1093"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52997",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "TL-1145"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51467",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1006"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51279",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1134"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51552",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51579",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1116"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52131",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1049"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885015",
+   "qty": 3,
+   "reason": "partly in stock",
+   "sku": "GD-1130"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-885015",
+   "qty": 3,
+   "reason": "partly in stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-51205",
+   "qty": 10,
+   "reason": "partly in stock",
+   "sku": "HM-1119"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108632",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1087"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882552",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "KIT-2004"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110764",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2003"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52155",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1082"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52155",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "HM-1016"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52426",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "TL-1124"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52691",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52310",
+   "qty": 12,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1024"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52945",
+   "qty": 8,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1139"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-883251",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "LT-1006"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52194",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "LT-1126"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51958",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "KT-1015"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51958",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1054"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51461",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1019"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884042",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2010"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882500",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "BT-1129"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52917",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1129"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3104494",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1087"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51407",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "HM-1112"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883304",
+   "qty": 9,
+   "reason": "partly in stock",
+   "sku": "BT-1027"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52333",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109785",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KT-1003"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51456",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1022"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52496",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1120"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52847",
+   "qty": 12,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1136"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52847",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52766",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "TL-1101"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52766",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "KT-1089"
+  },
+  {
+   "line_no": 4,
+   "order_id": "W-3105596",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "GD-1018"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105918",
+   "qty": 4,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1005"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52367",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1049"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52376",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "HM-1121"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52376",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "HM-1025"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52264",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1063"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882628",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2021"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51829",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "KT-1029"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108662",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "GD-1018"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3110151",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "BT-1029"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52491",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1124"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883783",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "TL-1097"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884252",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "HM-1103"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52534",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "HM-1132"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3108849",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1018"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885146",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2000"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51843",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "TL-1054"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51843",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1067"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-51843",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "HM-1007"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885409",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "BT-1129"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-883379",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1124"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3108582",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2005"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885051",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "BT-1079"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106201",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1100"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52819",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1125"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51906",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51906",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "BT-1019"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51543",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "KT-1070"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52839",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1106"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881734",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1002"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51439",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "TL-1141"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52678",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "TL-1079"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52678",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "LT-1092"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3104217",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1086"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-881368",
+   "qty": 10,
+   "reason": "partly in stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882624",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "BT-1116"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-53120",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1117"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3104763",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "BT-1029"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52745",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1018"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52790",
+   "qty": 24,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1121"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52440",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51414",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110233",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1006"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52272",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1066"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52272",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "HM-1053"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51984",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "KT-1043"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3107707",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "HM-1075"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52033",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1123"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51280",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "TL-1097"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51280",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "LT-1068"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52223",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1134"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106805",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "HM-1053"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-53008",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1148"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106563",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 4,
+   "order_id": "W-3107794",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1013"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52420",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "BT-1064"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-53091",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1006"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52152",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52774",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1048"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51739",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1118"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51769",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "KT-1009"
+  },
+  {
+   "line_no": 4,
+   "order_id": "W-3106159",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52908",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51572",
+   "qty": 9,
+   "reason": "partly in stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883359",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2008"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883359",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "TL-1088"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884283",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1032"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52750",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1121"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882382",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1148"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53092",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "KT-1101"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-53092",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1140"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882785",
+   "qty": 3,
+   "reason": "partly in stock",
+   "sku": "BT-1121"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52882",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109856",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3106552",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2013"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51882",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "KT-1082"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105708",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "LT-1126"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885364",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "LT-1074"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51351",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1110"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3110687",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "TL-1108"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52817",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882451",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "LT-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882371",
+   "qty": 9,
+   "reason": "partly in stock",
+   "sku": "GD-1125"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51777",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1141"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3105085",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1015"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885006",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2004"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-885006",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "HM-1121"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882203",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2000"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882254",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1021"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882254",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2002"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882944",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2008"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51925",
+   "qty": 3,
+   "reason": "partly in stock",
+   "sku": "BT-1141"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51448",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1034"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51448",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1052"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-885340",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "LT-1101"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3111366",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "BT-1008"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109289",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2013"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110780",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KIT-2018"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3109941",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1119"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883516",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "TL-1130"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883292",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2002"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51550",
+   "qty": 5,
+   "reason": "partly in stock",
+   "sku": "GD-1147"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110973",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51590",
+   "qty": 24,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1124"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-51590",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "LT-1036"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3104468",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "BT-1004"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51324",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1067"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51248",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1040"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884198",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "BT-1129"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882009",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2021"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110909",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "LT-1126"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52609",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1031"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3110914",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2013"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52985",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "TL-1011"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3109515",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52944",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "LT-1082"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105195",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1013"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882043",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "KT-1125"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3109226",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1057"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-53140",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KT-1091"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-53140",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1143"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-53140",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1103"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881853",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "LT-1017"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109796",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52657",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1055"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52551",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1019"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52028",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "KT-1086"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52106",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1113"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52106",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884269",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51243",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51243",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "TL-1093"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3107330",
+   "qty": 4,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2005"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882107",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2021"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51436",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1004"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51436",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883882",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KIT-2023"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884098",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "TL-1052"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52392",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1045"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52362",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1113"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51695",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "LT-1131"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-881365",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2021"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3108243",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KT-1006"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51988",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1060"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52244",
+   "qty": 12,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1121"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51768",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51768",
+   "qty": 15,
+   "reason": "partly in stock",
+   "sku": "GD-1095"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51742",
+   "qty": 17,
+   "reason": "partly in stock",
+   "sku": "GD-1093"
+  },
+  {
+   "line_no": 4,
+   "order_id": "W-3111201",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "BT-1004"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3111458",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1124"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881614",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2010"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3110982",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1136"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52715",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "LT-1017"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52715",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52715",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1126"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53111",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52412",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1108"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51666",
+   "qty": 12,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1121"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51477",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1085"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51692",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1125"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881876",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KIT-2023"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3106119",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1126"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881987",
+   "qty": 13,
+   "reason": "partly in stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106771",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "GD-1095"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52700",
+   "qty": 11,
+   "reason": "partly in stock",
+   "sku": "TL-1022"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109894",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "LT-1126"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52633",
+   "qty": 5,
+   "reason": "partly in stock",
+   "sku": "GD-1001"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52092",
+   "qty": 18,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1005"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53105",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-53105",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1123"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881926",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2018"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52585",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52585",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1034"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52585",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883553",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52955",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "BT-1104"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52955",
+   "qty": 22,
+   "reason": "partly in stock",
+   "sku": "TL-1097"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52160",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52160",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "KT-1057"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52160",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "LT-1136"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-53045",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "TL-1054"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53045",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1110"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52288",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "TL-1045"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3110468",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1021"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52377",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "KT-1007"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882025",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2003"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-53161",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881884",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "KT-1142"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3109092",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "GD-1050"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107030",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3107030",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KT-1003"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882544",
+   "qty": 5,
+   "reason": "partly in stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52279",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "LT-1110"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108349",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52215",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "KT-1013"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105553",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-883463",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "LT-1131"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51561",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "HM-1111"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3110070",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "TL-1097"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52898",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1047"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3104885",
+   "qty": 1,
+   "reason": "partly in stock",
+   "sku": "HM-1121"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-881383",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "KIT-2015"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-881383",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "LT-1033"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52290",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "TL-1088"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52290",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1051"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105219",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "TL-1097"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-883286",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "TL-1022"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53096",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1125"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52222",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "HM-1123"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-53123",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "BT-1008"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51664",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1108"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107004",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1053"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52125",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "LT-1117"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52125",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1053"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3106538",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "GD-1050"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51922",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52444",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1142"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106920",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2003"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52329",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "BT-1132"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105047",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "BT-1004"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52682",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1062"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52682",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-885233",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KIT-2007"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106913",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "BT-1085"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51977",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "KT-1103"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52570",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1133"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52399",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3105272",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2013"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51528",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1136"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883007",
+   "qty": 6,
+   "reason": "partly in stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105325",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "GD-1126"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52550",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "LT-1057"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108707",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KT-1091"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52915",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1121"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3111014",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1123"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3107638",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1008"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52782",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105780",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1034"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-883948",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "BT-1008"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108703",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "BT-1019"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3109086",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105948",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KIT-2023"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52433",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "HM-1006"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52580",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "HM-1088"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3104546",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2004"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3111293",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "KIT-2023"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-51807",
+   "qty": 6,
+   "reason": "no warehouse stocks it",
+   "sku": "HM-1135"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51700",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "BT-1148"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51700",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "TL-1016"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52293",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "HM-1095"
+  },
+  {
+   "line_no": 3,
+   "order_id": "W-3106462",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1065"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52890",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52302",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52302",
+   "qty": 10,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1022"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3108882",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "GD-1034"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-882575",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "TL-1052"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52137",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107456",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1110"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3105751",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2021"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3104782",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1015"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3106506",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "BT-1094"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884384",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2018"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-881789",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884396",
+   "qty": 3,
+   "reason": "not enough stock",
+   "sku": "KIT-2023"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882355",
+   "qty": 4,
+   "reason": "not enough stock",
+   "sku": "TL-1102"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-52031",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "KT-1050"
+  },
+  {
+   "line_no": 5,
+   "order_id": "B-52031",
+   "qty": 8,
+   "reason": "not enough stock",
+   "sku": "HM-1024"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52480",
+   "qty": 10,
+   "reason": "partly in stock",
+   "sku": "TL-1088"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3111123",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1090"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109705",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1090"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3111302",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "BT-1046"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-883785",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1103"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884218",
+   "qty": 2,
+   "reason": "partly in stock",
+   "sku": "GD-1130"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3104376",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1049"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3108631",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KT-1091"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52899",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1065"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-52899",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "LT-1142"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883957",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "LT-1132"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-885471",
+   "qty": 7,
+   "reason": "partly in stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881637",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-881393",
+   "qty": 9,
+   "reason": "partly in stock",
+   "sku": "HM-1042"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-53087",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "KT-1091"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-883043",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "GD-1096"
+  },
+  {
+   "line_no": 2,
+   "order_id": "M-884995",
+   "qty": 2,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1018"
+  },
+  {
+   "line_no": 4,
+   "order_id": "B-51897",
+   "qty": 6,
+   "reason": "not enough stock",
+   "sku": "BT-1034"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-51505",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "TL-1130"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884668",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "HM-1063"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884286",
+   "qty": 4,
+   "reason": "partly in stock",
+   "sku": "LT-1057"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3109972",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "KT-1057"
+  },
+  {
+   "line_no": 4,
+   "order_id": "M-884521",
+   "qty": 4,
+   "reason": "no warehouse stocks it",
+   "sku": "BT-1136"
+  },
+  {
+   "line_no": 3,
+   "order_id": "M-884558",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1013"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882485",
+   "qty": 3,
+   "reason": "partly in stock",
+   "sku": "KT-1142"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52383",
+   "qty": 24,
+   "reason": "no warehouse stocks it",
+   "sku": "LT-1014"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3106793",
+   "qty": 2,
+   "reason": "not enough stock",
+   "sku": "LT-1126"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3104691",
+   "qty": 3,
+   "reason": "no warehouse stocks it",
+   "sku": "KT-1118"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-51520",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "HM-1090"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52163",
+   "qty": 10,
+   "reason": "not enough stock",
+   "sku": "GD-1128"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52526",
+   "qty": 24,
+   "reason": "not enough stock",
+   "sku": "KT-1103"
+  },
+  {
+   "line_no": 1,
+   "order_id": "W-3107565",
+   "qty": 1,
+   "reason": "no warehouse stocks it",
+   "sku": "KIT-2005"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884511",
+   "qty": 5,
+   "reason": "partly in stock",
+   "sku": "GD-1118"
+  },
+  {
+   "line_no": 1,
+   "order_id": "B-52168",
+   "qty": 8,
+   "reason": "partly in stock",
+   "sku": "LT-1122"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-882719",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "LT-1118"
+  },
+  {
+   "line_no": 2,
+   "order_id": "B-51834",
+   "qty": 18,
+   "reason": "not enough stock",
+   "sku": "GD-1048"
+  },
+  {
+   "line_no": 2,
+   "order_id": "W-3110205",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "HM-1075"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884260",
+   "qty": 1,
+   "reason": "not enough stock",
+   "sku": "KIT-2018"
+  },
+  {
+   "line_no": 1,
+   "order_id": "M-884626",
+   "qty": 8,
+   "reason": "partly in stock",
+   "sku": "LT-1004"
+  },
+  {
+   "line_no": 3,
+   "order_id": "B-52642",
+   "qty": 12,
+   "reason": "not enough stock",
+   "sku": "GD-1034"
+  }
+ ],
+ "channels": {
+  "b2b": {
+   "allocated": 11189,
+   "backordered": 2675,
+   "lines": 1162,
+   "ordered": 13864
+  },
+  "marketplace": {
+   "allocated": 2288,
+   "backordered": 335,
+   "lines": 1416,
+   "ordered": 2623
+  },
+  "web": {
+   "allocated": 4074,
+   "backordered": 188,
+   "lines": 2545,
+   "ordered": 4262
+  }
+ },
+ "day": "2026-09-29",
+ "generated_at": "2026-09-29T00:00:04Z",
+ "warehouses": {
+  "LEE": {
+   "lines": 592,
+   "orders": 380,
+   "units": 1993
+  },
+  "LEJ": {
+   "lines": 2098,
+   "orders": 1260,
+   "units": 7200
+  },
+  "MAD": {
+   "lines": 305,
+   "orders": 226,
+   "units": 1159
+  },
+  "RTM": {
+   "lines": 2038,
+   "orders": 1347,
+   "units": 7402
+  }
+ }
+}

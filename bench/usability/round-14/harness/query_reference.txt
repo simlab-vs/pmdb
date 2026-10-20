@@ -1,0 +1,16 @@
+/work/report.pmdb is a trace of that run: every call of the program's own functions, in the order the calls started, with its arguments as they were when it started (positional, in parameter order, defaults included; a method's `self` first) and the value it returned or the exception it raised. Query it with `pmdb`, which is on your PATH. It reads commands from standard input, one per line, and stops at the first failing command:
+
+    pmdb /work/report.pmdb <<'EOF'
+    show functions
+    select f(x, ...) -> r where r > 10
+    show $0
+    EOF
+
+Commands: `select <query>` stores the matches in the next variable ($0, $1, …) and prints their count; `show $N` prints one line per match (`file:line: call f(args) -> result`, strings without quotes); `show functions` lists the recorded functions (qualified, e.g. `Ledger.post`) with their numbers of calls; `export $N to "file.jsonl"` writes the matches as JSON Lines (`function`, `positional`, `named`, `returned` or `raised`); `#` starts a comment. Variables last for one invocation.
+
+Query: `<pattern> [from $N] [where <condition>]`.
+- Call pattern: `name(arguments)`, the name exact (`Ledger.post`) or a regex `/Ledger\..*/`. Argument patterns: a variable (binds the value, e.g. `x`), `_`, a literal (`10`, `2.5`, `"B2"`, `true`, `none`), `name = pattern` for named arguments, `*` (any positional arguments), `**` (any named ones), `...` (any further arguments). Every argument must be matched: `f(x)` matches only one-argument calls.
+- Outcome: `-> r` (returned, binding r), `raised e` (raised; e has `type` and `message`; an exception is recorded on every call it passes through).
+- Snap pattern: a label regex, e.g. `/Ledger\.post\.\$result/` (results are also recorded as snaps `<function>.$result`).
+- `from $N` searches only the observations in $N (not the calls made inside them).
+- Conditions: `|| && < <= > >= == != + - * /`, `!`, `if c then a else b`; `t.key` (dicts are tables), `xs[i]`, `xs.len()`, `xs.all(x => …)`, `xs.any(…)`, `xs.count(…)`, `t.has("key")`; `x == none`; `int(b)`, `bool(n)`. Conditions must be Booleans; integers and floats compare by value. Values: None is `none`, lists and tuples are arrays, dicts and named tuples are tables, other objects are opaque.

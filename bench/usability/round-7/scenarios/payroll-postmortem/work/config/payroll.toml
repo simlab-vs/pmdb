@@ -1,0 +1,49 @@
+[company]
+name = "Brandt & Kessler Logistik GmbH"
+debtor_iban = "DE89370400440532013000"
+report_dir = "reports"
+bank_dir = "/srv/payroll/out"
+
+[cost_centres]
+CC-110 = "Administration"
+CC-120 = "Finance & HR"
+CC-210 = "Warehouse Nord"
+CC-220 = "Warehouse Süd"
+CC-310 = "Transport"
+CC-410 = "Sales"
+CC-510 = "IT"
+
+[allowances]
+meal_per_day = "7.50"
+
+[premiums]
+# basis points of the hourly rate
+night = 2500
+sunday = 5000
+holiday = 10000
+overtime = 2500
+night_from = "22:00"
+night_to = "06:00"
+
+[contributions]
+# 2026 ceilings per month, rates in basis points (employee / employer)
+pension_ceiling = "8450.00"
+health_ceiling = "5812.50"
+pension_employee = 930
+pension_employer = 930
+unemployment_employee = 130
+unemployment_employer = 130
+health_employee = 855
+health_employer = 805
+care_employee = 180
+care_employer = 180
+
+[tax]
+# annual basic allowance per tax class
+allowance = { "1" = "12096.00", "2" = "16356.00", "3" = "24192.00", "4" = "12096.00", "5" = "0.00", "6" = "0.00" }
+# annual bands above the allowance: [width, rate in basis points]; the last band is open
+bands = [["10000.00", 1400], ["40000.00", 2400], ["150000.00", 4200], ["0", 4500]]
+
+[holidays]
+dates = ["2026-01-01", "2026-04-03", "2026-04-06", "2026-05-01", "2026-05-14", "2026-05-25",
+         "2026-10-03", "2026-12-25", "2026-12-26"]

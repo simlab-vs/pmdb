@@ -1,0 +1,29 @@
+{
+  "truth": {
+    "kestrel": {
+      "gross": 44609628,
+      "fees": 851599,
+      "refunds": 1771125,
+      "disputes": 80729,
+      "net": 41906175
+    },
+    "lumen": {
+      "gross": 29248370,
+      "fees": 425088,
+      "refunds": 857038,
+      "disputes": 60958,
+      "net": 27905286
+    },
+    "novapay": {
+      "gross": 33189329,
+      "fees": 618665,
+      "refunds": 1107819,
+      "disputes": 69721,
+      "net": 31393124
+    }
+  },
+  "shapes": {
+    "old": 326
+  },
+  "events": 21479
+}

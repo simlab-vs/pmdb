@@ -1,0 +1,52 @@
+--- a/recon/ledger.py
++++ b/recon/ledger.py
+@@ -4,7 +4,7 @@
+ import logging
+ from collections import Counter
+ 
+-from .models import CHARGE, REFUND, DISPUTE, OTHER
++from .models import CHARGE, REFUND, DISPUTE, OTHER, SUCCEEDED
+ 
+ log = logging.getLogger(__name__)
+ 
+@@ -18,10 +18,16 @@
+         self.provider = provider
+         self.gross = 0
+         self.fees = 0
+-        self.refunds = 0
+         self.disputes = 0
+         self.counts = Counter()
+         self.skipped = Counter()
++        self.refund_txns = {}
++
++    @property
++    def refunds(self):
++        return sum(
++            txn.settle_amount for txn in self.refund_txns.values() if txn.status == SUCCEEDED
++        )
+ 
+     @property
+     def net(self):
+@@ -48,6 +54,9 @@
+     def apply(self, txn):
+         """Book one transaction; returns False if it was not booked."""
+         book = self.books[txn.provider]
++        if txn.kind == REFUND:
++            self.apply_refund(book, txn)
++            return True
+         if txn.status in self.ignored_statuses:
+             book.skipped[txn.status] += 1
+             return False
+@@ -69,8 +78,10 @@
+         book.fees += txn.fee
+ 
+     def apply_refund(self, book, txn):
+-        book.refunds += txn.settle_amount
+-        book.fees += txn.fee
++        if txn.ref not in book.refund_txns:
++            book.counts[REFUND] += 1
++            book.entries = next(book.entry_numbers)
++        book.refund_txns[txn.ref] = txn
+ 
+     def apply_dispute(self, book, txn):
+         book.disputes += txn.settle_amount

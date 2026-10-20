@@ -1,0 +1,26 @@
+{
+  "mdm_metered_kwh": "1578948.4",
+  "needles": [
+    {
+      "kind": "tx_legacy_to_ml",
+      "account": "AC-309321",
+      "legacy_id": "NW-14430",
+      "old_meter": "TX7252976",
+      "old_kwh": "350.7",
+      "new_meter": "ML-75B0F2",
+      "new_kwh": "168.962",
+      "date": "2026-09-21"
+    },
+    {
+      "kind": "gs_to_ml",
+      "account": "AC-083734",
+      "legacy_id": "",
+      "old_meter": "G35K625510",
+      "old_kwh": "169.70",
+      "new_meter": "ML-CE61E8",
+      "new_kwh": "114.108",
+      "date": "2026-09-21"
+    }
+  ],
+  "readings": 4580
+}

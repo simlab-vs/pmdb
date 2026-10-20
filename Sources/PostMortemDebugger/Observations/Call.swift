@@ -30,17 +30,25 @@ public struct Call: Observation {
     self.children = []
   }
 
-  /// Reads an instance from `archive`.
-  public init<T>(from archive: inout ReadableArchive<T>) throws {
+  /// Reads an instance from `archive`, where it was written with the name of the parameter of each
+  /// positional argument and the location of the function's definition iff `withParameters`, and
+  /// whose values may refer to the table of values `context`.
+  public init<T>(
+    from archive: inout ReadableArchive<T>, withParameters: Bool = false, in context: inout Any
+  ) throws {
     self.location = try archive.read(SourceLine.self)
     self.function = try archive.read(String.self)
     self.children = []
 
-    // Parse the positional arguments.
+    // Skip the location of the function's definition, if any.
+    if withParameters { _ = try archive.read(SourceLine.self) }
+
+    // Parse the positional arguments, skipping their parameters' names, if any.
     let m = try Int(archive.readUnsignedLEB128())
     var positional: [Value] = .init(minimumCapacity: m)
     for _ in 0 ..< m {
-      try positional.append(archive.read(Value.self))
+      if withParameters { _ = try archive.read(String.self) }
+      try positional.append(archive.read(Value.self, in: &context))
     }
     self.positional = positional
 
@@ -49,9 +57,9 @@ public struct Call: Observation {
     var named: SortedDictionary<String, Value> = .init(minimumCapacity: n)
     for _ in 0 ..< n {
       let k = try archive.read(String.self)
-      let v = try archive.read(Value.self)
+      let v = try archive.read(Value.self, in: &context)
       try modify(&named[k]) { (w) in
-        if w == nil { throw ArchiveError.invalidInput } else { w = .some(v) }
+        if w != nil { throw ArchiveError.invalidInput } else { w = .some(v) }
       }
     }
     self.named = named

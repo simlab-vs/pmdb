@@ -1,0 +1,8706 @@
+{
+ "meta": {
+  "delivery": {
+   "ooo": 906,
+   "redeliver": 1509,
+   "resend": 620,
+   "resend_first": 382
+  },
+  "events": 10074,
+  "messages": 12240,
+  "offline_collision_amount": 153420,
+  "offline_collisions": 541,
+  "seed": 7202
+ },
+ "truth": {
+  "cards": {
+   "KP00007779": {
+    "held": 0,
+    "movement": 1861
+   },
+   "KP00029384": {
+    "held": 0,
+    "movement": -20994
+   },
+   "KP00101558": {
+    "held": 0,
+    "movement": -19862
+   },
+   "KP00240719": {
+    "held": 0,
+    "movement": -15832
+   },
+   "KP00438633": {
+    "held": 0,
+    "movement": -31054
+   },
+   "KP00444490": {
+    "held": 6142,
+    "movement": -5804
+   },
+   "KP00473654": {
+    "held": 0,
+    "movement": 6882
+   },
+   "KP00514292": {
+    "held": 0,
+    "movement": -22740
+   },
+   "KP00679913": {
+    "held": 20000,
+    "movement": -39913
+   },
+   "KP00680824": {
+    "held": 0,
+    "movement": -10405
+   },
+   "KP00687243": {
+    "held": 0,
+    "movement": -20360
+   },
+   "KP00731576": {
+    "held": 32196,
+    "movement": 0
+   },
+   "KP00805370": {
+    "held": 7944,
+    "movement": -1310
+   },
+   "KP00834962": {
+    "held": 0,
+    "movement": -10641
+   },
+   "KP00892197": {
+    "held": 569,
+    "movement": -25220
+   },
+   "KP00927616": {
+    "held": 0,
+    "movement": -44058
+   },
+   "KP01043631": {
+    "held": 0,
+    "movement": -21491
+   },
+   "KP01050846": {
+    "held": 6558,
+    "movement": 20000
+   },
+   "KP01058446": {
+    "held": 7540,
+    "movement": -28169
+   },
+   "KP01059556": {
+    "held": 0,
+    "movement": -19295
+   },
+   "KP01092440": {
+    "held": 0,
+    "movement": -40044
+   },
+   "KP01153613": {
+    "held": 7668,
+    "movement": 6136
+   },
+   "KP01184396": {
+    "held": 0,
+    "movement": -17168
+   },
+   "KP01257161": {
+    "held": 0,
+    "movement": -17780
+   },
+   "KP01328544": {
+    "held": 0,
+    "movement": -36516
+   },
+   "KP01406092": {
+    "held": 0,
+    "movement": -28635
+   },
+   "KP01437969": {
+    "held": 0,
+    "movement": -28044
+   },
+   "KP01519498": {
+    "held": 0,
+    "movement": -51538
+   },
+   "KP01669369": {
+    "held": 0,
+    "movement": -19887
+   },
+   "KP01690310": {
+    "held": 0,
+    "movement": 137
+   },
+   "KP01776005": {
+    "held": 0,
+    "movement": -39102
+   },
+   "KP02006029": {
+    "held": 4977,
+    "movement": -3512
+   },
+   "KP02034351": {
+    "held": 0,
+    "movement": -29850
+   },
+   "KP02046491": {
+    "held": 9605,
+    "movement": -50732
+   },
+   "KP02130297": {
+    "held": 8527,
+    "movement": -22136
+   },
+   "KP02249592": {
+    "held": 0,
+    "movement": 8697
+   },
+   "KP02309978": {
+    "held": 31922,
+    "movement": -21500
+   },
+   "KP02320437": {
+    "held": 15028,
+    "movement": -12428
+   },
+   "KP02347296": {
+    "held": 0,
+    "movement": -6581
+   },
+   "KP02370899": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP02502862": {
+    "held": 0,
+    "movement": -11406
+   },
+   "KP02509571": {
+    "held": 334,
+    "movement": 0
+   },
+   "KP02525452": {
+    "held": 0,
+    "movement": -27725
+   },
+   "KP02536000": {
+    "held": 0,
+    "movement": -15992
+   },
+   "KP02554725": {
+    "held": 0,
+    "movement": -18142
+   },
+   "KP02601502": {
+    "held": 2122,
+    "movement": -700
+   },
+   "KP02645357": {
+    "held": 0,
+    "movement": -10718
+   },
+   "KP02743782": {
+    "held": 9497,
+    "movement": 0
+   },
+   "KP02745293": {
+    "held": 0,
+    "movement": -41737
+   },
+   "KP02764990": {
+    "held": 0,
+    "movement": -26785
+   },
+   "KP02798357": {
+    "held": 0,
+    "movement": -9291
+   },
+   "KP02915348": {
+    "held": 0,
+    "movement": -5747
+   },
+   "KP02957940": {
+    "held": 0,
+    "movement": -5855
+   },
+   "KP02959446": {
+    "held": 0,
+    "movement": -5727
+   },
+   "KP02959525": {
+    "held": 3915,
+    "movement": -25154
+   },
+   "KP03069661": {
+    "held": 0,
+    "movement": -13544
+   },
+   "KP03091375": {
+    "held": 0,
+    "movement": -32576
+   },
+   "KP03098431": {
+    "held": 5641,
+    "movement": 0
+   },
+   "KP03125479": {
+    "held": 0,
+    "movement": -24297
+   },
+   "KP03164510": {
+    "held": 0,
+    "movement": 2252
+   },
+   "KP03260603": {
+    "held": 1117,
+    "movement": -4687
+   },
+   "KP03367993": {
+    "held": 0,
+    "movement": -18630
+   },
+   "KP03407911": {
+    "held": 0,
+    "movement": -10995
+   },
+   "KP03510359": {
+    "held": 0,
+    "movement": -25230
+   },
+   "KP03534114": {
+    "held": 0,
+    "movement": -14131
+   },
+   "KP03572610": {
+    "held": 0,
+    "movement": -39459
+   },
+   "KP03672865": {
+    "held": 0,
+    "movement": -12798
+   },
+   "KP03844120": {
+    "held": 0,
+    "movement": -41371
+   },
+   "KP03883073": {
+    "held": 0,
+    "movement": -34499
+   },
+   "KP03910047": {
+    "held": 26494,
+    "movement": -290
+   },
+   "KP03923407": {
+    "held": 0,
+    "movement": -21413
+   },
+   "KP03970084": {
+    "held": 7376,
+    "movement": -16946
+   },
+   "KP04140738": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP04157750": {
+    "held": 0,
+    "movement": -4840
+   },
+   "KP04212414": {
+    "held": 0,
+    "movement": -33094
+   },
+   "KP04232098": {
+    "held": 7011,
+    "movement": -8957
+   },
+   "KP04258096": {
+    "held": 0,
+    "movement": -14049
+   },
+   "KP04348310": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP04356024": {
+    "held": 39348,
+    "movement": -1957
+   },
+   "KP04385914": {
+    "held": 0,
+    "movement": -10823
+   },
+   "KP04423440": {
+    "held": 0,
+    "movement": -7338
+   },
+   "KP04433375": {
+    "held": 0,
+    "movement": -13969
+   },
+   "KP04544303": {
+    "held": 4517,
+    "movement": 15540
+   },
+   "KP04567122": {
+    "held": 0,
+    "movement": -42942
+   },
+   "KP04597203": {
+    "held": 0,
+    "movement": -15118
+   },
+   "KP04641658": {
+    "held": 0,
+    "movement": -12560
+   },
+   "KP04653400": {
+    "held": 0,
+    "movement": -17040
+   },
+   "KP04660927": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP04772458": {
+    "held": 0,
+    "movement": -18779
+   },
+   "KP04777293": {
+    "held": 17082,
+    "movement": -10059
+   },
+   "KP04793598": {
+    "held": 0,
+    "movement": -6715
+   },
+   "KP04828155": {
+    "held": 0,
+    "movement": -25442
+   },
+   "KP04964770": {
+    "held": 3417,
+    "movement": -6300
+   },
+   "KP04989859": {
+    "held": 0,
+    "movement": -1714
+   },
+   "KP04998119": {
+    "held": 0,
+    "movement": -9045
+   },
+   "KP05020028": {
+    "held": 0,
+    "movement": -36797
+   },
+   "KP05037724": {
+    "held": 0,
+    "movement": -6810
+   },
+   "KP05085592": {
+    "held": 0,
+    "movement": -15003
+   },
+   "KP05147348": {
+    "held": 0,
+    "movement": -2716
+   },
+   "KP05244947": {
+    "held": 0,
+    "movement": -15837
+   },
+   "KP05246376": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP05270004": {
+    "held": 0,
+    "movement": -18307
+   },
+   "KP05404512": {
+    "held": 13227,
+    "movement": -4217
+   },
+   "KP05436864": {
+    "held": 0,
+    "movement": 9824
+   },
+   "KP05452066": {
+    "held": 0,
+    "movement": -9295
+   },
+   "KP05501622": {
+    "held": 0,
+    "movement": -18844
+   },
+   "KP05517797": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP05560616": {
+    "held": 0,
+    "movement": -28110
+   },
+   "KP05566956": {
+    "held": 12125,
+    "movement": -14265
+   },
+   "KP05639485": {
+    "held": 0,
+    "movement": -21920
+   },
+   "KP05679874": {
+    "held": 0,
+    "movement": -15465
+   },
+   "KP05714866": {
+    "held": 0,
+    "movement": -9210
+   },
+   "KP05880434": {
+    "held": 0,
+    "movement": -34897
+   },
+   "KP05887421": {
+    "held": 0,
+    "movement": -15939
+   },
+   "KP06172405": {
+    "held": 5902,
+    "movement": -13744
+   },
+   "KP06197910": {
+    "held": 22250,
+    "movement": -8659
+   },
+   "KP06215146": {
+    "held": 0,
+    "movement": -15148
+   },
+   "KP06273851": {
+    "held": 0,
+    "movement": -9905
+   },
+   "KP06279278": {
+    "held": 0,
+    "movement": 14164
+   },
+   "KP06286047": {
+    "held": 0,
+    "movement": -25356
+   },
+   "KP06298224": {
+    "held": 0,
+    "movement": -13768
+   },
+   "KP06353593": {
+    "held": 0,
+    "movement": -12074
+   },
+   "KP06370610": {
+    "held": 0,
+    "movement": -6404
+   },
+   "KP06378932": {
+    "held": 0,
+    "movement": -17728
+   },
+   "KP06423359": {
+    "held": 0,
+    "movement": 19710
+   },
+   "KP06450990": {
+    "held": 0,
+    "movement": -2785
+   },
+   "KP06495460": {
+    "held": 0,
+    "movement": -48688
+   },
+   "KP06636188": {
+    "held": 0,
+    "movement": -3310
+   },
+   "KP06677989": {
+    "held": 0,
+    "movement": -6121
+   },
+   "KP06705562": {
+    "held": 0,
+    "movement": -14260
+   },
+   "KP06715009": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP06728108": {
+    "held": 0,
+    "movement": -1210
+   },
+   "KP06751137": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP06760319": {
+    "held": 0,
+    "movement": -18848
+   },
+   "KP06818075": {
+    "held": 0,
+    "movement": -5187
+   },
+   "KP06935827": {
+    "held": 0,
+    "movement": -1358
+   },
+   "KP07027270": {
+    "held": 8984,
+    "movement": -12241
+   },
+   "KP07040757": {
+    "held": 0,
+    "movement": -8249
+   },
+   "KP07129169": {
+    "held": 0,
+    "movement": -39374
+   },
+   "KP07152918": {
+    "held": 21812,
+    "movement": -25956
+   },
+   "KP07208795": {
+    "held": 0,
+    "movement": -870
+   },
+   "KP07433091": {
+    "held": 0,
+    "movement": 39894
+   },
+   "KP07434893": {
+    "held": 0,
+    "movement": -9266
+   },
+   "KP07512985": {
+    "held": 0,
+    "movement": -22970
+   },
+   "KP07517830": {
+    "held": 331,
+    "movement": 18197
+   },
+   "KP07528293": {
+    "held": 0,
+    "movement": -11792
+   },
+   "KP07545161": {
+    "held": 3127,
+    "movement": -19951
+   },
+   "KP07561155": {
+    "held": 8399,
+    "movement": -16530
+   },
+   "KP07594693": {
+    "held": 0,
+    "movement": -2889
+   },
+   "KP07607402": {
+    "held": 0,
+    "movement": -25630
+   },
+   "KP07611399": {
+    "held": 0,
+    "movement": 11646
+   },
+   "KP07795778": {
+    "held": 0,
+    "movement": -5446
+   },
+   "KP07828053": {
+    "held": 0,
+    "movement": -4419
+   },
+   "KP07953409": {
+    "held": 0,
+    "movement": -24615
+   },
+   "KP07959161": {
+    "held": 5783,
+    "movement": -13329
+   },
+   "KP07997352": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP08026717": {
+    "held": 0,
+    "movement": -7295
+   },
+   "KP08087271": {
+    "held": 0,
+    "movement": -33182
+   },
+   "KP08137669": {
+    "held": 0,
+    "movement": -35381
+   },
+   "KP08236146": {
+    "held": 7557,
+    "movement": 0
+   },
+   "KP08252843": {
+    "held": 5962,
+    "movement": 9819
+   },
+   "KP08290131": {
+    "held": 5912,
+    "movement": -11181
+   },
+   "KP08312523": {
+    "held": 9937,
+    "movement": -13506
+   },
+   "KP08397973": {
+    "held": 0,
+    "movement": -7216
+   },
+   "KP08425468": {
+    "held": 0,
+    "movement": -27893
+   },
+   "KP08426368": {
+    "held": 0,
+    "movement": -12158
+   },
+   "KP08447334": {
+    "held": 0,
+    "movement": -36414
+   },
+   "KP08477969": {
+    "held": 0,
+    "movement": -5654
+   },
+   "KP08482918": {
+    "held": 8630,
+    "movement": -42388
+   },
+   "KP08530742": {
+    "held": 0,
+    "movement": 9320
+   },
+   "KP08607875": {
+    "held": 0,
+    "movement": -14645
+   },
+   "KP08611933": {
+    "held": 0,
+    "movement": -26912
+   },
+   "KP08617262": {
+    "held": 0,
+    "movement": -25848
+   },
+   "KP08626842": {
+    "held": 0,
+    "movement": -6415
+   },
+   "KP08689932": {
+    "held": 0,
+    "movement": -37977
+   },
+   "KP08692705": {
+    "held": 0,
+    "movement": -8648
+   },
+   "KP08698030": {
+    "held": 3808,
+    "movement": -5983
+   },
+   "KP08715740": {
+    "held": 0,
+    "movement": -45558
+   },
+   "KP08725239": {
+    "held": 0,
+    "movement": -21621
+   },
+   "KP08769512": {
+    "held": 0,
+    "movement": -29034
+   },
+   "KP08811780": {
+    "held": 0,
+    "movement": 5052
+   },
+   "KP08839244": {
+    "held": 0,
+    "movement": 2075
+   },
+   "KP08889210": {
+    "held": 6703,
+    "movement": 0
+   },
+   "KP08924664": {
+    "held": 0,
+    "movement": -37697
+   },
+   "KP08957276": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP09033503": {
+    "held": 5261,
+    "movement": -26203
+   },
+   "KP09093835": {
+    "held": 5045,
+    "movement": -9609
+   },
+   "KP09142461": {
+    "held": 8867,
+    "movement": -32266
+   },
+   "KP09166399": {
+    "held": 0,
+    "movement": -18406
+   },
+   "KP09204538": {
+    "held": 0,
+    "movement": -3844
+   },
+   "KP09257795": {
+    "held": 0,
+    "movement": -44462
+   },
+   "KP09350210": {
+    "held": 0,
+    "movement": -18429
+   },
+   "KP09372023": {
+    "held": 6076,
+    "movement": -1121
+   },
+   "KP09383092": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP09395249": {
+    "held": 0,
+    "movement": -15450
+   },
+   "KP09418682": {
+    "held": 0,
+    "movement": -1683
+   },
+   "KP09484202": {
+    "held": 0,
+    "movement": -328
+   },
+   "KP09508439": {
+    "held": 0,
+    "movement": -25198
+   },
+   "KP09614534": {
+    "held": 0,
+    "movement": 4000
+   },
+   "KP09661768": {
+    "held": 0,
+    "movement": -23585
+   },
+   "KP09673073": {
+    "held": 0,
+    "movement": -20256
+   },
+   "KP09735246": {
+    "held": 0,
+    "movement": -13805
+   },
+   "KP09736191": {
+    "held": 2374,
+    "movement": -27225
+   },
+   "KP09752305": {
+    "held": 0,
+    "movement": -18210
+   },
+   "KP09793575": {
+    "held": 27146,
+    "movement": -15714
+   },
+   "KP09887163": {
+    "held": 0,
+    "movement": -50211
+   },
+   "KP09935028": {
+    "held": 0,
+    "movement": -6934
+   },
+   "KP10085019": {
+    "held": 0,
+    "movement": -53907
+   },
+   "KP10142463": {
+    "held": 0,
+    "movement": -65275
+   },
+   "KP10150552": {
+    "held": 0,
+    "movement": -21654
+   },
+   "KP10161753": {
+    "held": 0,
+    "movement": -24549
+   },
+   "KP10242081": {
+    "held": 0,
+    "movement": -64277
+   },
+   "KP10245712": {
+    "held": 0,
+    "movement": -23963
+   },
+   "KP10348800": {
+    "held": 0,
+    "movement": -26589
+   },
+   "KP10350459": {
+    "held": 0,
+    "movement": -53927
+   },
+   "KP10439441": {
+    "held": 0,
+    "movement": -9862
+   },
+   "KP10511718": {
+    "held": 3484,
+    "movement": -3051
+   },
+   "KP10568244": {
+    "held": 0,
+    "movement": -17644
+   },
+   "KP10592029": {
+    "held": 0,
+    "movement": -17774
+   },
+   "KP10613250": {
+    "held": 0,
+    "movement": -37391
+   },
+   "KP10801023": {
+    "held": 20000,
+    "movement": -26436
+   },
+   "KP10836785": {
+    "held": 0,
+    "movement": -24218
+   },
+   "KP10862242": {
+    "held": 0,
+    "movement": -15234
+   },
+   "KP10879006": {
+    "held": 0,
+    "movement": -22107
+   },
+   "KP10907318": {
+    "held": 0,
+    "movement": -7930
+   },
+   "KP11074055": {
+    "held": 0,
+    "movement": -15427
+   },
+   "KP11079088": {
+    "held": 0,
+    "movement": 14286
+   },
+   "KP11100950": {
+    "held": 0,
+    "movement": 3513
+   },
+   "KP11123804": {
+    "held": 0,
+    "movement": -15945
+   },
+   "KP11180091": {
+    "held": 0,
+    "movement": -5353
+   },
+   "KP11187447": {
+    "held": 0,
+    "movement": -4467
+   },
+   "KP11220835": {
+    "held": 0,
+    "movement": -275
+   },
+   "KP11265761": {
+    "held": 0,
+    "movement": -6474
+   },
+   "KP11323483": {
+    "held": 0,
+    "movement": -44037
+   },
+   "KP11357712": {
+    "held": 0,
+    "movement": -37676
+   },
+   "KP11370140": {
+    "held": 0,
+    "movement": -2996
+   },
+   "KP11373395": {
+    "held": 0,
+    "movement": -10801
+   },
+   "KP11387105": {
+    "held": 0,
+    "movement": 1640
+   },
+   "KP11417071": {
+    "held": 0,
+    "movement": -38411
+   },
+   "KP11422339": {
+    "held": 0,
+    "movement": -37966
+   },
+   "KP11469090": {
+    "held": 0,
+    "movement": -17577
+   },
+   "KP11473632": {
+    "held": 0,
+    "movement": -5114
+   },
+   "KP11597585": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP11622650": {
+    "held": 0,
+    "movement": 11872
+   },
+   "KP11625608": {
+    "held": 0,
+    "movement": 8417
+   },
+   "KP11925525": {
+    "held": 0,
+    "movement": -5433
+   },
+   "KP12112576": {
+    "held": 0,
+    "movement": -8218
+   },
+   "KP12112590": {
+    "held": 0,
+    "movement": 720
+   },
+   "KP12135091": {
+    "held": 0,
+    "movement": -33078
+   },
+   "KP12201183": {
+    "held": 0,
+    "movement": -9016
+   },
+   "KP12226777": {
+    "held": 0,
+    "movement": 7000
+   },
+   "KP12286180": {
+    "held": 1537,
+    "movement": -1845
+   },
+   "KP12295484": {
+    "held": 0,
+    "movement": -27836
+   },
+   "KP12381654": {
+    "held": 0,
+    "movement": -41438
+   },
+   "KP12412849": {
+    "held": 0,
+    "movement": -27150
+   },
+   "KP12420582": {
+    "held": 0,
+    "movement": 12966
+   },
+   "KP12482154": {
+    "held": 0,
+    "movement": -15522
+   },
+   "KP12493255": {
+    "held": 0,
+    "movement": -3099
+   },
+   "KP12505178": {
+    "held": 0,
+    "movement": -1710
+   },
+   "KP12509502": {
+    "held": 0,
+    "movement": -11888
+   },
+   "KP12615987": {
+    "held": 0,
+    "movement": -19450
+   },
+   "KP12653442": {
+    "held": 0,
+    "movement": -826
+   },
+   "KP12685733": {
+    "held": 0,
+    "movement": -20000
+   },
+   "KP12814554": {
+    "held": 0,
+    "movement": 11237
+   },
+   "KP12873408": {
+    "held": 27086,
+    "movement": -7608
+   },
+   "KP12941508": {
+    "held": 0,
+    "movement": -18671
+   },
+   "KP13014519": {
+    "held": 0,
+    "movement": -24626
+   },
+   "KP13051217": {
+    "held": 8917,
+    "movement": 5000
+   },
+   "KP13102164": {
+    "held": 0,
+    "movement": -1540
+   },
+   "KP13200626": {
+    "held": 0,
+    "movement": -24561
+   },
+   "KP13290169": {
+    "held": 0,
+    "movement": -3771
+   },
+   "KP13398082": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP13508084": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP13564760": {
+    "held": 0,
+    "movement": 8875
+   },
+   "KP13578509": {
+    "held": 6014,
+    "movement": 11854
+   },
+   "KP13720201": {
+    "held": 0,
+    "movement": -23962
+   },
+   "KP13735624": {
+    "held": 0,
+    "movement": -20633
+   },
+   "KP13787138": {
+    "held": 0,
+    "movement": -35933
+   },
+   "KP13838154": {
+    "held": 0,
+    "movement": -7062
+   },
+   "KP13900537": {
+    "held": 0,
+    "movement": 23259
+   },
+   "KP13904241": {
+    "held": 0,
+    "movement": -23089
+   },
+   "KP14025651": {
+    "held": 0,
+    "movement": 5409
+   },
+   "KP14028308": {
+    "held": 0,
+    "movement": -720
+   },
+   "KP14036095": {
+    "held": 0,
+    "movement": -14020
+   },
+   "KP14072525": {
+    "held": 0,
+    "movement": -6121
+   },
+   "KP14082661": {
+    "held": 0,
+    "movement": -22767
+   },
+   "KP14087421": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP14087921": {
+    "held": 0,
+    "movement": 7000
+   },
+   "KP14097775": {
+    "held": 6635,
+    "movement": -20680
+   },
+   "KP14101850": {
+    "held": 0,
+    "movement": -10324
+   },
+   "KP14143669": {
+    "held": 0,
+    "movement": -1141
+   },
+   "KP14156068": {
+    "held": 6668,
+    "movement": -10557
+   },
+   "KP14175570": {
+    "held": 0,
+    "movement": -15732
+   },
+   "KP14189992": {
+    "held": 0,
+    "movement": -85226
+   },
+   "KP14224910": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP14246355": {
+    "held": 0,
+    "movement": 15419
+   },
+   "KP14248501": {
+    "held": 0,
+    "movement": -31983
+   },
+   "KP14273512": {
+    "held": 0,
+    "movement": -37747
+   },
+   "KP14319305": {
+    "held": 0,
+    "movement": 30000
+   },
+   "KP14449226": {
+    "held": 0,
+    "movement": 46408
+   },
+   "KP14464605": {
+    "held": 0,
+    "movement": -13768
+   },
+   "KP14503834": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP14504130": {
+    "held": 0,
+    "movement": 20318
+   },
+   "KP14533959": {
+    "held": 0,
+    "movement": -4821
+   },
+   "KP14649768": {
+    "held": 0,
+    "movement": -11874
+   },
+   "KP14700266": {
+    "held": 0,
+    "movement": -20413
+   },
+   "KP14703542": {
+    "held": 0,
+    "movement": 10146
+   },
+   "KP14770102": {
+    "held": 0,
+    "movement": -5372
+   },
+   "KP14793988": {
+    "held": 10000,
+    "movement": 22122
+   },
+   "KP14825256": {
+    "held": 0,
+    "movement": -33690
+   },
+   "KP14867487": {
+    "held": 6238,
+    "movement": -12307
+   },
+   "KP14973247": {
+    "held": 0,
+    "movement": 9371
+   },
+   "KP14995779": {
+    "held": 0,
+    "movement": -10313
+   },
+   "KP15015334": {
+    "held": 2627,
+    "movement": -36484
+   },
+   "KP15091593": {
+    "held": 0,
+    "movement": 7055
+   },
+   "KP15102372": {
+    "held": 0,
+    "movement": -15102
+   },
+   "KP15135213": {
+    "held": 0,
+    "movement": -30669
+   },
+   "KP15175105": {
+    "held": 0,
+    "movement": -21488
+   },
+   "KP15195421": {
+    "held": 0,
+    "movement": -25209
+   },
+   "KP15336832": {
+    "held": 0,
+    "movement": -9303
+   },
+   "KP15354211": {
+    "held": 0,
+    "movement": -11472
+   },
+   "KP15427522": {
+    "held": 0,
+    "movement": -4913
+   },
+   "KP15485633": {
+    "held": 21715,
+    "movement": -62103
+   },
+   "KP15533768": {
+    "held": 0,
+    "movement": -21974
+   },
+   "KP15598529": {
+    "held": 0,
+    "movement": -9176
+   },
+   "KP15654774": {
+    "held": 0,
+    "movement": -28032
+   },
+   "KP15661675": {
+    "held": 0,
+    "movement": -20308
+   },
+   "KP15721470": {
+    "held": 0,
+    "movement": -2829
+   },
+   "KP15762632": {
+    "held": 8232,
+    "movement": -8650
+   },
+   "KP15770935": {
+    "held": 9545,
+    "movement": 1420
+   },
+   "KP15799423": {
+    "held": 7565,
+    "movement": -1729
+   },
+   "KP15959026": {
+    "held": 0,
+    "movement": 10796
+   },
+   "KP15987171": {
+    "held": 0,
+    "movement": -5534
+   },
+   "KP16012556": {
+    "held": 0,
+    "movement": -17837
+   },
+   "KP16133440": {
+    "held": 0,
+    "movement": -98981
+   },
+   "KP16202396": {
+    "held": 0,
+    "movement": -19013
+   },
+   "KP16221793": {
+    "held": 0,
+    "movement": -12657
+   },
+   "KP16303535": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP16328771": {
+    "held": 3432,
+    "movement": -6730
+   },
+   "KP16356695": {
+    "held": 0,
+    "movement": -15804
+   },
+   "KP16361112": {
+    "held": 0,
+    "movement": -13345
+   },
+   "KP16469454": {
+    "held": 0,
+    "movement": -16701
+   },
+   "KP16471454": {
+    "held": 0,
+    "movement": -774
+   },
+   "KP16564019": {
+    "held": 0,
+    "movement": -6178
+   },
+   "KP16696149": {
+    "held": 0,
+    "movement": -1010
+   },
+   "KP16703525": {
+    "held": 0,
+    "movement": -38168
+   },
+   "KP16707497": {
+    "held": 0,
+    "movement": -45179
+   },
+   "KP16778412": {
+    "held": 0,
+    "movement": -13600
+   },
+   "KP16784488": {
+    "held": 0,
+    "movement": -7565
+   },
+   "KP16953381": {
+    "held": 0,
+    "movement": -5573
+   },
+   "KP16966631": {
+    "held": 0,
+    "movement": -23224
+   },
+   "KP16976722": {
+    "held": 0,
+    "movement": 1503
+   },
+   "KP17039799": {
+    "held": 7176,
+    "movement": -11660
+   },
+   "KP17047071": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP17085904": {
+    "held": 4327,
+    "movement": -8490
+   },
+   "KP17111319": {
+    "held": 0,
+    "movement": -43871
+   },
+   "KP17158920": {
+    "held": 0,
+    "movement": 10162
+   },
+   "KP17162558": {
+    "held": 0,
+    "movement": 7377
+   },
+   "KP17303928": {
+    "held": 0,
+    "movement": -7258
+   },
+   "KP17307738": {
+    "held": 0,
+    "movement": -15638
+   },
+   "KP17369913": {
+    "held": 0,
+    "movement": -26899
+   },
+   "KP17382242": {
+    "held": 11067,
+    "movement": 0
+   },
+   "KP17423386": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP17453147": {
+    "held": 0,
+    "movement": -25164
+   },
+   "KP17460737": {
+    "held": 1524,
+    "movement": -37121
+   },
+   "KP17466476": {
+    "held": 6152,
+    "movement": -20212
+   },
+   "KP17534937": {
+    "held": 0,
+    "movement": -2000
+   },
+   "KP17575658": {
+    "held": 0,
+    "movement": -53940
+   },
+   "KP17636323": {
+    "held": 0,
+    "movement": -5863
+   },
+   "KP17636842": {
+    "held": 0,
+    "movement": -15910
+   },
+   "KP17718589": {
+    "held": 0,
+    "movement": -6759
+   },
+   "KP17780640": {
+    "held": 0,
+    "movement": -36230
+   },
+   "KP17896178": {
+    "held": 0,
+    "movement": -9791
+   },
+   "KP17950846": {
+    "held": 0,
+    "movement": -25561
+   },
+   "KP17969351": {
+    "held": 20000,
+    "movement": 14240
+   },
+   "KP17994738": {
+    "held": 0,
+    "movement": -19716
+   },
+   "KP18046920": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP18115407": {
+    "held": 2273,
+    "movement": 18822
+   },
+   "KP18122060": {
+    "held": 0,
+    "movement": -18373
+   },
+   "KP18136991": {
+    "held": 0,
+    "movement": -22199
+   },
+   "KP18145182": {
+    "held": 0,
+    "movement": 4435
+   },
+   "KP18145555": {
+    "held": 9615,
+    "movement": -13748
+   },
+   "KP18227554": {
+    "held": 0,
+    "movement": -6388
+   },
+   "KP18253382": {
+    "held": 0,
+    "movement": 18352
+   },
+   "KP18267469": {
+    "held": 0,
+    "movement": -10850
+   },
+   "KP18270603": {
+    "held": 0,
+    "movement": 14820
+   },
+   "KP18361532": {
+    "held": 0,
+    "movement": -57751
+   },
+   "KP18407215": {
+    "held": 0,
+    "movement": 13445
+   },
+   "KP18417220": {
+    "held": 13876,
+    "movement": -10522
+   },
+   "KP18417289": {
+    "held": 0,
+    "movement": 19618
+   },
+   "KP18435362": {
+    "held": 14135,
+    "movement": -3468
+   },
+   "KP18469231": {
+    "held": 2594,
+    "movement": -26934
+   },
+   "KP18492513": {
+    "held": 0,
+    "movement": -8354
+   },
+   "KP18499612": {
+    "held": 0,
+    "movement": -30632
+   },
+   "KP18544071": {
+    "held": 0,
+    "movement": -14138
+   },
+   "KP18590720": {
+    "held": 0,
+    "movement": 5100
+   },
+   "KP18625285": {
+    "held": 0,
+    "movement": -9060
+   },
+   "KP18644896": {
+    "held": 0,
+    "movement": 2284
+   },
+   "KP18651407": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP18708189": {
+    "held": 0,
+    "movement": -14406
+   },
+   "KP18787859": {
+    "held": 12461,
+    "movement": -528
+   },
+   "KP18788378": {
+    "held": 0,
+    "movement": -9409
+   },
+   "KP18800059": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP18828430": {
+    "held": 6498,
+    "movement": -7338
+   },
+   "KP18853666": {
+    "held": 0,
+    "movement": -8406
+   },
+   "KP18936264": {
+    "held": 0,
+    "movement": -6097
+   },
+   "KP18987696": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP19010046": {
+    "held": 0,
+    "movement": -26985
+   },
+   "KP19062782": {
+    "held": 0,
+    "movement": -22397
+   },
+   "KP19092601": {
+    "held": 0,
+    "movement": -44350
+   },
+   "KP19212494": {
+    "held": 0,
+    "movement": -21070
+   },
+   "KP19250442": {
+    "held": 0,
+    "movement": -9137
+   },
+   "KP19271148": {
+    "held": 9872,
+    "movement": 0
+   },
+   "KP19421760": {
+    "held": 5733,
+    "movement": 0
+   },
+   "KP19455721": {
+    "held": 0,
+    "movement": -2646
+   },
+   "KP19495939": {
+    "held": 0,
+    "movement": 18667
+   },
+   "KP19541006": {
+    "held": 0,
+    "movement": -3389
+   },
+   "KP19559364": {
+    "held": 0,
+    "movement": -32097
+   },
+   "KP19614588": {
+    "held": 0,
+    "movement": -14348
+   },
+   "KP19618124": {
+    "held": 0,
+    "movement": -32025
+   },
+   "KP19627474": {
+    "held": 0,
+    "movement": -36543
+   },
+   "KP19646742": {
+    "held": 0,
+    "movement": -2959
+   },
+   "KP19651312": {
+    "held": 0,
+    "movement": -23957
+   },
+   "KP19659125": {
+    "held": 0,
+    "movement": -17362
+   },
+   "KP19769253": {
+    "held": 0,
+    "movement": -14410
+   },
+   "KP19772975": {
+    "held": 8346,
+    "movement": -8439
+   },
+   "KP19774987": {
+    "held": 0,
+    "movement": -17369
+   },
+   "KP19814745": {
+    "held": 0,
+    "movement": 18970
+   },
+   "KP19821016": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP19857251": {
+    "held": 0,
+    "movement": -44431
+   },
+   "KP19954668": {
+    "held": 0,
+    "movement": -1904
+   },
+   "KP19961917": {
+    "held": 1255,
+    "movement": -23811
+   },
+   "KP19977947": {
+    "held": 0,
+    "movement": -21259
+   },
+   "KP19988000": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP20018184": {
+    "held": 4941,
+    "movement": -12854
+   },
+   "KP20032549": {
+    "held": 0,
+    "movement": -19649
+   },
+   "KP20077621": {
+    "held": 0,
+    "movement": -700
+   },
+   "KP20095090": {
+    "held": 0,
+    "movement": 1813
+   },
+   "KP20245514": {
+    "held": 0,
+    "movement": -7415
+   },
+   "KP20308318": {
+    "held": 0,
+    "movement": 19660
+   },
+   "KP20416725": {
+    "held": 0,
+    "movement": -5722
+   },
+   "KP20480641": {
+    "held": 0,
+    "movement": -10846
+   },
+   "KP20534298": {
+    "held": 0,
+    "movement": 199
+   },
+   "KP20589033": {
+    "held": 0,
+    "movement": -11171
+   },
+   "KP20623907": {
+    "held": 0,
+    "movement": 5289
+   },
+   "KP20637480": {
+    "held": 6896,
+    "movement": -19595
+   },
+   "KP20701967": {
+    "held": 0,
+    "movement": -7072
+   },
+   "KP20712468": {
+    "held": 0,
+    "movement": -6896
+   },
+   "KP20739945": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP20855497": {
+    "held": 0,
+    "movement": 404
+   },
+   "KP20867613": {
+    "held": 0,
+    "movement": -30871
+   },
+   "KP20890358": {
+    "held": 0,
+    "movement": -16253
+   },
+   "KP20901533": {
+    "held": 29303,
+    "movement": -44138
+   },
+   "KP20965815": {
+    "held": 0,
+    "movement": -16322
+   },
+   "KP20968077": {
+    "held": 0,
+    "movement": -1547
+   },
+   "KP20974599": {
+    "held": 0,
+    "movement": -10534
+   },
+   "KP21051770": {
+    "held": 0,
+    "movement": -23408
+   },
+   "KP21104997": {
+    "held": 0,
+    "movement": -32752
+   },
+   "KP21235740": {
+    "held": 0,
+    "movement": -13301
+   },
+   "KP21237509": {
+    "held": 0,
+    "movement": 6310
+   },
+   "KP21292634": {
+    "held": 0,
+    "movement": -3544
+   },
+   "KP21321578": {
+    "held": 0,
+    "movement": 1066
+   },
+   "KP21332713": {
+    "held": 0,
+    "movement": -10916
+   },
+   "KP21367534": {
+    "held": 0,
+    "movement": -35725
+   },
+   "KP21387672": {
+    "held": 10042,
+    "movement": -11656
+   },
+   "KP21404344": {
+    "held": 0,
+    "movement": -4919
+   },
+   "KP21457736": {
+    "held": 0,
+    "movement": -15340
+   },
+   "KP21502966": {
+    "held": 0,
+    "movement": 1820
+   },
+   "KP21504536": {
+    "held": 0,
+    "movement": -17470
+   },
+   "KP21540535": {
+    "held": 0,
+    "movement": 36126
+   },
+   "KP21548559": {
+    "held": 0,
+    "movement": -12315
+   },
+   "KP21678996": {
+    "held": 3893,
+    "movement": -53341
+   },
+   "KP21683619": {
+    "held": 6328,
+    "movement": -5492
+   },
+   "KP21722803": {
+    "held": 0,
+    "movement": -46129
+   },
+   "KP21799848": {
+    "held": 0,
+    "movement": -584
+   },
+   "KP21870411": {
+    "held": 21145,
+    "movement": 2249
+   },
+   "KP21887162": {
+    "held": 11249,
+    "movement": -15841
+   },
+   "KP21937545": {
+    "held": 0,
+    "movement": -3402
+   },
+   "KP21965730": {
+    "held": 0,
+    "movement": -36252
+   },
+   "KP21972872": {
+    "held": 0,
+    "movement": -11991
+   },
+   "KP21974437": {
+    "held": 4740,
+    "movement": 5000
+   },
+   "KP21981575": {
+    "held": 38012,
+    "movement": -340
+   },
+   "KP22051768": {
+    "held": 0,
+    "movement": -41963
+   },
+   "KP22105769": {
+    "held": 0,
+    "movement": -600
+   },
+   "KP22201744": {
+    "held": 0,
+    "movement": -28566
+   },
+   "KP22225218": {
+    "held": 0,
+    "movement": -8399
+   },
+   "KP22241307": {
+    "held": 0,
+    "movement": -8837
+   },
+   "KP22242002": {
+    "held": 0,
+    "movement": -1858
+   },
+   "KP22267184": {
+    "held": 0,
+    "movement": -3736
+   },
+   "KP22304008": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP22326284": {
+    "held": 0,
+    "movement": -5209
+   },
+   "KP22384881": {
+    "held": 0,
+    "movement": -14140
+   },
+   "KP22410749": {
+    "held": 0,
+    "movement": -33317
+   },
+   "KP22422820": {
+    "held": 0,
+    "movement": -8617
+   },
+   "KP22504646": {
+    "held": 0,
+    "movement": -10362
+   },
+   "KP22555714": {
+    "held": 0,
+    "movement": -15108
+   },
+   "KP22599647": {
+    "held": 0,
+    "movement": -15258
+   },
+   "KP22602644": {
+    "held": 0,
+    "movement": 7339
+   },
+   "KP22605445": {
+    "held": 0,
+    "movement": -880
+   },
+   "KP22698836": {
+    "held": 0,
+    "movement": -46295
+   },
+   "KP22708367": {
+    "held": 0,
+    "movement": -30508
+   },
+   "KP22963231": {
+    "held": 0,
+    "movement": -16938
+   },
+   "KP22976710": {
+    "held": 669,
+    "movement": -10187
+   },
+   "KP22979000": {
+    "held": 0,
+    "movement": -1470
+   },
+   "KP23138766": {
+    "held": 0,
+    "movement": 2826
+   },
+   "KP23167433": {
+    "held": 6336,
+    "movement": -4979
+   },
+   "KP23177473": {
+    "held": 0,
+    "movement": -13866
+   },
+   "KP23299604": {
+    "held": 12778,
+    "movement": -2052
+   },
+   "KP23314608": {
+    "held": 1250,
+    "movement": 388
+   },
+   "KP23357340": {
+    "held": 20000,
+    "movement": -2787
+   },
+   "KP23375591": {
+    "held": 0,
+    "movement": -7702
+   },
+   "KP23378372": {
+    "held": 0,
+    "movement": -27946
+   },
+   "KP23403041": {
+    "held": 0,
+    "movement": -2741
+   },
+   "KP23405262": {
+    "held": 0,
+    "movement": 6587
+   },
+   "KP23410710": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP23588401": {
+    "held": 0,
+    "movement": -2686
+   },
+   "KP23618071": {
+    "held": 0,
+    "movement": -10952
+   },
+   "KP23643147": {
+    "held": 0,
+    "movement": -22677
+   },
+   "KP23667229": {
+    "held": 0,
+    "movement": -12108
+   },
+   "KP23676534": {
+    "held": 0,
+    "movement": -10480
+   },
+   "KP23723998": {
+    "held": 0,
+    "movement": -7243
+   },
+   "KP23749092": {
+    "held": 0,
+    "movement": -34741
+   },
+   "KP23852499": {
+    "held": 0,
+    "movement": -34648
+   },
+   "KP24064938": {
+    "held": 0,
+    "movement": -15288
+   },
+   "KP24111572": {
+    "held": 14225,
+    "movement": -41496
+   },
+   "KP24116611": {
+    "held": 0,
+    "movement": -4631
+   },
+   "KP24150243": {
+    "held": 0,
+    "movement": -1175
+   },
+   "KP24169065": {
+    "held": 0,
+    "movement": -34713
+   },
+   "KP24187541": {
+    "held": 24478,
+    "movement": -10001
+   },
+   "KP24194866": {
+    "held": 0,
+    "movement": -25154
+   },
+   "KP24198649": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP24367517": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP24381958": {
+    "held": 35976,
+    "movement": -7313
+   },
+   "KP24457529": {
+    "held": 0,
+    "movement": 12256
+   },
+   "KP24479517": {
+    "held": 0,
+    "movement": -4657
+   },
+   "KP24479708": {
+    "held": 0,
+    "movement": -16182
+   },
+   "KP24570905": {
+    "held": 0,
+    "movement": 9706
+   },
+   "KP24577460": {
+    "held": 0,
+    "movement": 4203
+   },
+   "KP24583703": {
+    "held": 0,
+    "movement": -6200
+   },
+   "KP24595264": {
+    "held": 2782,
+    "movement": -8673
+   },
+   "KP24617729": {
+    "held": 0,
+    "movement": 12042
+   },
+   "KP24645398": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP24660058": {
+    "held": 0,
+    "movement": -10337
+   },
+   "KP24722775": {
+    "held": 0,
+    "movement": -6075
+   },
+   "KP24747103": {
+    "held": 0,
+    "movement": -16021
+   },
+   "KP24837000": {
+    "held": 0,
+    "movement": 7699
+   },
+   "KP24942579": {
+    "held": 0,
+    "movement": -19907
+   },
+   "KP24955631": {
+    "held": 18862,
+    "movement": 21529
+   },
+   "KP24962723": {
+    "held": 0,
+    "movement": -13997
+   },
+   "KP25004896": {
+    "held": 0,
+    "movement": -16544
+   },
+   "KP25064299": {
+    "held": 2942,
+    "movement": -4268
+   },
+   "KP25083589": {
+    "held": 0,
+    "movement": -15287
+   },
+   "KP25089681": {
+    "held": 7531,
+    "movement": -2159
+   },
+   "KP25128052": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP25147612": {
+    "held": 0,
+    "movement": -4096
+   },
+   "KP25267784": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP25291723": {
+    "held": 15178,
+    "movement": -17423
+   },
+   "KP25325587": {
+    "held": 0,
+    "movement": 4055
+   },
+   "KP25391807": {
+    "held": 0,
+    "movement": -180
+   },
+   "KP25439424": {
+    "held": 0,
+    "movement": -11623
+   },
+   "KP25459718": {
+    "held": 0,
+    "movement": -13402
+   },
+   "KP25466121": {
+    "held": 0,
+    "movement": -2846
+   },
+   "KP25466346": {
+    "held": 0,
+    "movement": -12114
+   },
+   "KP25577977": {
+    "held": 0,
+    "movement": 7419
+   },
+   "KP25616102": {
+    "held": 0,
+    "movement": -9522
+   },
+   "KP25719815": {
+    "held": 0,
+    "movement": -1567
+   },
+   "KP25757598": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP25760470": {
+    "held": 0,
+    "movement": 4414
+   },
+   "KP25772683": {
+    "held": 0,
+    "movement": 4641
+   },
+   "KP25810106": {
+    "held": 0,
+    "movement": -20918
+   },
+   "KP25814491": {
+    "held": 4396,
+    "movement": 0
+   },
+   "KP25905954": {
+    "held": 0,
+    "movement": -37856
+   },
+   "KP25945223": {
+    "held": 0,
+    "movement": -18229
+   },
+   "KP25963856": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP26008111": {
+    "held": 0,
+    "movement": -14901
+   },
+   "KP26018118": {
+    "held": 0,
+    "movement": -3744
+   },
+   "KP26026294": {
+    "held": 10073,
+    "movement": -39711
+   },
+   "KP26092649": {
+    "held": 0,
+    "movement": -10663
+   },
+   "KP26124336": {
+    "held": 0,
+    "movement": -12975
+   },
+   "KP26138889": {
+    "held": 0,
+    "movement": -4602
+   },
+   "KP26165003": {
+    "held": 0,
+    "movement": -12201
+   },
+   "KP26200255": {
+    "held": 0,
+    "movement": -13809
+   },
+   "KP26260547": {
+    "held": 0,
+    "movement": -3017
+   },
+   "KP26312840": {
+    "held": 743,
+    "movement": -7852
+   },
+   "KP26329472": {
+    "held": 0,
+    "movement": -3804
+   },
+   "KP26404386": {
+    "held": 11569,
+    "movement": -22809
+   },
+   "KP26476559": {
+    "held": 0,
+    "movement": -12377
+   },
+   "KP26497283": {
+    "held": 0,
+    "movement": -12792
+   },
+   "KP26499142": {
+    "held": 2695,
+    "movement": -14179
+   },
+   "KP26534240": {
+    "held": 0,
+    "movement": -13713
+   },
+   "KP26633905": {
+    "held": 0,
+    "movement": -2344
+   },
+   "KP26644780": {
+    "held": 728,
+    "movement": -665
+   },
+   "KP26656355": {
+    "held": 0,
+    "movement": -3915
+   },
+   "KP26658932": {
+    "held": 8384,
+    "movement": -14831
+   },
+   "KP26687576": {
+    "held": 0,
+    "movement": -10532
+   },
+   "KP26738603": {
+    "held": 0,
+    "movement": -12185
+   },
+   "KP26820097": {
+    "held": 0,
+    "movement": -19536
+   },
+   "KP26821611": {
+    "held": 0,
+    "movement": -9338
+   },
+   "KP26865537": {
+    "held": 2637,
+    "movement": -5583
+   },
+   "KP26958775": {
+    "held": 0,
+    "movement": -21284
+   },
+   "KP27064438": {
+    "held": 5794,
+    "movement": -5055
+   },
+   "KP27076386": {
+    "held": 0,
+    "movement": -28862
+   },
+   "KP27089603": {
+    "held": 0,
+    "movement": -11814
+   },
+   "KP27112592": {
+    "held": 0,
+    "movement": -360
+   },
+   "KP27137467": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP27152490": {
+    "held": 0,
+    "movement": 15877
+   },
+   "KP27197051": {
+    "held": 11107,
+    "movement": 8456
+   },
+   "KP27216788": {
+    "held": 0,
+    "movement": -3508
+   },
+   "KP27269495": {
+    "held": 0,
+    "movement": -14924
+   },
+   "KP27282118": {
+    "held": 0,
+    "movement": -4304
+   },
+   "KP27298782": {
+    "held": 0,
+    "movement": 22791
+   },
+   "KP27304156": {
+    "held": 0,
+    "movement": -34969
+   },
+   "KP27343275": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP27424366": {
+    "held": 0,
+    "movement": -6698
+   },
+   "KP27466148": {
+    "held": 0,
+    "movement": -18920
+   },
+   "KP27477926": {
+    "held": 0,
+    "movement": -1210
+   },
+   "KP27500934": {
+    "held": 24455,
+    "movement": -20716
+   },
+   "KP27585877": {
+    "held": 0,
+    "movement": 5461
+   },
+   "KP27688379": {
+    "held": 0,
+    "movement": -573
+   },
+   "KP27694558": {
+    "held": 6705,
+    "movement": 5519
+   },
+   "KP27730540": {
+    "held": 0,
+    "movement": -15787
+   },
+   "KP27781109": {
+    "held": 0,
+    "movement": -14900
+   },
+   "KP27900185": {
+    "held": 0,
+    "movement": -17756
+   },
+   "KP27909354": {
+    "held": 0,
+    "movement": -4750
+   },
+   "KP27981542": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP27991692": {
+    "held": 0,
+    "movement": -23163
+   },
+   "KP28012661": {
+    "held": 0,
+    "movement": -22763
+   },
+   "KP28047759": {
+    "held": 0,
+    "movement": -4275
+   },
+   "KP28064349": {
+    "held": 0,
+    "movement": -536
+   },
+   "KP28133566": {
+    "held": 0,
+    "movement": -45230
+   },
+   "KP28141630": {
+    "held": 0,
+    "movement": 6718
+   },
+   "KP28158511": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP28170372": {
+    "held": 0,
+    "movement": -14422
+   },
+   "KP28180258": {
+    "held": 7937,
+    "movement": -41451
+   },
+   "KP28316477": {
+    "held": 0,
+    "movement": -21176
+   },
+   "KP28351050": {
+    "held": 0,
+    "movement": -19733
+   },
+   "KP28473081": {
+    "held": 0,
+    "movement": -4868
+   },
+   "KP28560650": {
+    "held": 0,
+    "movement": 3000
+   },
+   "KP28602107": {
+    "held": 2161,
+    "movement": -8217
+   },
+   "KP28670037": {
+    "held": 2995,
+    "movement": -7756
+   },
+   "KP28688307": {
+    "held": 2350,
+    "movement": 0
+   },
+   "KP28726564": {
+    "held": 0,
+    "movement": 8778
+   },
+   "KP28765448": {
+    "held": 0,
+    "movement": 8411
+   },
+   "KP28780608": {
+    "held": 475,
+    "movement": -28523
+   },
+   "KP28791107": {
+    "held": 0,
+    "movement": -45729
+   },
+   "KP28832532": {
+    "held": 0,
+    "movement": -4330
+   },
+   "KP28834794": {
+    "held": 0,
+    "movement": -978
+   },
+   "KP28856035": {
+    "held": 0,
+    "movement": -13839
+   },
+   "KP28912470": {
+    "held": 0,
+    "movement": -2086
+   },
+   "KP29042278": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP29068441": {
+    "held": 0,
+    "movement": -4725
+   },
+   "KP29149017": {
+    "held": 0,
+    "movement": -8316
+   },
+   "KP29171323": {
+    "held": 0,
+    "movement": -66626
+   },
+   "KP29308276": {
+    "held": 0,
+    "movement": 2677
+   },
+   "KP29311083": {
+    "held": 6641,
+    "movement": -18477
+   },
+   "KP29426767": {
+    "held": 0,
+    "movement": -28445
+   },
+   "KP29435135": {
+    "held": 5182,
+    "movement": -2160
+   },
+   "KP29457407": {
+    "held": 0,
+    "movement": -46039
+   },
+   "KP29551433": {
+    "held": 3981,
+    "movement": -3440
+   },
+   "KP29614912": {
+    "held": 0,
+    "movement": -13633
+   },
+   "KP29643937": {
+    "held": 2334,
+    "movement": -15476
+   },
+   "KP29650223": {
+    "held": 10974,
+    "movement": -13183
+   },
+   "KP29653210": {
+    "held": 0,
+    "movement": 7000
+   },
+   "KP29658618": {
+    "held": 0,
+    "movement": 17505
+   },
+   "KP29715809": {
+    "held": 0,
+    "movement": 35000
+   },
+   "KP29754341": {
+    "held": 5603,
+    "movement": -1020
+   },
+   "KP29774972": {
+    "held": 0,
+    "movement": 5224
+   },
+   "KP29873177": {
+    "held": 0,
+    "movement": -6816
+   },
+   "KP29913029": {
+    "held": 0,
+    "movement": 8800
+   },
+   "KP29918754": {
+    "held": 0,
+    "movement": 7915
+   },
+   "KP29986222": {
+    "held": 4148,
+    "movement": -27724
+   },
+   "KP30073088": {
+    "held": 0,
+    "movement": -1166
+   },
+   "KP30082322": {
+    "held": 11631,
+    "movement": -1390
+   },
+   "KP30168493": {
+    "held": 12748,
+    "movement": -1972
+   },
+   "KP30173266": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP30198200": {
+    "held": 0,
+    "movement": -8289
+   },
+   "KP30212690": {
+    "held": 0,
+    "movement": -27015
+   },
+   "KP30218369": {
+    "held": 0,
+    "movement": -6410
+   },
+   "KP30223146": {
+    "held": 0,
+    "movement": -3543
+   },
+   "KP30282836": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP30345008": {
+    "held": 0,
+    "movement": 16812
+   },
+   "KP30352891": {
+    "held": 0,
+    "movement": -16479
+   },
+   "KP30390940": {
+    "held": 0,
+    "movement": -10927
+   },
+   "KP30418356": {
+    "held": 0,
+    "movement": 242
+   },
+   "KP30425765": {
+    "held": 494,
+    "movement": -5300
+   },
+   "KP30495075": {
+    "held": 33728,
+    "movement": -26601
+   },
+   "KP30548111": {
+    "held": 0,
+    "movement": 18000
+   },
+   "KP30596870": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP30607877": {
+    "held": 0,
+    "movement": -9678
+   },
+   "KP30658853": {
+    "held": 0,
+    "movement": -17358
+   },
+   "KP30666926": {
+    "held": 0,
+    "movement": -40582
+   },
+   "KP30710889": {
+    "held": 0,
+    "movement": -4101
+   },
+   "KP30746801": {
+    "held": 0,
+    "movement": -14371
+   },
+   "KP30812378": {
+    "held": 5205,
+    "movement": -9707
+   },
+   "KP30851989": {
+    "held": 0,
+    "movement": -35126
+   },
+   "KP30924436": {
+    "held": 6551,
+    "movement": -1160
+   },
+   "KP31006716": {
+    "held": 7584,
+    "movement": 19372
+   },
+   "KP31018534": {
+    "held": 0,
+    "movement": -24070
+   },
+   "KP31019996": {
+    "held": 0,
+    "movement": -2868
+   },
+   "KP31059869": {
+    "held": 15260,
+    "movement": -931
+   },
+   "KP31195430": {
+    "held": 0,
+    "movement": -11862
+   },
+   "KP31204551": {
+    "held": 0,
+    "movement": -53954
+   },
+   "KP31304731": {
+    "held": 0,
+    "movement": -54566
+   },
+   "KP31422370": {
+    "held": 0,
+    "movement": -56870
+   },
+   "KP31430680": {
+    "held": 0,
+    "movement": 21723
+   },
+   "KP31464370": {
+    "held": 0,
+    "movement": 18445
+   },
+   "KP31522161": {
+    "held": 0,
+    "movement": -6512
+   },
+   "KP31576951": {
+    "held": 0,
+    "movement": -23754
+   },
+   "KP31635162": {
+    "held": 0,
+    "movement": -2985
+   },
+   "KP31653158": {
+    "held": 13228,
+    "movement": -3039
+   },
+   "KP31674054": {
+    "held": 0,
+    "movement": 15739
+   },
+   "KP31703677": {
+    "held": 0,
+    "movement": -2331
+   },
+   "KP31745932": {
+    "held": 0,
+    "movement": 10470
+   },
+   "KP31760864": {
+    "held": 0,
+    "movement": 1837
+   },
+   "KP31850734": {
+    "held": 0,
+    "movement": 21081
+   },
+   "KP31865890": {
+    "held": 0,
+    "movement": -15950
+   },
+   "KP31869712": {
+    "held": 0,
+    "movement": -326
+   },
+   "KP31944788": {
+    "held": 0,
+    "movement": 27032
+   },
+   "KP31987536": {
+    "held": 0,
+    "movement": -11833
+   },
+   "KP32025044": {
+    "held": 8307,
+    "movement": -42967
+   },
+   "KP32029611": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP32032758": {
+    "held": 5157,
+    "movement": -9709
+   },
+   "KP32133043": {
+    "held": 0,
+    "movement": 12409
+   },
+   "KP32254719": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP32264217": {
+    "held": 0,
+    "movement": -28951
+   },
+   "KP32504842": {
+    "held": 0,
+    "movement": 1960
+   },
+   "KP32561070": {
+    "held": 0,
+    "movement": -23605
+   },
+   "KP32604842": {
+    "held": 0,
+    "movement": -11417
+   },
+   "KP32622841": {
+    "held": 0,
+    "movement": -24031
+   },
+   "KP32627519": {
+    "held": 0,
+    "movement": -14918
+   },
+   "KP32754979": {
+    "held": 0,
+    "movement": -11616
+   },
+   "KP32879215": {
+    "held": 0,
+    "movement": -1380
+   },
+   "KP32885314": {
+    "held": 0,
+    "movement": -25624
+   },
+   "KP32955164": {
+    "held": 6716,
+    "movement": -12634
+   },
+   "KP32962428": {
+    "held": 0,
+    "movement": -21004
+   },
+   "KP32991864": {
+    "held": 0,
+    "movement": 8082
+   },
+   "KP33045651": {
+    "held": 0,
+    "movement": -12174
+   },
+   "KP33105083": {
+    "held": 38878,
+    "movement": -9414
+   },
+   "KP33148169": {
+    "held": 0,
+    "movement": -10749
+   },
+   "KP33166976": {
+    "held": 0,
+    "movement": 7131
+   },
+   "KP33179682": {
+    "held": 8546,
+    "movement": 680
+   },
+   "KP33183022": {
+    "held": 0,
+    "movement": -37821
+   },
+   "KP33199350": {
+    "held": 0,
+    "movement": -6755
+   },
+   "KP33278404": {
+    "held": 0,
+    "movement": -9921
+   },
+   "KP33421895": {
+    "held": 0,
+    "movement": -18101
+   },
+   "KP33450609": {
+    "held": 0,
+    "movement": -867
+   },
+   "KP33477500": {
+    "held": 3078,
+    "movement": -3044
+   },
+   "KP33530569": {
+    "held": 0,
+    "movement": 2387
+   },
+   "KP33591544": {
+    "held": 0,
+    "movement": 22000
+   },
+   "KP33637175": {
+    "held": 0,
+    "movement": 5600
+   },
+   "KP33665721": {
+    "held": 14197,
+    "movement": 1230
+   },
+   "KP33707564": {
+    "held": 14977,
+    "movement": -20646
+   },
+   "KP33711347": {
+    "held": 4818,
+    "movement": -21792
+   },
+   "KP33715031": {
+    "held": 6166,
+    "movement": -680
+   },
+   "KP33742155": {
+    "held": 0,
+    "movement": -11499
+   },
+   "KP33810980": {
+    "held": 0,
+    "movement": -11149
+   },
+   "KP33812491": {
+    "held": 0,
+    "movement": -2322
+   },
+   "KP33831781": {
+    "held": 0,
+    "movement": -1923
+   },
+   "KP33892321": {
+    "held": 0,
+    "movement": -840
+   },
+   "KP33954204": {
+    "held": 21186,
+    "movement": -2240
+   },
+   "KP34079679": {
+    "held": 0,
+    "movement": -24101
+   },
+   "KP34105090": {
+    "held": 0,
+    "movement": -48872
+   },
+   "KP34113285": {
+    "held": 31056,
+    "movement": -16979
+   },
+   "KP34210458": {
+    "held": 0,
+    "movement": -3637
+   },
+   "KP34226886": {
+    "held": 0,
+    "movement": -4223
+   },
+   "KP34273825": {
+    "held": 0,
+    "movement": -5904
+   },
+   "KP34301987": {
+    "held": 0,
+    "movement": -8413
+   },
+   "KP34369737": {
+    "held": 0,
+    "movement": -1928
+   },
+   "KP34484872": {
+    "held": 0,
+    "movement": -2635
+   },
+   "KP34511711": {
+    "held": 0,
+    "movement": -15781
+   },
+   "KP34512960": {
+    "held": 3853,
+    "movement": 0
+   },
+   "KP34598762": {
+    "held": 8362,
+    "movement": -10614
+   },
+   "KP34599812": {
+    "held": 0,
+    "movement": -3356
+   },
+   "KP34642252": {
+    "held": 0,
+    "movement": -41365
+   },
+   "KP34655157": {
+    "held": 0,
+    "movement": 4083
+   },
+   "KP34678873": {
+    "held": 0,
+    "movement": -890
+   },
+   "KP34756172": {
+    "held": 0,
+    "movement": 45926
+   },
+   "KP34815038": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP34818656": {
+    "held": 0,
+    "movement": -33023
+   },
+   "KP34826875": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP34839423": {
+    "held": 0,
+    "movement": -7386
+   },
+   "KP34854120": {
+    "held": 0,
+    "movement": -30480
+   },
+   "KP34947808": {
+    "held": 0,
+    "movement": -43778
+   },
+   "KP34964910": {
+    "held": 0,
+    "movement": -1160
+   },
+   "KP34990133": {
+    "held": 6458,
+    "movement": -2519
+   },
+   "KP34995216": {
+    "held": 0,
+    "movement": 2310
+   },
+   "KP35000763": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP35100490": {
+    "held": 0,
+    "movement": -9099
+   },
+   "KP35110633": {
+    "held": 0,
+    "movement": 14834
+   },
+   "KP35151889": {
+    "held": 6532,
+    "movement": 4710
+   },
+   "KP35176907": {
+    "held": 2000,
+    "movement": 828
+   },
+   "KP35275051": {
+    "held": 0,
+    "movement": -20098
+   },
+   "KP35309411": {
+    "held": 0,
+    "movement": 13157
+   },
+   "KP35346247": {
+    "held": 21100,
+    "movement": -29399
+   },
+   "KP35347818": {
+    "held": 0,
+    "movement": -12363
+   },
+   "KP35421504": {
+    "held": 0,
+    "movement": -9076
+   },
+   "KP35461147": {
+    "held": 0,
+    "movement": 1710
+   },
+   "KP35503678": {
+    "held": 0,
+    "movement": 9808
+   },
+   "KP35605667": {
+    "held": 5656,
+    "movement": -12714
+   },
+   "KP35716936": {
+    "held": 0,
+    "movement": -23868
+   },
+   "KP35745043": {
+    "held": 0,
+    "movement": -52029
+   },
+   "KP35857939": {
+    "held": 0,
+    "movement": -5032
+   },
+   "KP35985496": {
+    "held": 0,
+    "movement": 9916
+   },
+   "KP36004016": {
+    "held": 0,
+    "movement": -9352
+   },
+   "KP36007438": {
+    "held": 0,
+    "movement": -10472
+   },
+   "KP36035690": {
+    "held": 0,
+    "movement": 3354
+   },
+   "KP36108086": {
+    "held": 4411,
+    "movement": -36725
+   },
+   "KP36128661": {
+    "held": 0,
+    "movement": -18190
+   },
+   "KP36209226": {
+    "held": 0,
+    "movement": -42421
+   },
+   "KP36308561": {
+    "held": 9279,
+    "movement": 0
+   },
+   "KP36369696": {
+    "held": 0,
+    "movement": 20013
+   },
+   "KP36430412": {
+    "held": 0,
+    "movement": -10732
+   },
+   "KP36439696": {
+    "held": 0,
+    "movement": -35234
+   },
+   "KP36676987": {
+    "held": 0,
+    "movement": -2631
+   },
+   "KP36681978": {
+    "held": 0,
+    "movement": -28466
+   },
+   "KP36781399": {
+    "held": 0,
+    "movement": 1306
+   },
+   "KP36933367": {
+    "held": 0,
+    "movement": -50448
+   },
+   "KP36948693": {
+    "held": 0,
+    "movement": -3483
+   },
+   "KP37010278": {
+    "held": 0,
+    "movement": -23994
+   },
+   "KP37040678": {
+    "held": 0,
+    "movement": -8091
+   },
+   "KP37045648": {
+    "held": 0,
+    "movement": -5912
+   },
+   "KP37070386": {
+    "held": 0,
+    "movement": -13094
+   },
+   "KP37139195": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP37140364": {
+    "held": 0,
+    "movement": 5295
+   },
+   "KP37241697": {
+    "held": 0,
+    "movement": -7446
+   },
+   "KP37246707": {
+    "held": 17059,
+    "movement": -19977
+   },
+   "KP37263379": {
+    "held": 0,
+    "movement": -7232
+   },
+   "KP37301348": {
+    "held": 0,
+    "movement": -27111
+   },
+   "KP37384261": {
+    "held": 0,
+    "movement": -8120
+   },
+   "KP37390953": {
+    "held": 0,
+    "movement": -5087
+   },
+   "KP37408800": {
+    "held": 0,
+    "movement": -37558
+   },
+   "KP37427204": {
+    "held": 13140,
+    "movement": -1874
+   },
+   "KP37687956": {
+    "held": 0,
+    "movement": -5651
+   },
+   "KP37724825": {
+    "held": 0,
+    "movement": -11415
+   },
+   "KP37730436": {
+    "held": 12297,
+    "movement": -9463
+   },
+   "KP37773977": {
+    "held": 12280,
+    "movement": -4664
+   },
+   "KP37802681": {
+    "held": 0,
+    "movement": -45018
+   },
+   "KP37814653": {
+    "held": 0,
+    "movement": -23793
+   },
+   "KP37825673": {
+    "held": 41357,
+    "movement": 8099
+   },
+   "KP37842168": {
+    "held": 0,
+    "movement": -16866
+   },
+   "KP37851106": {
+    "held": 0,
+    "movement": -7964
+   },
+   "KP37906662": {
+    "held": 0,
+    "movement": -14399
+   },
+   "KP37951870": {
+    "held": 0,
+    "movement": -1946
+   },
+   "KP37974549": {
+    "held": 12552,
+    "movement": 31879
+   },
+   "KP37999872": {
+    "held": 0,
+    "movement": -26595
+   },
+   "KP38067908": {
+    "held": 0,
+    "movement": -37037
+   },
+   "KP38133663": {
+    "held": 0,
+    "movement": -19371
+   },
+   "KP38137864": {
+    "held": 0,
+    "movement": -5589
+   },
+   "KP38193884": {
+    "held": 0,
+    "movement": -19824
+   },
+   "KP38369955": {
+    "held": 0,
+    "movement": -5536
+   },
+   "KP38572512": {
+    "held": 0,
+    "movement": -21473
+   },
+   "KP38723650": {
+    "held": 8424,
+    "movement": -23984
+   },
+   "KP38732219": {
+    "held": 0,
+    "movement": 33593
+   },
+   "KP38742383": {
+    "held": 0,
+    "movement": -6391
+   },
+   "KP38745531": {
+    "held": 0,
+    "movement": -9167
+   },
+   "KP38837166": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP38938425": {
+    "held": 0,
+    "movement": -37141
+   },
+   "KP38995477": {
+    "held": 0,
+    "movement": -180
+   },
+   "KP39055748": {
+    "held": 0,
+    "movement": -14360
+   },
+   "KP39118342": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP39120466": {
+    "held": 0,
+    "movement": -3952
+   },
+   "KP39207270": {
+    "held": 0,
+    "movement": -1623
+   },
+   "KP39225206": {
+    "held": 0,
+    "movement": -10251
+   },
+   "KP39278719": {
+    "held": 9453,
+    "movement": -20994
+   },
+   "KP39353663": {
+    "held": 898,
+    "movement": -3248
+   },
+   "KP39424427": {
+    "held": 0,
+    "movement": -9101
+   },
+   "KP39433358": {
+    "held": 0,
+    "movement": -6492
+   },
+   "KP39443616": {
+    "held": 0,
+    "movement": -4761
+   },
+   "KP39451783": {
+    "held": 0,
+    "movement": -13047
+   },
+   "KP39575578": {
+    "held": 0,
+    "movement": -23887
+   },
+   "KP39584354": {
+    "held": 0,
+    "movement": -12311
+   },
+   "KP39647465": {
+    "held": 0,
+    "movement": -19455
+   },
+   "KP39718735": {
+    "held": 36833,
+    "movement": -6986
+   },
+   "KP39744758": {
+    "held": 0,
+    "movement": -21110
+   },
+   "KP39792001": {
+    "held": 0,
+    "movement": -18433
+   },
+   "KP39863931": {
+    "held": 0,
+    "movement": -14204
+   },
+   "KP39864066": {
+    "held": 0,
+    "movement": -19031
+   },
+   "KP39879719": {
+    "held": 0,
+    "movement": -21996
+   },
+   "KP39907024": {
+    "held": 0,
+    "movement": -10447
+   },
+   "KP39956811": {
+    "held": 0,
+    "movement": -12295
+   },
+   "KP40122515": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP40142067": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP40174004": {
+    "held": 0,
+    "movement": -11573
+   },
+   "KP40195796": {
+    "held": 3418,
+    "movement": 836
+   },
+   "KP40236084": {
+    "held": 0,
+    "movement": -9003
+   },
+   "KP40248027": {
+    "held": 0,
+    "movement": -3504
+   },
+   "KP40255833": {
+    "held": 8066,
+    "movement": -10236
+   },
+   "KP40472411": {
+    "held": 0,
+    "movement": -13274
+   },
+   "KP40487351": {
+    "held": 0,
+    "movement": -33061
+   },
+   "KP40512790": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP40560880": {
+    "held": 0,
+    "movement": -15686
+   },
+   "KP40586050": {
+    "held": 892,
+    "movement": 0
+   },
+   "KP40592385": {
+    "held": 0,
+    "movement": -675
+   },
+   "KP40612120": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP40673618": {
+    "held": 0,
+    "movement": -720
+   },
+   "KP40692374": {
+    "held": 0,
+    "movement": -980
+   },
+   "KP40808802": {
+    "held": 0,
+    "movement": -46049
+   },
+   "KP40812532": {
+    "held": 0,
+    "movement": 1388
+   },
+   "KP40841790": {
+    "held": 0,
+    "movement": -31651
+   },
+   "KP40869866": {
+    "held": 0,
+    "movement": 4302
+   },
+   "KP40999121": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP41006083": {
+    "held": 0,
+    "movement": 30000
+   },
+   "KP41039315": {
+    "held": 0,
+    "movement": -18458
+   },
+   "KP41059946": {
+    "held": 10957,
+    "movement": 8380
+   },
+   "KP41100950": {
+    "held": 0,
+    "movement": -461
+   },
+   "KP41164277": {
+    "held": 0,
+    "movement": -15907
+   },
+   "KP41221438": {
+    "held": 0,
+    "movement": -9615
+   },
+   "KP41222451": {
+    "held": 0,
+    "movement": 14257
+   },
+   "KP41238226": {
+    "held": 0,
+    "movement": -4147
+   },
+   "KP41271018": {
+    "held": 0,
+    "movement": -9477
+   },
+   "KP41321783": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP41326453": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP41357607": {
+    "held": 8770,
+    "movement": -18660
+   },
+   "KP41462960": {
+    "held": 0,
+    "movement": 3840
+   },
+   "KP41470359": {
+    "held": 15303,
+    "movement": -10467
+   },
+   "KP41710836": {
+    "held": 0,
+    "movement": 21872
+   },
+   "KP41816356": {
+    "held": 0,
+    "movement": -28817
+   },
+   "KP41978428": {
+    "held": 0,
+    "movement": -4451
+   },
+   "KP41979697": {
+    "held": 0,
+    "movement": -2613
+   },
+   "KP41998830": {
+    "held": 0,
+    "movement": -734
+   },
+   "KP42103560": {
+    "held": 5728,
+    "movement": -5529
+   },
+   "KP42124228": {
+    "held": 0,
+    "movement": -8643
+   },
+   "KP42146528": {
+    "held": 0,
+    "movement": -6100
+   },
+   "KP42170429": {
+    "held": 0,
+    "movement": 6254
+   },
+   "KP42197966": {
+    "held": 8652,
+    "movement": 10000
+   },
+   "KP42199081": {
+    "held": 0,
+    "movement": -18622
+   },
+   "KP42202282": {
+    "held": 0,
+    "movement": -5378
+   },
+   "KP42351055": {
+    "held": 0,
+    "movement": 16413
+   },
+   "KP42511523": {
+    "held": 8359,
+    "movement": 18325
+   },
+   "KP42534378": {
+    "held": 0,
+    "movement": 6798
+   },
+   "KP42539541": {
+    "held": 0,
+    "movement": 3912
+   },
+   "KP42585080": {
+    "held": 0,
+    "movement": -4519
+   },
+   "KP42604761": {
+    "held": 1216,
+    "movement": 6983
+   },
+   "KP42666376": {
+    "held": 0,
+    "movement": -2290
+   },
+   "KP42666765": {
+    "held": 0,
+    "movement": -24112
+   },
+   "KP42685039": {
+    "held": 0,
+    "movement": -5089
+   },
+   "KP42726545": {
+    "held": 544,
+    "movement": -6932
+   },
+   "KP42832092": {
+    "held": 0,
+    "movement": 15529
+   },
+   "KP42926266": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP42927801": {
+    "held": 2447,
+    "movement": -6722
+   },
+   "KP42968733": {
+    "held": 0,
+    "movement": -40436
+   },
+   "KP43002150": {
+    "held": 0,
+    "movement": 6677
+   },
+   "KP43039451": {
+    "held": 0,
+    "movement": -24404
+   },
+   "KP43043791": {
+    "held": 0,
+    "movement": -44302
+   },
+   "KP43064198": {
+    "held": 0,
+    "movement": -19502
+   },
+   "KP43159831": {
+    "held": 0,
+    "movement": -15442
+   },
+   "KP43233932": {
+    "held": 0,
+    "movement": 17034
+   },
+   "KP43321798": {
+    "held": 0,
+    "movement": -20716
+   },
+   "KP43326977": {
+    "held": 6518,
+    "movement": -41927
+   },
+   "KP43365093": {
+    "held": 0,
+    "movement": -13075
+   },
+   "KP43412271": {
+    "held": 0,
+    "movement": -15218
+   },
+   "KP43412613": {
+    "held": 1611,
+    "movement": -580
+   },
+   "KP43434322": {
+    "held": 0,
+    "movement": -2690
+   },
+   "KP43440922": {
+    "held": 0,
+    "movement": -16359
+   },
+   "KP43537426": {
+    "held": 3316,
+    "movement": -30786
+   },
+   "KP43578627": {
+    "held": 0,
+    "movement": -35806
+   },
+   "KP43589357": {
+    "held": 0,
+    "movement": -13475
+   },
+   "KP43662823": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP43709380": {
+    "held": 0,
+    "movement": -10967
+   },
+   "KP43812651": {
+    "held": 13676,
+    "movement": 0
+   },
+   "KP43948398": {
+    "held": 0,
+    "movement": 4053
+   },
+   "KP43963081": {
+    "held": 0,
+    "movement": -23599
+   },
+   "KP44007395": {
+    "held": 0,
+    "movement": -8575
+   },
+   "KP44010065": {
+    "held": 0,
+    "movement": -26797
+   },
+   "KP44143772": {
+    "held": 0,
+    "movement": -21531
+   },
+   "KP44160009": {
+    "held": 0,
+    "movement": -10021
+   },
+   "KP44332530": {
+    "held": 0,
+    "movement": 2290
+   },
+   "KP44352726": {
+    "held": 0,
+    "movement": -18240
+   },
+   "KP44359727": {
+    "held": 0,
+    "movement": 790
+   },
+   "KP44402842": {
+    "held": 0,
+    "movement": -360
+   },
+   "KP44408439": {
+    "held": 0,
+    "movement": -5934
+   },
+   "KP44511652": {
+    "held": 0,
+    "movement": -2495
+   },
+   "KP44541616": {
+    "held": 0,
+    "movement": -26746
+   },
+   "KP44561015": {
+    "held": 0,
+    "movement": -48952
+   },
+   "KP44565975": {
+    "held": 0,
+    "movement": -29356
+   },
+   "KP44573996": {
+    "held": 0,
+    "movement": -720
+   },
+   "KP44654259": {
+    "held": 0,
+    "movement": -17682
+   },
+   "KP44697734": {
+    "held": 0,
+    "movement": -8562
+   },
+   "KP44727784": {
+    "held": 0,
+    "movement": 9182
+   },
+   "KP44744753": {
+    "held": 0,
+    "movement": -1754
+   },
+   "KP44849826": {
+    "held": 0,
+    "movement": -18326
+   },
+   "KP44858078": {
+    "held": 0,
+    "movement": -54431
+   },
+   "KP44922034": {
+    "held": 0,
+    "movement": -53809
+   },
+   "KP45045299": {
+    "held": 3756,
+    "movement": 18847
+   },
+   "KP45080597": {
+    "held": 0,
+    "movement": 9546
+   },
+   "KP45097005": {
+    "held": 0,
+    "movement": 10501
+   },
+   "KP45097596": {
+    "held": 11422,
+    "movement": -29366
+   },
+   "KP45106529": {
+    "held": 0,
+    "movement": -4820
+   },
+   "KP45126536": {
+    "held": 14893,
+    "movement": -2016
+   },
+   "KP45147295": {
+    "held": 0,
+    "movement": -6102
+   },
+   "KP45151421": {
+    "held": 0,
+    "movement": -11492
+   },
+   "KP45212809": {
+    "held": 0,
+    "movement": 6409
+   },
+   "KP45269000": {
+    "held": 0,
+    "movement": -2250
+   },
+   "KP45286824": {
+    "held": 0,
+    "movement": 4660
+   },
+   "KP45311130": {
+    "held": 0,
+    "movement": -40557
+   },
+   "KP45315390": {
+    "held": 4648,
+    "movement": -18334
+   },
+   "KP45340541": {
+    "held": 0,
+    "movement": -26818
+   },
+   "KP45367631": {
+    "held": 9654,
+    "movement": -546
+   },
+   "KP45453661": {
+    "held": 0,
+    "movement": -13150
+   },
+   "KP45460855": {
+    "held": 0,
+    "movement": -13888
+   },
+   "KP45627049": {
+    "held": 0,
+    "movement": -10708
+   },
+   "KP45642721": {
+    "held": 0,
+    "movement": -15422
+   },
+   "KP45725065": {
+    "held": 0,
+    "movement": 16336
+   },
+   "KP45745251": {
+    "held": 0,
+    "movement": -20608
+   },
+   "KP45778660": {
+    "held": 0,
+    "movement": -28765
+   },
+   "KP45830090": {
+    "held": 0,
+    "movement": -7984
+   },
+   "KP45882540": {
+    "held": 12025,
+    "movement": -48375
+   },
+   "KP45883983": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP45890418": {
+    "held": 0,
+    "movement": 32841
+   },
+   "KP45910422": {
+    "held": 0,
+    "movement": -22177
+   },
+   "KP45917104": {
+    "held": 0,
+    "movement": -5805
+   },
+   "KP46056177": {
+    "held": 0,
+    "movement": 3988
+   },
+   "KP46074990": {
+    "held": 0,
+    "movement": -11329
+   },
+   "KP46079898": {
+    "held": 0,
+    "movement": -16126
+   },
+   "KP46089301": {
+    "held": 0,
+    "movement": -5977
+   },
+   "KP46138734": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP46152002": {
+    "held": 3412,
+    "movement": -8417
+   },
+   "KP46162207": {
+    "held": 0,
+    "movement": -12950
+   },
+   "KP46193158": {
+    "held": 0,
+    "movement": -31334
+   },
+   "KP46353235": {
+    "held": 0,
+    "movement": -21658
+   },
+   "KP46411962": {
+    "held": 0,
+    "movement": 13092
+   },
+   "KP46433018": {
+    "held": 0,
+    "movement": -1792
+   },
+   "KP46506505": {
+    "held": 0,
+    "movement": 17495
+   },
+   "KP46519011": {
+    "held": 0,
+    "movement": -6666
+   },
+   "KP46605698": {
+    "held": 0,
+    "movement": -62122
+   },
+   "KP46606195": {
+    "held": 0,
+    "movement": -8433
+   },
+   "KP46697755": {
+    "held": 17537,
+    "movement": -24315
+   },
+   "KP46870989": {
+    "held": 0,
+    "movement": 8402
+   },
+   "KP46903028": {
+    "held": 0,
+    "movement": -21966
+   },
+   "KP47019852": {
+    "held": 0,
+    "movement": -3513
+   },
+   "KP47026994": {
+    "held": 0,
+    "movement": 40000
+   },
+   "KP47129100": {
+    "held": 0,
+    "movement": -53326
+   },
+   "KP47199380": {
+    "held": 0,
+    "movement": -37633
+   },
+   "KP47218162": {
+    "held": 0,
+    "movement": -17754
+   },
+   "KP47254342": {
+    "held": 0,
+    "movement": -43157
+   },
+   "KP47324405": {
+    "held": 0,
+    "movement": 14624
+   },
+   "KP47476474": {
+    "held": 0,
+    "movement": -540
+   },
+   "KP47509180": {
+    "held": 0,
+    "movement": -11385
+   },
+   "KP47632404": {
+    "held": 0,
+    "movement": -26353
+   },
+   "KP47640818": {
+    "held": 0,
+    "movement": -12225
+   },
+   "KP47713719": {
+    "held": 0,
+    "movement": -3710
+   },
+   "KP47766457": {
+    "held": 0,
+    "movement": -4654
+   },
+   "KP47791429": {
+    "held": 0,
+    "movement": -14230
+   },
+   "KP47795643": {
+    "held": 0,
+    "movement": -15831
+   },
+   "KP47842721": {
+    "held": 0,
+    "movement": 220
+   },
+   "KP47857563": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP47879105": {
+    "held": 0,
+    "movement": -5216
+   },
+   "KP47898959": {
+    "held": 14206,
+    "movement": 0
+   },
+   "KP47938271": {
+    "held": 0,
+    "movement": -10707
+   },
+   "KP47952970": {
+    "held": 0,
+    "movement": -15878
+   },
+   "KP47957295": {
+    "held": 0,
+    "movement": -47577
+   },
+   "KP47968519": {
+    "held": 0,
+    "movement": -71226
+   },
+   "KP47993043": {
+    "held": 28371,
+    "movement": 6550
+   },
+   "KP47995410": {
+    "held": 0,
+    "movement": -18275
+   },
+   "KP48068362": {
+    "held": 0,
+    "movement": -1206
+   },
+   "KP48280616": {
+    "held": 1752,
+    "movement": -8977
+   },
+   "KP48304876": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP48322507": {
+    "held": 0,
+    "movement": -21455
+   },
+   "KP48340590": {
+    "held": 0,
+    "movement": -7044
+   },
+   "KP48389446": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP48494074": {
+    "held": 0,
+    "movement": -29361
+   },
+   "KP48518589": {
+    "held": 535,
+    "movement": 13512
+   },
+   "KP48569340": {
+    "held": 0,
+    "movement": -20194
+   },
+   "KP48628496": {
+    "held": 0,
+    "movement": -6981
+   },
+   "KP48649552": {
+    "held": 0,
+    "movement": -22286
+   },
+   "KP48649927": {
+    "held": 0,
+    "movement": -24429
+   },
+   "KP48695800": {
+    "held": 12865,
+    "movement": -4335
+   },
+   "KP48773064": {
+    "held": 0,
+    "movement": -1020
+   },
+   "KP48826304": {
+    "held": 0,
+    "movement": -26737
+   },
+   "KP48868284": {
+    "held": 0,
+    "movement": 2361
+   },
+   "KP48995776": {
+    "held": 20000,
+    "movement": -9831
+   },
+   "KP48998186": {
+    "held": 0,
+    "movement": -12658
+   },
+   "KP49000757": {
+    "held": 1294,
+    "movement": -19304
+   },
+   "KP49098813": {
+    "held": 2727,
+    "movement": -4599
+   },
+   "KP49111057": {
+    "held": 0,
+    "movement": -9744
+   },
+   "KP49238159": {
+    "held": 0,
+    "movement": 23475
+   },
+   "KP49300287": {
+    "held": 0,
+    "movement": -19042
+   },
+   "KP49334352": {
+    "held": 0,
+    "movement": -10276
+   },
+   "KP49418762": {
+    "held": 0,
+    "movement": -52925
+   },
+   "KP49555016": {
+    "held": 220,
+    "movement": -16687
+   },
+   "KP49608460": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP49703141": {
+    "held": 0,
+    "movement": -3985
+   },
+   "KP49848515": {
+    "held": 0,
+    "movement": -6787
+   },
+   "KP49864167": {
+    "held": 0,
+    "movement": -14612
+   },
+   "KP49885970": {
+    "held": 0,
+    "movement": -38532
+   },
+   "KP49907087": {
+    "held": 0,
+    "movement": -15034
+   },
+   "KP49939362": {
+    "held": 0,
+    "movement": 14320
+   },
+   "KP49985075": {
+    "held": 17552,
+    "movement": -4537
+   },
+   "KP50023542": {
+    "held": 6564,
+    "movement": -19384
+   },
+   "KP50042395": {
+    "held": 6678,
+    "movement": 7835
+   },
+   "KP50061518": {
+    "held": 0,
+    "movement": -21398
+   },
+   "KP50069413": {
+    "held": 0,
+    "movement": -7509
+   },
+   "KP50113824": {
+    "held": 0,
+    "movement": -4032
+   },
+   "KP50128627": {
+    "held": 0,
+    "movement": -1838
+   },
+   "KP50171272": {
+    "held": 0,
+    "movement": -17614
+   },
+   "KP50354811": {
+    "held": 0,
+    "movement": 23768
+   },
+   "KP50378967": {
+    "held": 0,
+    "movement": -13218
+   },
+   "KP50405407": {
+    "held": 0,
+    "movement": 18530
+   },
+   "KP50415214": {
+    "held": 0,
+    "movement": -10800
+   },
+   "KP50417824": {
+    "held": 1766,
+    "movement": -14839
+   },
+   "KP50429005": {
+    "held": 0,
+    "movement": -33813
+   },
+   "KP50599343": {
+    "held": 5341,
+    "movement": -5860
+   },
+   "KP50686600": {
+    "held": 0,
+    "movement": -11380
+   },
+   "KP50802513": {
+    "held": 0,
+    "movement": -21855
+   },
+   "KP50811383": {
+    "held": 0,
+    "movement": -517
+   },
+   "KP50812898": {
+    "held": 3884,
+    "movement": -19980
+   },
+   "KP50844836": {
+    "held": 0,
+    "movement": -41424
+   },
+   "KP50885015": {
+    "held": 0,
+    "movement": 1420
+   },
+   "KP50915323": {
+    "held": 0,
+    "movement": 4422
+   },
+   "KP50973853": {
+    "held": 0,
+    "movement": -12288
+   },
+   "KP51022348": {
+    "held": 0,
+    "movement": -24853
+   },
+   "KP51049336": {
+    "held": 0,
+    "movement": -16248
+   },
+   "KP51065864": {
+    "held": 0,
+    "movement": -54905
+   },
+   "KP51080630": {
+    "held": 10669,
+    "movement": -15000
+   },
+   "KP51166498": {
+    "held": 0,
+    "movement": 25000
+   },
+   "KP51175861": {
+    "held": 0,
+    "movement": -13122
+   },
+   "KP51228315": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP51381777": {
+    "held": 0,
+    "movement": -14210
+   },
+   "KP51448195": {
+    "held": 0,
+    "movement": -860
+   },
+   "KP51483747": {
+    "held": 0,
+    "movement": -5115
+   },
+   "KP51498280": {
+    "held": 0,
+    "movement": -20514
+   },
+   "KP51520074": {
+    "held": 0,
+    "movement": -39605
+   },
+   "KP51526580": {
+    "held": 0,
+    "movement": -10400
+   },
+   "KP51533844": {
+    "held": 18234,
+    "movement": 22076
+   },
+   "KP51558660": {
+    "held": 0,
+    "movement": -10300
+   },
+   "KP51595778": {
+    "held": 0,
+    "movement": -13524
+   },
+   "KP51613860": {
+    "held": 0,
+    "movement": -10812
+   },
+   "KP51654615": {
+    "held": 0,
+    "movement": -17442
+   },
+   "KP51800893": {
+    "held": 0,
+    "movement": -6907
+   },
+   "KP51843664": {
+    "held": 0,
+    "movement": -34324
+   },
+   "KP51881979": {
+    "held": 0,
+    "movement": -8574
+   },
+   "KP51950237": {
+    "held": 0,
+    "movement": 16432
+   },
+   "KP52023616": {
+    "held": 0,
+    "movement": -1204
+   },
+   "KP52056840": {
+    "held": 0,
+    "movement": -15805
+   },
+   "KP52058679": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP52062366": {
+    "held": 0,
+    "movement": 25994
+   },
+   "KP52082698": {
+    "held": 0,
+    "movement": -3105
+   },
+   "KP52098922": {
+    "held": 0,
+    "movement": 18849
+   },
+   "KP52108304": {
+    "held": 0,
+    "movement": -8649
+   },
+   "KP52141323": {
+    "held": 0,
+    "movement": -4742
+   },
+   "KP52166262": {
+    "held": 12928,
+    "movement": -1356
+   },
+   "KP52207433": {
+    "held": 0,
+    "movement": -22186
+   },
+   "KP52226681": {
+    "held": 6812,
+    "movement": -6208
+   },
+   "KP52270040": {
+    "held": 0,
+    "movement": -720
+   },
+   "KP52316679": {
+    "held": 15411,
+    "movement": -580
+   },
+   "KP52323090": {
+    "held": 0,
+    "movement": -15538
+   },
+   "KP52346477": {
+    "held": 0,
+    "movement": -14844
+   },
+   "KP52472731": {
+    "held": 0,
+    "movement": -7700
+   },
+   "KP52516635": {
+    "held": 700,
+    "movement": -18942
+   },
+   "KP52525850": {
+    "held": 0,
+    "movement": -10245
+   },
+   "KP52542245": {
+    "held": 0,
+    "movement": -15028
+   },
+   "KP52594534": {
+    "held": 0,
+    "movement": -23661
+   },
+   "KP52598460": {
+    "held": 4445,
+    "movement": -45820
+   },
+   "KP52620851": {
+    "held": 0,
+    "movement": -18825
+   },
+   "KP52696716": {
+    "held": 4580,
+    "movement": -13982
+   },
+   "KP52792638": {
+    "held": 12274,
+    "movement": -9745
+   },
+   "KP52919002": {
+    "held": 0,
+    "movement": -7928
+   },
+   "KP52983048": {
+    "held": 0,
+    "movement": -3992
+   },
+   "KP52987673": {
+    "held": 0,
+    "movement": 27646
+   },
+   "KP52994595": {
+    "held": 5000,
+    "movement": -8761
+   },
+   "KP53160471": {
+    "held": 0,
+    "movement": -40427
+   },
+   "KP53192017": {
+    "held": 0,
+    "movement": 25000
+   },
+   "KP53227091": {
+    "held": 4574,
+    "movement": -13118
+   },
+   "KP53296425": {
+    "held": 0,
+    "movement": 18494
+   },
+   "KP53313679": {
+    "held": 0,
+    "movement": -43766
+   },
+   "KP53414276": {
+    "held": 0,
+    "movement": 4274
+   },
+   "KP53447468": {
+    "held": 0,
+    "movement": -24003
+   },
+   "KP53487609": {
+    "held": 0,
+    "movement": -4097
+   },
+   "KP53652410": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP53655834": {
+    "held": 34969,
+    "movement": 0
+   },
+   "KP53684667": {
+    "held": 0,
+    "movement": -20813
+   },
+   "KP53734660": {
+    "held": 0,
+    "movement": -4539
+   },
+   "KP53828884": {
+    "held": 0,
+    "movement": -10853
+   },
+   "KP53829210": {
+    "held": 11146,
+    "movement": -13677
+   },
+   "KP53977588": {
+    "held": 2000,
+    "movement": -8043
+   },
+   "KP54020903": {
+    "held": 0,
+    "movement": -691
+   },
+   "KP54082106": {
+    "held": 0,
+    "movement": -14877
+   },
+   "KP54094502": {
+    "held": 0,
+    "movement": -11228
+   },
+   "KP54097859": {
+    "held": 13404,
+    "movement": -389
+   },
+   "KP54129382": {
+    "held": 10423,
+    "movement": -23476
+   },
+   "KP54235422": {
+    "held": 0,
+    "movement": -10855
+   },
+   "KP54246845": {
+    "held": 0,
+    "movement": 3854
+   },
+   "KP54340877": {
+    "held": 0,
+    "movement": -47080
+   },
+   "KP54346270": {
+    "held": 0,
+    "movement": -3821
+   },
+   "KP54438745": {
+    "held": 0,
+    "movement": -6053
+   },
+   "KP54472558": {
+    "held": 0,
+    "movement": -20370
+   },
+   "KP54586133": {
+    "held": 0,
+    "movement": -7552
+   },
+   "KP54630995": {
+    "held": 0,
+    "movement": 4974
+   },
+   "KP54633691": {
+    "held": 0,
+    "movement": -32455
+   },
+   "KP54663651": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP54691981": {
+    "held": 6147,
+    "movement": -10374
+   },
+   "KP54778533": {
+    "held": 0,
+    "movement": -31789
+   },
+   "KP54797829": {
+    "held": 0,
+    "movement": -13696
+   },
+   "KP55079842": {
+    "held": 0,
+    "movement": -870
+   },
+   "KP55081306": {
+    "held": 5311,
+    "movement": -1618
+   },
+   "KP55118942": {
+    "held": 3120,
+    "movement": -20765
+   },
+   "KP55135413": {
+    "held": 30423,
+    "movement": -9268
+   },
+   "KP55378919": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP55390185": {
+    "held": 0,
+    "movement": -8792
+   },
+   "KP55419688": {
+    "held": 0,
+    "movement": -16737
+   },
+   "KP55434521": {
+    "held": 0,
+    "movement": -11106
+   },
+   "KP55440164": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP55524978": {
+    "held": 0,
+    "movement": -19388
+   },
+   "KP55550924": {
+    "held": 0,
+    "movement": -22643
+   },
+   "KP55552618": {
+    "held": 0,
+    "movement": 14996
+   },
+   "KP55591373": {
+    "held": 0,
+    "movement": -8600
+   },
+   "KP55600640": {
+    "held": 0,
+    "movement": -28194
+   },
+   "KP55749245": {
+    "held": 15086,
+    "movement": 15000
+   },
+   "KP55777355": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP55822548": {
+    "held": 0,
+    "movement": -11075
+   },
+   "KP55837224": {
+    "held": 0,
+    "movement": -8237
+   },
+   "KP55891497": {
+    "held": 0,
+    "movement": -2789
+   },
+   "KP55945592": {
+    "held": 0,
+    "movement": -8257
+   },
+   "KP55962195": {
+    "held": 0,
+    "movement": -870
+   },
+   "KP55969042": {
+    "held": 0,
+    "movement": -458
+   },
+   "KP56028561": {
+    "held": 0,
+    "movement": -13335
+   },
+   "KP56040091": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP56060774": {
+    "held": 0,
+    "movement": -27486
+   },
+   "KP56131340": {
+    "held": 0,
+    "movement": -19262
+   },
+   "KP56169933": {
+    "held": 10495,
+    "movement": -6019
+   },
+   "KP56327903": {
+    "held": 0,
+    "movement": -22328
+   },
+   "KP56347681": {
+    "held": 0,
+    "movement": -5327
+   },
+   "KP56495295": {
+    "held": 0,
+    "movement": -1711
+   },
+   "KP56507855": {
+    "held": 0,
+    "movement": -13586
+   },
+   "KP56526681": {
+    "held": 0,
+    "movement": 1556
+   },
+   "KP56622197": {
+    "held": 0,
+    "movement": 775
+   },
+   "KP56645246": {
+    "held": 0,
+    "movement": -15340
+   },
+   "KP56654544": {
+    "held": 5304,
+    "movement": -45846
+   },
+   "KP56658872": {
+    "held": 0,
+    "movement": 707
+   },
+   "KP56780632": {
+    "held": 0,
+    "movement": -13030
+   },
+   "KP56814487": {
+    "held": 0,
+    "movement": -7317
+   },
+   "KP56883499": {
+    "held": 0,
+    "movement": -880
+   },
+   "KP56887842": {
+    "held": 0,
+    "movement": -752
+   },
+   "KP56911026": {
+    "held": 0,
+    "movement": -8643
+   },
+   "KP56915491": {
+    "held": 0,
+    "movement": -12378
+   },
+   "KP56939543": {
+    "held": 0,
+    "movement": -24259
+   },
+   "KP57088734": {
+    "held": 1357,
+    "movement": 0
+   },
+   "KP57110501": {
+    "held": 0,
+    "movement": 25831
+   },
+   "KP57123387": {
+    "held": 0,
+    "movement": -4648
+   },
+   "KP57155111": {
+    "held": 0,
+    "movement": -58733
+   },
+   "KP57159961": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP57161022": {
+    "held": 0,
+    "movement": -7989
+   },
+   "KP57164020": {
+    "held": 0,
+    "movement": -25546
+   },
+   "KP57354030": {
+    "held": 0,
+    "movement": -2340
+   },
+   "KP57378913": {
+    "held": 0,
+    "movement": -14546
+   },
+   "KP57555890": {
+    "held": 0,
+    "movement": -35550
+   },
+   "KP57563801": {
+    "held": 8337,
+    "movement": -6776
+   },
+   "KP57572929": {
+    "held": 5811,
+    "movement": -16757
+   },
+   "KP57593271": {
+    "held": 0,
+    "movement": -41941
+   },
+   "KP57732588": {
+    "held": 12399,
+    "movement": -8568
+   },
+   "KP57942225": {
+    "held": 36691,
+    "movement": -6585
+   },
+   "KP57975394": {
+    "held": 0,
+    "movement": -3844
+   },
+   "KP57984250": {
+    "held": 0,
+    "movement": 4140
+   },
+   "KP57989325": {
+    "held": 0,
+    "movement": -17286
+   },
+   "KP58044248": {
+    "held": 0,
+    "movement": -18767
+   },
+   "KP58170298": {
+    "held": 8874,
+    "movement": -17751
+   },
+   "KP58289329": {
+    "held": 11159,
+    "movement": -26265
+   },
+   "KP58396991": {
+    "held": 0,
+    "movement": -7236
+   },
+   "KP58405101": {
+    "held": 23451,
+    "movement": -14341
+   },
+   "KP58451833": {
+    "held": 0,
+    "movement": -17936
+   },
+   "KP58529525": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP58571510": {
+    "held": 0,
+    "movement": -6347
+   },
+   "KP58579933": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP58642358": {
+    "held": 0,
+    "movement": -1570
+   },
+   "KP58748579": {
+    "held": 0,
+    "movement": -37503
+   },
+   "KP59020952": {
+    "held": 0,
+    "movement": 12
+   },
+   "KP59074380": {
+    "held": 0,
+    "movement": -20967
+   },
+   "KP59076455": {
+    "held": 1989,
+    "movement": -10776
+   },
+   "KP59131643": {
+    "held": 0,
+    "movement": -5705
+   },
+   "KP59253147": {
+    "held": 0,
+    "movement": -32400
+   },
+   "KP59278200": {
+    "held": 10000,
+    "movement": -16768
+   },
+   "KP59301616": {
+    "held": 0,
+    "movement": -13190
+   },
+   "KP59321456": {
+    "held": 0,
+    "movement": 19892
+   },
+   "KP59375584": {
+    "held": 0,
+    "movement": 11444
+   },
+   "KP59376432": {
+    "held": 8953,
+    "movement": -20760
+   },
+   "KP59562362": {
+    "held": 7902,
+    "movement": 14165
+   },
+   "KP59615135": {
+    "held": 0,
+    "movement": 6907
+   },
+   "KP59618775": {
+    "held": 11001,
+    "movement": 0
+   },
+   "KP59668376": {
+    "held": 4148,
+    "movement": -5922
+   },
+   "KP59743977": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP59747317": {
+    "held": 790,
+    "movement": -17459
+   },
+   "KP59771795": {
+    "held": 0,
+    "movement": -24927
+   },
+   "KP59800976": {
+    "held": 6362,
+    "movement": -20151
+   },
+   "KP59801608": {
+    "held": 13299,
+    "movement": -6839
+   },
+   "KP59839333": {
+    "held": 0,
+    "movement": -18603
+   },
+   "KP59859409": {
+    "held": 15120,
+    "movement": -29225
+   },
+   "KP59955994": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP59999978": {
+    "held": 0,
+    "movement": -8485
+   },
+   "KP60075950": {
+    "held": 4286,
+    "movement": -19345
+   },
+   "KP60143318": {
+    "held": 3920,
+    "movement": 0
+   },
+   "KP60155690": {
+    "held": 6425,
+    "movement": -580
+   },
+   "KP60168808": {
+    "held": 0,
+    "movement": -42930
+   },
+   "KP60183279": {
+    "held": 0,
+    "movement": 15250
+   },
+   "KP60234122": {
+    "held": 0,
+    "movement": -9036
+   },
+   "KP60249717": {
+    "held": 10602,
+    "movement": -7675
+   },
+   "KP60265400": {
+    "held": 0,
+    "movement": -6542
+   },
+   "KP60287358": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP60364933": {
+    "held": 0,
+    "movement": 2288
+   },
+   "KP60373620": {
+    "held": 0,
+    "movement": -3580
+   },
+   "KP60446905": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP60471900": {
+    "held": 0,
+    "movement": -1450
+   },
+   "KP60478321": {
+    "held": 14605,
+    "movement": -2000
+   },
+   "KP60481389": {
+    "held": 0,
+    "movement": -3685
+   },
+   "KP60567042": {
+    "held": 2131,
+    "movement": 2000
+   },
+   "KP60593384": {
+    "held": 0,
+    "movement": -30103
+   },
+   "KP60740343": {
+    "held": 0,
+    "movement": -12914
+   },
+   "KP60764818": {
+    "held": 0,
+    "movement": -9418
+   },
+   "KP60777542": {
+    "held": 0,
+    "movement": 18965
+   },
+   "KP60891988": {
+    "held": 0,
+    "movement": -22027
+   },
+   "KP60909880": {
+    "held": 0,
+    "movement": -2905
+   },
+   "KP60979269": {
+    "held": 0,
+    "movement": -2231
+   },
+   "KP61046930": {
+    "held": 0,
+    "movement": -8172
+   },
+   "KP61053845": {
+    "held": 6644,
+    "movement": -12091
+   },
+   "KP61257939": {
+    "held": 0,
+    "movement": -45431
+   },
+   "KP61269058": {
+    "held": 0,
+    "movement": -854
+   },
+   "KP61378352": {
+    "held": 0,
+    "movement": -700
+   },
+   "KP61408786": {
+    "held": 0,
+    "movement": -20254
+   },
+   "KP61415678": {
+    "held": 0,
+    "movement": 671
+   },
+   "KP61472498": {
+    "held": 0,
+    "movement": -14243
+   },
+   "KP61582619": {
+    "held": 0,
+    "movement": -4863
+   },
+   "KP61594893": {
+    "held": 0,
+    "movement": -14132
+   },
+   "KP61648847": {
+    "held": 0,
+    "movement": -960
+   },
+   "KP61678594": {
+    "held": 6135,
+    "movement": -15358
+   },
+   "KP61693801": {
+    "held": 0,
+    "movement": -42099
+   },
+   "KP61735712": {
+    "held": 13270,
+    "movement": -21760
+   },
+   "KP61897122": {
+    "held": 0,
+    "movement": -58994
+   },
+   "KP61912032": {
+    "held": 0,
+    "movement": -3732
+   },
+   "KP61917907": {
+    "held": 0,
+    "movement": -14746
+   },
+   "KP61937699": {
+    "held": 0,
+    "movement": -14496
+   },
+   "KP61974363": {
+    "held": 0,
+    "movement": -5244
+   },
+   "KP61981555": {
+    "held": 0,
+    "movement": -14916
+   },
+   "KP62120710": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP62258584": {
+    "held": 8324,
+    "movement": -9548
+   },
+   "KP62261538": {
+    "held": 7072,
+    "movement": -1358
+   },
+   "KP62294683": {
+    "held": 0,
+    "movement": -42023
+   },
+   "KP62427821": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP62460691": {
+    "held": 0,
+    "movement": -12819
+   },
+   "KP62473430": {
+    "held": 12748,
+    "movement": -3861
+   },
+   "KP62526293": {
+    "held": 0,
+    "movement": 15360
+   },
+   "KP62553690": {
+    "held": 4699,
+    "movement": 15000
+   },
+   "KP62577231": {
+    "held": 0,
+    "movement": 5900
+   },
+   "KP62623649": {
+    "held": 0,
+    "movement": -19540
+   },
+   "KP62668499": {
+    "held": 0,
+    "movement": -1985
+   },
+   "KP62707931": {
+    "held": 0,
+    "movement": -3622
+   },
+   "KP62709791": {
+    "held": 0,
+    "movement": -11688
+   },
+   "KP62850357": {
+    "held": 0,
+    "movement": 27383
+   },
+   "KP62865241": {
+    "held": 0,
+    "movement": -5581
+   },
+   "KP62897823": {
+    "held": 0,
+    "movement": -13680
+   },
+   "KP62977085": {
+    "held": 0,
+    "movement": -4690
+   },
+   "KP62984647": {
+    "held": 15970,
+    "movement": -24486
+   },
+   "KP63026244": {
+    "held": 0,
+    "movement": -34896
+   },
+   "KP63069394": {
+    "held": 2087,
+    "movement": -13473
+   },
+   "KP63235757": {
+    "held": 0,
+    "movement": -1420
+   },
+   "KP63249802": {
+    "held": 0,
+    "movement": -26214
+   },
+   "KP63302324": {
+    "held": 0,
+    "movement": 25000
+   },
+   "KP63319999": {
+    "held": 5353,
+    "movement": 1253
+   },
+   "KP63333595": {
+    "held": 0,
+    "movement": 5358
+   },
+   "KP63421754": {
+    "held": 15071,
+    "movement": 0
+   },
+   "KP63444944": {
+    "held": 0,
+    "movement": -20737
+   },
+   "KP63487659": {
+    "held": 0,
+    "movement": -3485
+   },
+   "KP63500126": {
+    "held": 0,
+    "movement": -12080
+   },
+   "KP63500533": {
+    "held": 0,
+    "movement": -21723
+   },
+   "KP63503705": {
+    "held": 0,
+    "movement": -15833
+   },
+   "KP63551991": {
+    "held": 0,
+    "movement": 14244
+   },
+   "KP63587497": {
+    "held": 0,
+    "movement": -24439
+   },
+   "KP63664943": {
+    "held": 0,
+    "movement": -12402
+   },
+   "KP63740774": {
+    "held": 1160,
+    "movement": -14744
+   },
+   "KP63804031": {
+    "held": 0,
+    "movement": 26511
+   },
+   "KP63839621": {
+    "held": 0,
+    "movement": -19197
+   },
+   "KP63985842": {
+    "held": 10925,
+    "movement": -7920
+   },
+   "KP64039383": {
+    "held": 0,
+    "movement": 9187
+   },
+   "KP64074188": {
+    "held": 0,
+    "movement": 0
+   },
+   "KP64176950": {
+    "held": 0,
+    "movement": 3039
+   },
+   "KP64270379": {
+    "held": 0,
+    "movement": -15925
+   },
+   "KP64291282": {
+    "held": 14262,
+    "movement": -23357
+   },
+   "KP64291661": {
+    "held": 0,
+    "movement": -20813
+   },
+   "KP64294687": {
+    "held": 0,
+    "movement": 1640
+   },
+   "KP64298200": {
+    "held": 0,
+    "movement": -2473
+   },
+   "KP64335871": {
+    "held": 0,
+    "movement": -11308
+   },
+   "KP64361628": {
+    "held": 8817,
+    "movement": 10000
+   },
+   "KP64428640": {
+    "held": 0,
+    "movement": -8316
+   },
+   "KP64500154": {
+    "held": 0,
+    "movement": -14945
+   },
+   "KP64580371": {
+    "held": 244,
+    "movement": -6840
+   },
+   "KP64595658": {
+    "held": 2163,
+    "movement": -20712
+   },
+   "KP64700570": {
+    "held": 0,
+    "movement": -8597
+   },
+   "KP64847759": {
+    "held": 0,
+    "movement": -14669
+   },
+   "KP64881680": {
+    "held": 0,
+    "movement": -7172
+   },
+   "KP64921933": {
+    "held": 0,
+    "movement": 13127
+   },
+   "KP65050561": {
+    "held": 0,
+    "movement": -360
+   },
+   "KP65055204": {
+    "held": 0,
+    "movement": -6289
+   },
+   "KP65058181": {
+    "held": 0,
+    "movement": -45413
+   },
+   "KP65100870": {
+    "held": 0,
+    "movement": -6402
+   },
+   "KP65106102": {
+    "held": 0,
+    "movement": -5078
+   },
+   "KP65183794": {
+    "held": 1227,
+    "movement": 0
+   },
+   "KP65243101": {
+    "held": 0,
+    "movement": -3540
+   },
+   "KP65260812": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP65364679": {
+    "held": 0,
+    "movement": -35078
+   },
+   "KP65403091": {
+    "held": 0,
+    "movement": -10857
+   },
+   "KP65533763": {
+    "held": 0,
+    "movement": -23678
+   },
+   "KP65606918": {
+    "held": 0,
+    "movement": -37842
+   },
+   "KP65620911": {
+    "held": 0,
+    "movement": -21231
+   },
+   "KP65632596": {
+    "held": 0,
+    "movement": -14826
+   },
+   "KP65642635": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP65679280": {
+    "held": 7828,
+    "movement": -26347
+   },
+   "KP65732982": {
+    "held": 12217,
+    "movement": -14622
+   },
+   "KP65744211": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP65794838": {
+    "held": 1419,
+    "movement": -1782
+   },
+   "KP65826090": {
+    "held": 0,
+    "movement": 20099
+   },
+   "KP65832635": {
+    "held": 8527,
+    "movement": -2372
+   },
+   "KP65837424": {
+    "held": 512,
+    "movement": -12330
+   },
+   "KP65859246": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP65922586": {
+    "held": 3877,
+    "movement": 28081
+   },
+   "KP65968606": {
+    "held": 0,
+    "movement": 1420
+   },
+   "KP65970797": {
+    "held": 0,
+    "movement": -11194
+   },
+   "KP65990528": {
+    "held": 0,
+    "movement": -26929
+   },
+   "KP66010945": {
+    "held": 0,
+    "movement": -11145
+   },
+   "KP66054622": {
+    "held": 11004,
+    "movement": 0
+   },
+   "KP66242181": {
+    "held": 0,
+    "movement": -10350
+   },
+   "KP66282892": {
+    "held": 0,
+    "movement": -30168
+   },
+   "KP66303695": {
+    "held": 0,
+    "movement": -70998
+   },
+   "KP66385758": {
+    "held": 0,
+    "movement": -14529
+   },
+   "KP66421447": {
+    "held": 0,
+    "movement": -5680
+   },
+   "KP66436344": {
+    "held": 0,
+    "movement": -949
+   },
+   "KP66440595": {
+    "held": 1391,
+    "movement": -2139
+   },
+   "KP66552659": {
+    "held": 0,
+    "movement": 4978
+   },
+   "KP66577365": {
+    "held": 0,
+    "movement": -11993
+   },
+   "KP66667570": {
+    "held": 0,
+    "movement": -2000
+   },
+   "KP66682807": {
+    "held": 0,
+    "movement": -43642
+   },
+   "KP66694000": {
+    "held": 4531,
+    "movement": 0
+   },
+   "KP66706727": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP66827780": {
+    "held": 0,
+    "movement": -4947
+   },
+   "KP66927053": {
+    "held": 0,
+    "movement": -1654
+   },
+   "KP66951015": {
+    "held": 0,
+    "movement": -10002
+   },
+   "KP67041154": {
+    "held": 2566,
+    "movement": 0
+   },
+   "KP67054824": {
+    "held": 38556,
+    "movement": -9200
+   },
+   "KP67276105": {
+    "held": 0,
+    "movement": -6201
+   },
+   "KP67311063": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP67419576": {
+    "held": 0,
+    "movement": 5425
+   },
+   "KP67436502": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP67479859": {
+    "held": 0,
+    "movement": 667
+   },
+   "KP67505689": {
+    "held": 0,
+    "movement": -31954
+   },
+   "KP67524241": {
+    "held": 6933,
+    "movement": -12470
+   },
+   "KP67530448": {
+    "held": 0,
+    "movement": -3977
+   },
+   "KP67547066": {
+    "held": 20884,
+    "movement": -11362
+   },
+   "KP67605948": {
+    "held": 0,
+    "movement": -21066
+   },
+   "KP67666538": {
+    "held": 0,
+    "movement": -2000
+   },
+   "KP67696146": {
+    "held": 30919,
+    "movement": 13418
+   },
+   "KP67858869": {
+    "held": 0,
+    "movement": -4032
+   },
+   "KP67873312": {
+    "held": 0,
+    "movement": -14497
+   },
+   "KP67890012": {
+    "held": 0,
+    "movement": -9947
+   },
+   "KP67998652": {
+    "held": 0,
+    "movement": -25317
+   },
+   "KP68007083": {
+    "held": 5513,
+    "movement": -23054
+   },
+   "KP68039207": {
+    "held": 0,
+    "movement": 35000
+   },
+   "KP68082815": {
+    "held": 13386,
+    "movement": 2511
+   },
+   "KP68089180": {
+    "held": 0,
+    "movement": -34971
+   },
+   "KP68122554": {
+    "held": 0,
+    "movement": -1180
+   },
+   "KP68175101": {
+    "held": 0,
+    "movement": 8059
+   },
+   "KP68189235": {
+    "held": 4230,
+    "movement": -1210
+   },
+   "KP68202816": {
+    "held": 11542,
+    "movement": -6035
+   },
+   "KP68295243": {
+    "held": 0,
+    "movement": -35868
+   },
+   "KP68303545": {
+    "held": 0,
+    "movement": -21714
+   },
+   "KP68326090": {
+    "held": 0,
+    "movement": -33490
+   },
+   "KP68369229": {
+    "held": 0,
+    "movement": -3421
+   },
+   "KP68372092": {
+    "held": 0,
+    "movement": -11523
+   },
+   "KP68405478": {
+    "held": 15502,
+    "movement": -28316
+   },
+   "KP68480889": {
+    "held": 0,
+    "movement": -43737
+   },
+   "KP68573974": {
+    "held": 0,
+    "movement": -10552
+   },
+   "KP68587394": {
+    "held": 0,
+    "movement": -5144
+   },
+   "KP68616998": {
+    "held": 0,
+    "movement": -26192
+   },
+   "KP68739010": {
+    "held": 0,
+    "movement": -38860
+   },
+   "KP68781215": {
+    "held": 0,
+    "movement": 21669
+   },
+   "KP68798699": {
+    "held": 0,
+    "movement": 4420
+   },
+   "KP68836784": {
+    "held": 0,
+    "movement": 584
+   },
+   "KP68901324": {
+    "held": 0,
+    "movement": -23586
+   },
+   "KP68926365": {
+    "held": 14040,
+    "movement": 21677
+   },
+   "KP69030322": {
+    "held": 4101,
+    "movement": -14075
+   },
+   "KP69053336": {
+    "held": 0,
+    "movement": -9177
+   },
+   "KP69062991": {
+    "held": 0,
+    "movement": -87251
+   },
+   "KP69103426": {
+    "held": 0,
+    "movement": -9402
+   },
+   "KP69112465": {
+    "held": 0,
+    "movement": -2162
+   },
+   "KP69220678": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP69270724": {
+    "held": 0,
+    "movement": -6445
+   },
+   "KP69310493": {
+    "held": 0,
+    "movement": -2035
+   },
+   "KP69333827": {
+    "held": 0,
+    "movement": -13135
+   },
+   "KP69336079": {
+    "held": 0,
+    "movement": -26495
+   },
+   "KP69340371": {
+    "held": 0,
+    "movement": -1487
+   },
+   "KP69472527": {
+    "held": 3424,
+    "movement": -22287
+   },
+   "KP69604806": {
+    "held": 6855,
+    "movement": -1420
+   },
+   "KP69650992": {
+    "held": 0,
+    "movement": 4640
+   },
+   "KP69657499": {
+    "held": 0,
+    "movement": -19160
+   },
+   "KP69707171": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP69718533": {
+    "held": 0,
+    "movement": -23721
+   },
+   "KP69726342": {
+    "held": 0,
+    "movement": -21802
+   },
+   "KP69774388": {
+    "held": 0,
+    "movement": -13431
+   },
+   "KP69805510": {
+    "held": 5962,
+    "movement": -7910
+   },
+   "KP69821960": {
+    "held": 0,
+    "movement": -17439
+   },
+   "KP69839521": {
+    "held": 0,
+    "movement": -32597
+   },
+   "KP69878813": {
+    "held": 0,
+    "movement": -8472
+   },
+   "KP69896296": {
+    "held": 0,
+    "movement": -15386
+   },
+   "KP69896827": {
+    "held": 5000,
+    "movement": 9420
+   },
+   "KP69996487": {
+    "held": 0,
+    "movement": 9644
+   },
+   "KP70005487": {
+    "held": 0,
+    "movement": -6070
+   },
+   "KP70023862": {
+    "held": 5372,
+    "movement": -6253
+   },
+   "KP70032253": {
+    "held": 0,
+    "movement": -8075
+   },
+   "KP70058140": {
+    "held": 0,
+    "movement": -7994
+   },
+   "KP70112838": {
+    "held": 0,
+    "movement": -15847
+   },
+   "KP70128243": {
+    "held": 0,
+    "movement": 24432
+   },
+   "KP70178868": {
+    "held": 0,
+    "movement": -6393
+   },
+   "KP70228298": {
+    "held": 9666,
+    "movement": 31203
+   },
+   "KP70244645": {
+    "held": 0,
+    "movement": -4785
+   },
+   "KP70311001": {
+    "held": 0,
+    "movement": -34303
+   },
+   "KP70321205": {
+    "held": 0,
+    "movement": -2967
+   },
+   "KP70327861": {
+    "held": 0,
+    "movement": -9197
+   },
+   "KP70365209": {
+    "held": 15231,
+    "movement": -28325
+   },
+   "KP70370199": {
+    "held": 0,
+    "movement": -1638
+   },
+   "KP70486278": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP70515580": {
+    "held": 9943,
+    "movement": -14485
+   },
+   "KP70518400": {
+    "held": 0,
+    "movement": -12190
+   },
+   "KP70533709": {
+    "held": 0,
+    "movement": -20034
+   },
+   "KP70557887": {
+    "held": 0,
+    "movement": -3303
+   },
+   "KP70562211": {
+    "held": 0,
+    "movement": -4735
+   },
+   "KP70617836": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP70632091": {
+    "held": 0,
+    "movement": -43571
+   },
+   "KP70659334": {
+    "held": 0,
+    "movement": 4478
+   },
+   "KP70714663": {
+    "held": 7932,
+    "movement": -13264
+   },
+   "KP70720330": {
+    "held": 0,
+    "movement": -30057
+   },
+   "KP70823454": {
+    "held": 0,
+    "movement": -35742
+   },
+   "KP70866940": {
+    "held": 0,
+    "movement": 13735
+   },
+   "KP70932539": {
+    "held": 0,
+    "movement": -32422
+   },
+   "KP71019741": {
+    "held": 0,
+    "movement": -470
+   },
+   "KP71037561": {
+    "held": 0,
+    "movement": -47753
+   },
+   "KP71057531": {
+    "held": 12106,
+    "movement": -11159
+   },
+   "KP71095304": {
+    "held": 0,
+    "movement": -12202
+   },
+   "KP71138146": {
+    "held": 0,
+    "movement": -340
+   },
+   "KP71185613": {
+    "held": 0,
+    "movement": -17881
+   },
+   "KP71208077": {
+    "held": 0,
+    "movement": -28079
+   },
+   "KP71232386": {
+    "held": 0,
+    "movement": -18053
+   },
+   "KP71318931": {
+    "held": 0,
+    "movement": -9921
+   },
+   "KP71353099": {
+    "held": 0,
+    "movement": -3623
+   },
+   "KP71415831": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP71420823": {
+    "held": 0,
+    "movement": -35364
+   },
+   "KP71421665": {
+    "held": 0,
+    "movement": -21785
+   },
+   "KP71434905": {
+    "held": 0,
+    "movement": -1917
+   },
+   "KP71560483": {
+    "held": 0,
+    "movement": -20150
+   },
+   "KP71581492": {
+    "held": 7836,
+    "movement": -29423
+   },
+   "KP71656163": {
+    "held": 0,
+    "movement": -32314
+   },
+   "KP71671980": {
+    "held": 0,
+    "movement": 711
+   },
+   "KP71696985": {
+    "held": 0,
+    "movement": -15859
+   },
+   "KP71883762": {
+    "held": 0,
+    "movement": -25103
+   },
+   "KP71914454": {
+    "held": 0,
+    "movement": -6441
+   },
+   "KP71980110": {
+    "held": 0,
+    "movement": -4291
+   },
+   "KP72020151": {
+    "held": 0,
+    "movement": -24389
+   },
+   "KP72119918": {
+    "held": 0,
+    "movement": -4813
+   },
+   "KP72168521": {
+    "held": 0,
+    "movement": -9268
+   },
+   "KP72198448": {
+    "held": 0,
+    "movement": -6258
+   },
+   "KP72283882": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP72492780": {
+    "held": 5947,
+    "movement": -41897
+   },
+   "KP72571789": {
+    "held": 0,
+    "movement": 1177
+   },
+   "KP72581583": {
+    "held": 0,
+    "movement": -18989
+   },
+   "KP72655065": {
+    "held": 0,
+    "movement": -6152
+   },
+   "KP72679895": {
+    "held": 0,
+    "movement": -11204
+   },
+   "KP72715051": {
+    "held": 0,
+    "movement": -11548
+   },
+   "KP72743778": {
+    "held": 0,
+    "movement": -36478
+   },
+   "KP72793202": {
+    "held": 8536,
+    "movement": -13
+   },
+   "KP73052114": {
+    "held": 0,
+    "movement": -39351
+   },
+   "KP73123647": {
+    "held": 0,
+    "movement": 19541
+   },
+   "KP73127692": {
+    "held": 0,
+    "movement": -6684
+   },
+   "KP73150757": {
+    "held": 0,
+    "movement": -23685
+   },
+   "KP73214328": {
+    "held": 0,
+    "movement": -8080
+   },
+   "KP73246126": {
+    "held": 5694,
+    "movement": -47147
+   },
+   "KP73343457": {
+    "held": 10000,
+    "movement": -10822
+   },
+   "KP73381267": {
+    "held": 11895,
+    "movement": -26221
+   },
+   "KP73431310": {
+    "held": 0,
+    "movement": -43432
+   },
+   "KP73433052": {
+    "held": 0,
+    "movement": -14942
+   },
+   "KP73484115": {
+    "held": 1042,
+    "movement": 0
+   },
+   "KP73514713": {
+    "held": 0,
+    "movement": -11702
+   },
+   "KP73514872": {
+    "held": 12917,
+    "movement": -5738
+   },
+   "KP73524833": {
+    "held": 12570,
+    "movement": -45414
+   },
+   "KP73543332": {
+    "held": 0,
+    "movement": -17784
+   },
+   "KP73545975": {
+    "held": 0,
+    "movement": -22888
+   },
+   "KP73649671": {
+    "held": 8345,
+    "movement": -26849
+   },
+   "KP73654057": {
+    "held": 0,
+    "movement": 6809
+   },
+   "KP73668133": {
+    "held": 0,
+    "movement": -34711
+   },
+   "KP73669860": {
+    "held": 0,
+    "movement": -10680
+   },
+   "KP73785844": {
+    "held": 0,
+    "movement": -14439
+   },
+   "KP73891945": {
+    "held": 0,
+    "movement": 3785
+   },
+   "KP73910924": {
+    "held": 0,
+    "movement": -8280
+   },
+   "KP73914054": {
+    "held": 11037,
+    "movement": -1716
+   },
+   "KP73983248": {
+    "held": 0,
+    "movement": -3455
+   },
+   "KP74117176": {
+    "held": 0,
+    "movement": -19307
+   },
+   "KP74154129": {
+    "held": 0,
+    "movement": -7728
+   },
+   "KP74158009": {
+    "held": 0,
+    "movement": 12914
+   },
+   "KP74176789": {
+    "held": 0,
+    "movement": -15568
+   },
+   "KP74185769": {
+    "held": 0,
+    "movement": -14985
+   },
+   "KP74267893": {
+    "held": 0,
+    "movement": -4124
+   },
+   "KP74357385": {
+    "held": 0,
+    "movement": 17000
+   },
+   "KP74423780": {
+    "held": 0,
+    "movement": -1546
+   },
+   "KP74466773": {
+    "held": 0,
+    "movement": -19552
+   },
+   "KP74503186": {
+    "held": 0,
+    "movement": -14316
+   },
+   "KP74568695": {
+    "held": 0,
+    "movement": -9170
+   },
+   "KP74592971": {
+    "held": 8938,
+    "movement": -21278
+   },
+   "KP74618724": {
+    "held": 0,
+    "movement": 29040
+   },
+   "KP74666708": {
+    "held": 0,
+    "movement": -9606
+   },
+   "KP74687742": {
+    "held": 0,
+    "movement": 7199
+   },
+   "KP74722025": {
+    "held": 0,
+    "movement": -6873
+   },
+   "KP74756618": {
+    "held": 0,
+    "movement": -12765
+   },
+   "KP75102441": {
+    "held": 0,
+    "movement": -10806
+   },
+   "KP75118846": {
+    "held": 0,
+    "movement": -37565
+   },
+   "KP75133232": {
+    "held": 0,
+    "movement": -19138
+   },
+   "KP75146011": {
+    "held": 0,
+    "movement": 5749
+   },
+   "KP75191989": {
+    "held": 3748,
+    "movement": -34092
+   },
+   "KP75219554": {
+    "held": 12337,
+    "movement": -15098
+   },
+   "KP75286864": {
+    "held": 0,
+    "movement": -6318
+   },
+   "KP75306511": {
+    "held": 0,
+    "movement": -2000
+   },
+   "KP75368290": {
+    "held": 0,
+    "movement": -5000
+   },
+   "KP75399305": {
+    "held": 0,
+    "movement": -20097
+   },
+   "KP75419726": {
+    "held": 0,
+    "movement": -17223
+   },
+   "KP75422815": {
+    "held": 0,
+    "movement": -766
+   },
+   "KP75491830": {
+    "held": 7328,
+    "movement": 0
+   },
+   "KP75547647": {
+    "held": 0,
+    "movement": -30703
+   },
+   "KP75596046": {
+    "held": 6001,
+    "movement": -35150
+   },
+   "KP75608275": {
+    "held": 0,
+    "movement": -1420
+   },
+   "KP75612953": {
+    "held": 19591,
+    "movement": -29736
+   },
+   "KP75738902": {
+    "held": 0,
+    "movement": -5469
+   },
+   "KP75751808": {
+    "held": 0,
+    "movement": -5506
+   },
+   "KP75820869": {
+    "held": 0,
+    "movement": -8220
+   },
+   "KP75833574": {
+    "held": 27363,
+    "movement": 2233
+   },
+   "KP75890489": {
+    "held": 0,
+    "movement": 1420
+   },
+   "KP75917197": {
+    "held": 0,
+    "movement": -11317
+   },
+   "KP75997131": {
+    "held": 0,
+    "movement": -18448
+   },
+   "KP76103930": {
+    "held": 0,
+    "movement": -11249
+   },
+   "KP76111858": {
+    "held": 0,
+    "movement": 14660
+   },
+   "KP76120417": {
+    "held": 0,
+    "movement": -13561
+   },
+   "KP76207054": {
+    "held": 0,
+    "movement": -17880
+   },
+   "KP76380509": {
+    "held": 0,
+    "movement": -7483
+   },
+   "KP76501254": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP76518153": {
+    "held": 0,
+    "movement": -4319
+   },
+   "KP76529484": {
+    "held": 0,
+    "movement": -2586
+   },
+   "KP76630526": {
+    "held": 9624,
+    "movement": -11605
+   },
+   "KP76743195": {
+    "held": 0,
+    "movement": 15000
+   },
+   "KP76863082": {
+    "held": 0,
+    "movement": -13856
+   },
+   "KP76866203": {
+    "held": 0,
+    "movement": -600
+   },
+   "KP76971596": {
+    "held": 0,
+    "movement": 13797
+   },
+   "KP77108647": {
+    "held": 0,
+    "movement": -44669
+   },
+   "KP77185717": {
+    "held": 31205,
+    "movement": -1160
+   },
+   "KP77214974": {
+    "held": 0,
+    "movement": -25665
+   },
+   "KP77253052": {
+    "held": 0,
+    "movement": -19695
+   },
+   "KP77396978": {
+    "held": 0,
+    "movement": 18341
+   },
+   "KP77447387": {
+    "held": 0,
+    "movement": -15730
+   },
+   "KP77509731": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP77526316": {
+    "held": 0,
+    "movement": -1360
+   },
+   "KP77540524": {
+    "held": 4803,
+    "movement": 12827
+   },
+   "KP77686035": {
+    "held": 0,
+    "movement": -31659
+   },
+   "KP77695286": {
+    "held": 0,
+    "movement": -15061
+   },
+   "KP77748182": {
+    "held": 31108,
+    "movement": -21637
+   },
+   "KP77786859": {
+    "held": 0,
+    "movement": 19660
+   },
+   "KP77839477": {
+    "held": 10542,
+    "movement": -17586
+   },
+   "KP77846796": {
+    "held": 0,
+    "movement": -38793
+   },
+   "KP77903204": {
+    "held": 0,
+    "movement": -20000
+   },
+   "KP77987581": {
+    "held": 6362,
+    "movement": -1177
+   },
+   "KP78060181": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP78165061": {
+    "held": 0,
+    "movement": -13943
+   },
+   "KP78246961": {
+    "held": 0,
+    "movement": -9281
+   },
+   "KP78258975": {
+    "held": 7053,
+    "movement": 0
+   },
+   "KP78343818": {
+    "held": 0,
+    "movement": -12029
+   },
+   "KP78436252": {
+    "held": 0,
+    "movement": -3748
+   },
+   "KP78450413": {
+    "held": 0,
+    "movement": 15819
+   },
+   "KP78485811": {
+    "held": 0,
+    "movement": -671
+   },
+   "KP78542788": {
+    "held": 0,
+    "movement": -4487
+   },
+   "KP78624617": {
+    "held": 0,
+    "movement": -12117
+   },
+   "KP78656921": {
+    "held": 0,
+    "movement": -8547
+   },
+   "KP78664818": {
+    "held": 0,
+    "movement": -51627
+   },
+   "KP78694375": {
+    "held": 0,
+    "movement": -630
+   },
+   "KP78704487": {
+    "held": 0,
+    "movement": -6596
+   },
+   "KP78752605": {
+    "held": 6966,
+    "movement": -22643
+   },
+   "KP78805683": {
+    "held": 0,
+    "movement": 6488
+   },
+   "KP78882304": {
+    "held": 0,
+    "movement": -2140
+   },
+   "KP78892127": {
+    "held": 1703,
+    "movement": -5537
+   },
+   "KP78932905": {
+    "held": 4611,
+    "movement": -24982
+   },
+   "KP79064011": {
+    "held": 0,
+    "movement": -4840
+   },
+   "KP79105339": {
+    "held": 0,
+    "movement": -5564
+   },
+   "KP79145434": {
+    "held": 0,
+    "movement": 12165
+   },
+   "KP79184437": {
+    "held": 0,
+    "movement": -32020
+   },
+   "KP79194311": {
+    "held": 4367,
+    "movement": -38182
+   },
+   "KP79290016": {
+    "held": 0,
+    "movement": 8242
+   },
+   "KP79300090": {
+    "held": 35433,
+    "movement": -29187
+   },
+   "KP79310181": {
+    "held": 0,
+    "movement": -15269
+   },
+   "KP79351967": {
+    "held": 0,
+    "movement": -14568
+   },
+   "KP79356719": {
+    "held": 0,
+    "movement": -13521
+   },
+   "KP79425557": {
+    "held": 0,
+    "movement": -4866
+   },
+   "KP79427083": {
+    "held": 5753,
+    "movement": -18424
+   },
+   "KP79428766": {
+    "held": 0,
+    "movement": 16301
+   },
+   "KP79435865": {
+    "held": 0,
+    "movement": -16717
+   },
+   "KP79511075": {
+    "held": 0,
+    "movement": -8450
+   },
+   "KP79567897": {
+    "held": 6702,
+    "movement": 3688
+   },
+   "KP79625677": {
+    "held": 0,
+    "movement": -9990
+   },
+   "KP79646315": {
+    "held": 0,
+    "movement": -20779
+   },
+   "KP79677785": {
+    "held": 0,
+    "movement": -14178
+   },
+   "KP79763320": {
+    "held": 0,
+    "movement": 9373
+   },
+   "KP79869630": {
+    "held": 0,
+    "movement": -40350
+   },
+   "KP79880551": {
+    "held": 0,
+    "movement": -6136
+   },
+   "KP79949147": {
+    "held": 8228,
+    "movement": -2366
+   },
+   "KP80000633": {
+    "held": 0,
+    "movement": -15995
+   },
+   "KP80011724": {
+    "held": 0,
+    "movement": 421
+   },
+   "KP80034396": {
+    "held": 0,
+    "movement": -17795
+   },
+   "KP80080438": {
+    "held": 0,
+    "movement": -5667
+   },
+   "KP80099830": {
+    "held": 0,
+    "movement": 1320
+   },
+   "KP80118486": {
+    "held": 681,
+    "movement": -10080
+   },
+   "KP80170214": {
+    "held": 0,
+    "movement": -4128
+   },
+   "KP80173215": {
+    "held": 0,
+    "movement": -25154
+   },
+   "KP80204585": {
+    "held": 0,
+    "movement": -9201
+   },
+   "KP80285481": {
+    "held": 10373,
+    "movement": -9599
+   },
+   "KP80311985": {
+    "held": 0,
+    "movement": -24520
+   },
+   "KP80374670": {
+    "held": 12536,
+    "movement": -22026
+   },
+   "KP80375023": {
+    "held": 0,
+    "movement": -8067
+   },
+   "KP80399589": {
+    "held": 0,
+    "movement": 12520
+   },
+   "KP80417514": {
+    "held": 0,
+    "movement": -34527
+   },
+   "KP80419639": {
+    "held": 0,
+    "movement": -24033
+   },
+   "KP80422895": {
+    "held": 0,
+    "movement": -5527
+   },
+   "KP80533462": {
+    "held": 0,
+    "movement": -26017
+   },
+   "KP80626672": {
+    "held": 0,
+    "movement": -18782
+   },
+   "KP80666356": {
+    "held": 0,
+    "movement": -3749
+   },
+   "KP80674387": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP80757357": {
+    "held": 0,
+    "movement": -9761
+   },
+   "KP80826125": {
+    "held": 0,
+    "movement": -15821
+   },
+   "KP80914441": {
+    "held": 0,
+    "movement": -14609
+   },
+   "KP80930238": {
+    "held": 0,
+    "movement": 6523
+   },
+   "KP80947110": {
+    "held": 0,
+    "movement": -5311
+   },
+   "KP80947123": {
+    "held": 0,
+    "movement": -48471
+   },
+   "KP80967751": {
+    "held": 0,
+    "movement": -1200
+   },
+   "KP80994485": {
+    "held": 0,
+    "movement": 9480
+   },
+   "KP81010290": {
+    "held": 0,
+    "movement": -21276
+   },
+   "KP81015502": {
+    "held": 0,
+    "movement": -39374
+   },
+   "KP81055603": {
+    "held": 0,
+    "movement": -23369
+   },
+   "KP81062270": {
+    "held": 0,
+    "movement": -12342
+   },
+   "KP81090991": {
+    "held": 0,
+    "movement": -1099
+   },
+   "KP81120390": {
+    "held": 0,
+    "movement": -6648
+   },
+   "KP81241294": {
+    "held": 0,
+    "movement": -15759
+   },
+   "KP81259635": {
+    "held": 0,
+    "movement": 8045
+   },
+   "KP81275115": {
+    "held": 0,
+    "movement": -34217
+   },
+   "KP81312350": {
+    "held": 5452,
+    "movement": -12886
+   },
+   "KP81313153": {
+    "held": 0,
+    "movement": -10652
+   },
+   "KP81402910": {
+    "held": 11289,
+    "movement": -1016
+   },
+   "KP81403942": {
+    "held": 0,
+    "movement": -5603
+   },
+   "KP81404552": {
+    "held": 12410,
+    "movement": -19623
+   },
+   "KP81475374": {
+    "held": 0,
+    "movement": -25539
+   },
+   "KP81519630": {
+    "held": 0,
+    "movement": -28938
+   },
+   "KP81531908": {
+    "held": 0,
+    "movement": 14041
+   },
+   "KP81577016": {
+    "held": 0,
+    "movement": -13523
+   },
+   "KP81650681": {
+    "held": 0,
+    "movement": -34751
+   },
+   "KP81699694": {
+    "held": 0,
+    "movement": -21916
+   },
+   "KP81719456": {
+    "held": 0,
+    "movement": -42463
+   },
+   "KP81791376": {
+    "held": 0,
+    "movement": -560
+   },
+   "KP81821775": {
+    "held": 0,
+    "movement": 18000
+   },
+   "KP81902734": {
+    "held": 10313,
+    "movement": 3059
+   },
+   "KP81936282": {
+    "held": 12524,
+    "movement": -30813
+   },
+   "KP82000207": {
+    "held": 0,
+    "movement": -23670
+   },
+   "KP82023408": {
+    "held": 0,
+    "movement": -40112
+   },
+   "KP82032622": {
+    "held": 0,
+    "movement": -32247
+   },
+   "KP82063364": {
+    "held": 5832,
+    "movement": 0
+   },
+   "KP82156509": {
+    "held": 0,
+    "movement": -22360
+   },
+   "KP82182035": {
+    "held": 0,
+    "movement": 7179
+   },
+   "KP82204670": {
+    "held": 0,
+    "movement": -20832
+   },
+   "KP82204721": {
+    "held": 0,
+    "movement": -10829
+   },
+   "KP82222640": {
+    "held": 0,
+    "movement": -11190
+   },
+   "KP82261970": {
+    "held": 0,
+    "movement": -17812
+   },
+   "KP82362142": {
+    "held": 0,
+    "movement": -9881
+   },
+   "KP82371992": {
+    "held": 0,
+    "movement": -13303
+   },
+   "KP82527141": {
+    "held": 407,
+    "movement": -32433
+   },
+   "KP82534062": {
+    "held": 0,
+    "movement": -3203
+   },
+   "KP82565265": {
+    "held": 772,
+    "movement": -290
+   },
+   "KP82574969": {
+    "held": 1313,
+    "movement": -2452
+   },
+   "KP82591237": {
+    "held": 0,
+    "movement": -12948
+   },
+   "KP82610526": {
+    "held": 0,
+    "movement": 609
+   },
+   "KP82687412": {
+    "held": 0,
+    "movement": -16484
+   },
+   "KP82707389": {
+    "held": 0,
+    "movement": -7561
+   },
+   "KP82739099": {
+    "held": 0,
+    "movement": -51419
+   },
+   "KP82761049": {
+    "held": 4713,
+    "movement": -20719
+   },
+   "KP82840753": {
+    "held": 0,
+    "movement": -17421
+   },
+   "KP82846321": {
+    "held": 0,
+    "movement": 8750
+   },
+   "KP82874080": {
+    "held": 0,
+    "movement": -1333
+   },
+   "KP82885444": {
+    "held": 0,
+    "movement": -17403
+   },
+   "KP82954656": {
+    "held": 0,
+    "movement": -2712
+   },
+   "KP83011380": {
+    "held": 0,
+    "movement": -10172
+   },
+   "KP83050645": {
+    "held": 0,
+    "movement": 3363
+   },
+   "KP83108321": {
+    "held": 7010,
+    "movement": -4452
+   },
+   "KP83150084": {
+    "held": 826,
+    "movement": 714
+   },
+   "KP83178254": {
+    "held": 0,
+    "movement": -19640
+   },
+   "KP83190547": {
+    "held": 0,
+    "movement": -10464
+   },
+   "KP83199513": {
+    "held": 13533,
+    "movement": -18427
+   },
+   "KP83302764": {
+    "held": 0,
+    "movement": -10341
+   },
+   "KP83317231": {
+    "held": 0,
+    "movement": 9420
+   },
+   "KP83384980": {
+    "held": 0,
+    "movement": 831
+   },
+   "KP83385268": {
+    "held": 0,
+    "movement": -29464
+   },
+   "KP83393512": {
+    "held": 0,
+    "movement": -31015
+   },
+   "KP83400363": {
+    "held": 0,
+    "movement": -4671
+   },
+   "KP83406925": {
+    "held": 0,
+    "movement": 1330
+   },
+   "KP83431639": {
+    "held": 0,
+    "movement": -9859
+   },
+   "KP83439731": {
+    "held": 0,
+    "movement": -35122
+   },
+   "KP83459821": {
+    "held": 15197,
+    "movement": 0
+   },
+   "KP83481671": {
+    "held": 9306,
+    "movement": -12951
+   },
+   "KP83485810": {
+    "held": 0,
+    "movement": 9981
+   },
+   "KP83501045": {
+    "held": 0,
+    "movement": -52562
+   },
+   "KP83517567": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP83564411": {
+    "held": 0,
+    "movement": -18510
+   },
+   "KP83565854": {
+    "held": 0,
+    "movement": -2076
+   },
+   "KP83631745": {
+    "held": 0,
+    "movement": 748
+   },
+   "KP83860658": {
+    "held": 0,
+    "movement": -5290
+   },
+   "KP83895499": {
+    "held": 0,
+    "movement": -52375
+   },
+   "KP83896918": {
+    "held": 7527,
+    "movement": -34805
+   },
+   "KP83982067": {
+    "held": 0,
+    "movement": -12200
+   },
+   "KP84004811": {
+    "held": 4502,
+    "movement": -28712
+   },
+   "KP84014478": {
+    "held": 0,
+    "movement": -1813
+   },
+   "KP84053694": {
+    "held": 0,
+    "movement": -1921
+   },
+   "KP84126856": {
+    "held": 0,
+    "movement": -5925
+   },
+   "KP84145776": {
+    "held": 0,
+    "movement": -33343
+   },
+   "KP84146207": {
+    "held": 0,
+    "movement": 119
+   },
+   "KP84170522": {
+    "held": 0,
+    "movement": -7860
+   },
+   "KP84288651": {
+    "held": 0,
+    "movement": -34019
+   },
+   "KP84333713": {
+    "held": 0,
+    "movement": -12852
+   },
+   "KP84368813": {
+    "held": 0,
+    "movement": 15704
+   },
+   "KP84434461": {
+    "held": 0,
+    "movement": -354
+   },
+   "KP84438138": {
+    "held": 0,
+    "movement": -9618
+   },
+   "KP84451387": {
+    "held": 0,
+    "movement": -26508
+   },
+   "KP84472317": {
+    "held": 0,
+    "movement": -540
+   },
+   "KP84669173": {
+    "held": 0,
+    "movement": -970
+   },
+   "KP84716851": {
+    "held": 8215,
+    "movement": 0
+   },
+   "KP84753196": {
+    "held": 4031,
+    "movement": -92
+   },
+   "KP84766402": {
+    "held": 13041,
+    "movement": -16676
+   },
+   "KP84790101": {
+    "held": 0,
+    "movement": -51987
+   },
+   "KP84904792": {
+    "held": 0,
+    "movement": -10004
+   },
+   "KP84913244": {
+    "held": 8808,
+    "movement": -6516
+   },
+   "KP84919735": {
+    "held": 0,
+    "movement": -57597
+   },
+   "KP84931315": {
+    "held": 0,
+    "movement": -11971
+   },
+   "KP85027645": {
+    "held": 0,
+    "movement": -79853
+   },
+   "KP85080626": {
+    "held": 2976,
+    "movement": -35386
+   },
+   "KP85380647": {
+    "held": 0,
+    "movement": -11460
+   },
+   "KP85424465": {
+    "held": 0,
+    "movement": -6390
+   },
+   "KP85505307": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP85525993": {
+    "held": 0,
+    "movement": 10615
+   },
+   "KP85628292": {
+    "held": 0,
+    "movement": -19213
+   },
+   "KP85670097": {
+    "held": 0,
+    "movement": -7493
+   },
+   "KP85692264": {
+    "held": 0,
+    "movement": -64953
+   },
+   "KP85710682": {
+    "held": 0,
+    "movement": -11664
+   },
+   "KP85758820": {
+    "held": 4473,
+    "movement": -5531
+   },
+   "KP85790685": {
+    "held": 0,
+    "movement": -25704
+   },
+   "KP85883568": {
+    "held": 0,
+    "movement": -12109
+   },
+   "KP85947785": {
+    "held": 0,
+    "movement": 153
+   },
+   "KP85981814": {
+    "held": 0,
+    "movement": -2920
+   },
+   "KP86039419": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP86049637": {
+    "held": 0,
+    "movement": 39653
+   },
+   "KP86226178": {
+    "held": 0,
+    "movement": -1889
+   },
+   "KP86309519": {
+    "held": 0,
+    "movement": -3483
+   },
+   "KP86416545": {
+    "held": 0,
+    "movement": -1407
+   },
+   "KP86556429": {
+    "held": 0,
+    "movement": -26312
+   },
+   "KP86567555": {
+    "held": 1212,
+    "movement": -24688
+   },
+   "KP86683623": {
+    "held": 0,
+    "movement": -14826
+   },
+   "KP86694676": {
+    "held": 0,
+    "movement": -5812
+   },
+   "KP86738725": {
+    "held": 0,
+    "movement": -5766
+   },
+   "KP86758719": {
+    "held": 0,
+    "movement": -40991
+   },
+   "KP86823820": {
+    "held": 0,
+    "movement": -34943
+   },
+   "KP86833817": {
+    "held": 0,
+    "movement": -8636
+   },
+   "KP86842762": {
+    "held": 0,
+    "movement": -51392
+   },
+   "KP86948136": {
+    "held": 0,
+    "movement": -7944
+   },
+   "KP86965945": {
+    "held": 10970,
+    "movement": -3516
+   },
+   "KP87089757": {
+    "held": 0,
+    "movement": -14433
+   },
+   "KP87158798": {
+    "held": 0,
+    "movement": -49953
+   },
+   "KP87215733": {
+    "held": 0,
+    "movement": -6355
+   },
+   "KP87221393": {
+    "held": 0,
+    "movement": -2655
+   },
+   "KP87289979": {
+    "held": 0,
+    "movement": -19937
+   },
+   "KP87332744": {
+    "held": 0,
+    "movement": -20015
+   },
+   "KP87453278": {
+    "held": 0,
+    "movement": -3436
+   },
+   "KP87454060": {
+    "held": 0,
+    "movement": -980
+   },
+   "KP87464449": {
+    "held": 11836,
+    "movement": -36803
+   },
+   "KP87486588": {
+    "held": 0,
+    "movement": -17714
+   },
+   "KP87525090": {
+    "held": 13565,
+    "movement": -33386
+   },
+   "KP87570221": {
+    "held": 0,
+    "movement": -20264
+   },
+   "KP87647528": {
+    "held": 0,
+    "movement": -16452
+   },
+   "KP87688679": {
+    "held": 0,
+    "movement": -6681
+   },
+   "KP87736512": {
+    "held": 0,
+    "movement": -17224
+   },
+   "KP87747278": {
+    "held": 0,
+    "movement": -7944
+   },
+   "KP87929680": {
+    "held": 13250,
+    "movement": -24787
+   },
+   "KP87996395": {
+    "held": 0,
+    "movement": -1609
+   },
+   "KP88025051": {
+    "held": 0,
+    "movement": 11263
+   },
+   "KP88047000": {
+    "held": 0,
+    "movement": -9158
+   },
+   "KP88062486": {
+    "held": 0,
+    "movement": -2935
+   },
+   "KP88086675": {
+    "held": 11983,
+    "movement": -180
+   },
+   "KP88160156": {
+    "held": 0,
+    "movement": -27732
+   },
+   "KP88189566": {
+    "held": 0,
+    "movement": 13370
+   },
+   "KP88269600": {
+    "held": 0,
+    "movement": -21666
+   },
+   "KP88341894": {
+    "held": 6524,
+    "movement": 5000
+   },
+   "KP88354745": {
+    "held": 1535,
+    "movement": -12144
+   },
+   "KP88424183": {
+    "held": 0,
+    "movement": -21120
+   },
+   "KP88451984": {
+    "held": 0,
+    "movement": -9720
+   },
+   "KP88478192": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP88622398": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP88707762": {
+    "held": 0,
+    "movement": -55943
+   },
+   "KP88767364": {
+    "held": 0,
+    "movement": -1200
+   },
+   "KP88780027": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP88793291": {
+    "held": 0,
+    "movement": -12482
+   },
+   "KP88799282": {
+    "held": 0,
+    "movement": -34716
+   },
+   "KP88834420": {
+    "held": 0,
+    "movement": -6649
+   },
+   "KP88841158": {
+    "held": 0,
+    "movement": -7827
+   },
+   "KP88931831": {
+    "held": 0,
+    "movement": 4416
+   },
+   "KP88975823": {
+    "held": 0,
+    "movement": 19420
+   },
+   "KP88989394": {
+    "held": 0,
+    "movement": -2670
+   },
+   "KP89056054": {
+    "held": 0,
+    "movement": -20750
+   },
+   "KP89072182": {
+    "held": 0,
+    "movement": -26702
+   },
+   "KP89083802": {
+    "held": 0,
+    "movement": -16248
+   },
+   "KP89110908": {
+    "held": 13617,
+    "movement": -8821
+   },
+   "KP89158378": {
+    "held": 0,
+    "movement": -8539
+   },
+   "KP89161424": {
+    "held": 0,
+    "movement": -9495
+   },
+   "KP89222873": {
+    "held": 0,
+    "movement": -15292
+   },
+   "KP89323514": {
+    "held": 0,
+    "movement": -680
+   },
+   "KP89325557": {
+    "held": 0,
+    "movement": -20977
+   },
+   "KP89371133": {
+    "held": 0,
+    "movement": -4666
+   },
+   "KP89383615": {
+    "held": 0,
+    "movement": -65051
+   },
+   "KP89430918": {
+    "held": 0,
+    "movement": -3934
+   },
+   "KP89450051": {
+    "held": 12318,
+    "movement": -11549
+   },
+   "KP89456362": {
+    "held": 0,
+    "movement": -3682
+   },
+   "KP89486803": {
+    "held": 13928,
+    "movement": -54673
+   },
+   "KP89491028": {
+    "held": 2558,
+    "movement": -4933
+   },
+   "KP89531677": {
+    "held": 0,
+    "movement": 9480
+   },
+   "KP89532128": {
+    "held": 0,
+    "movement": -14222
+   },
+   "KP89556947": {
+    "held": 0,
+    "movement": -4684
+   },
+   "KP89566726": {
+    "held": 0,
+    "movement": 8240
+   },
+   "KP89597991": {
+    "held": 0,
+    "movement": 13975
+   },
+   "KP89616390": {
+    "held": 0,
+    "movement": -3798
+   },
+   "KP89646825": {
+    "held": 0,
+    "movement": -40871
+   },
+   "KP89648794": {
+    "held": 0,
+    "movement": -17137
+   },
+   "KP89661661": {
+    "held": 21420,
+    "movement": 4250
+   },
+   "KP89665798": {
+    "held": 0,
+    "movement": -2864
+   },
+   "KP89696138": {
+    "held": 0,
+    "movement": -17145
+   },
+   "KP89861833": {
+    "held": 523,
+    "movement": -41627
+   },
+   "KP89903076": {
+    "held": 8428,
+    "movement": -14997
+   },
+   "KP89904073": {
+    "held": 2935,
+    "movement": -5073
+   },
+   "KP89940595": {
+    "held": 0,
+    "movement": 8022
+   },
+   "KP89951134": {
+    "held": 0,
+    "movement": -26272
+   },
+   "KP90026350": {
+    "held": 0,
+    "movement": 3027
+   },
+   "KP90072723": {
+    "held": 0,
+    "movement": -10870
+   },
+   "KP90310144": {
+    "held": 0,
+    "movement": -20135
+   },
+   "KP90336562": {
+    "held": 0,
+    "movement": 2403
+   },
+   "KP90512132": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP90569723": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP90586615": {
+    "held": 0,
+    "movement": 11014
+   },
+   "KP90677953": {
+    "held": 0,
+    "movement": -11699
+   },
+   "KP90689575": {
+    "held": 0,
+    "movement": -20378
+   },
+   "KP90729109": {
+    "held": 0,
+    "movement": -14486
+   },
+   "KP90746757": {
+    "held": 0,
+    "movement": -25019
+   },
+   "KP90768118": {
+    "held": 14778,
+    "movement": 0
+   },
+   "KP90786511": {
+    "held": 0,
+    "movement": 19627
+   },
+   "KP90803365": {
+    "held": 0,
+    "movement": 1089
+   },
+   "KP90858953": {
+    "held": 0,
+    "movement": 1733
+   },
+   "KP90869066": {
+    "held": 1728,
+    "movement": -5809
+   },
+   "KP90898619": {
+    "held": 0,
+    "movement": -4485
+   },
+   "KP90908422": {
+    "held": 7523,
+    "movement": -24568
+   },
+   "KP90956888": {
+    "held": 0,
+    "movement": -1580
+   },
+   "KP91012644": {
+    "held": 0,
+    "movement": -41619
+   },
+   "KP91106756": {
+    "held": 0,
+    "movement": -15756
+   },
+   "KP91149710": {
+    "held": 0,
+    "movement": -12319
+   },
+   "KP91163676": {
+    "held": 7584,
+    "movement": 0
+   },
+   "KP91166270": {
+    "held": 0,
+    "movement": -10145
+   },
+   "KP91173895": {
+    "held": 0,
+    "movement": -6815
+   },
+   "KP91247918": {
+    "held": 0,
+    "movement": -580
+   },
+   "KP91260443": {
+    "held": 32010,
+    "movement": -2810
+   },
+   "KP91293870": {
+    "held": 8089,
+    "movement": -7871
+   },
+   "KP91336386": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP91383582": {
+    "held": 0,
+    "movement": -14549
+   },
+   "KP91606781": {
+    "held": 7213,
+    "movement": -6577
+   },
+   "KP91695524": {
+    "held": 0,
+    "movement": -1420
+   },
+   "KP91700848": {
+    "held": 0,
+    "movement": 26617
+   },
+   "KP91718429": {
+    "held": 0,
+    "movement": -3326
+   },
+   "KP91787725": {
+    "held": 0,
+    "movement": 20000
+   },
+   "KP91788766": {
+    "held": 772,
+    "movement": 10000
+   },
+   "KP91842375": {
+    "held": 0,
+    "movement": -25073
+   },
+   "KP91845811": {
+    "held": 15839,
+    "movement": -27119
+   },
+   "KP91848303": {
+    "held": 0,
+    "movement": -16040
+   },
+   "KP91857088": {
+    "held": 0,
+    "movement": -13892
+   },
+   "KP91867997": {
+    "held": 0,
+    "movement": -25977
+   },
+   "KP91890918": {
+    "held": 18693,
+    "movement": -11452
+   },
+   "KP91972321": {
+    "held": 0,
+    "movement": -4267
+   },
+   "KP91994558": {
+    "held": 0,
+    "movement": 15854
+   },
+   "KP92016946": {
+    "held": 0,
+    "movement": -16934
+   },
+   "KP92028232": {
+    "held": 0,
+    "movement": 8064
+   },
+   "KP92040994": {
+    "held": 0,
+    "movement": -24313
+   },
+   "KP92105306": {
+    "held": 0,
+    "movement": -25325
+   },
+   "KP92149930": {
+    "held": 0,
+    "movement": -3390
+   },
+   "KP92272428": {
+    "held": 0,
+    "movement": -36586
+   },
+   "KP92284174": {
+    "held": 0,
+    "movement": -290
+   },
+   "KP92350281": {
+    "held": 0,
+    "movement": -5608
+   },
+   "KP92353104": {
+    "held": 0,
+    "movement": -9978
+   },
+   "KP92356570": {
+    "held": 0,
+    "movement": -15435
+   },
+   "KP92367864": {
+    "held": 0,
+    "movement": -9118
+   },
+   "KP92390683": {
+    "held": 0,
+    "movement": -8066
+   },
+   "KP92417025": {
+    "held": 0,
+    "movement": -11539
+   },
+   "KP92434796": {
+    "held": 0,
+    "movement": -14202
+   },
+   "KP92451834": {
+    "held": 0,
+    "movement": 8223
+   },
+   "KP92485045": {
+    "held": 15386,
+    "movement": -13486
+   },
+   "KP92611870": {
+    "held": 11629,
+    "movement": -23198
+   },
+   "KP92640564": {
+    "held": 0,
+    "movement": -9703
+   },
+   "KP92654508": {
+    "held": 0,
+    "movement": -8825
+   },
+   "KP92655229": {
+    "held": 0,
+    "movement": -44785
+   },
+   "KP92673032": {
+    "held": 0,
+    "movement": -1946
+   },
+   "KP92727573": {
+    "held": 0,
+    "movement": -6444
+   },
+   "KP92817971": {
+    "held": 0,
+    "movement": -45151
+   },
+   "KP92863359": {
+    "held": 4166,
+    "movement": -20173
+   },
+   "KP92897958": {
+    "held": 15555,
+    "movement": -27700
+   },
+   "KP92926077": {
+    "held": 0,
+    "movement": -10104
+   },
+   "KP93019788": {
+    "held": 0,
+    "movement": -10616
+   },
+   "KP93173488": {
+    "held": 0,
+    "movement": -24133
+   },
+   "KP93204305": {
+    "held": 0,
+    "movement": -27947
+   },
+   "KP93225344": {
+    "held": 0,
+    "movement": -45266
+   },
+   "KP93232050": {
+    "held": 0,
+    "movement": 26617
+   },
+   "KP93296890": {
+    "held": 0,
+    "movement": -5637
+   },
+   "KP93319966": {
+    "held": 0,
+    "movement": -12700
+   },
+   "KP93354178": {
+    "held": 0,
+    "movement": -4922
+   },
+   "KP93400551": {
+    "held": 31422,
+    "movement": -7724
+   },
+   "KP93411867": {
+    "held": 0,
+    "movement": -14329
+   },
+   "KP93479278": {
+    "held": 0,
+    "movement": -59647
+   },
+   "KP93511568": {
+    "held": 0,
+    "movement": 13622
+   },
+   "KP93593334": {
+    "held": 0,
+    "movement": -5993
+   },
+   "KP93600676": {
+    "held": 0,
+    "movement": -27132
+   },
+   "KP93606801": {
+    "held": 0,
+    "movement": 19420
+   },
+   "KP93637183": {
+    "held": 0,
+    "movement": -4029
+   },
+   "KP93666955": {
+    "held": 2095,
+    "movement": 18374
+   },
+   "KP93672513": {
+    "held": 0,
+    "movement": -29285
+   },
+   "KP93716129": {
+    "held": 0,
+    "movement": -13754
+   },
+   "KP93722716": {
+    "held": 12780,
+    "movement": -12845
+   },
+   "KP93734979": {
+    "held": 0,
+    "movement": -5456
+   },
+   "KP93773221": {
+    "held": 0,
+    "movement": -61387
+   },
+   "KP93852517": {
+    "held": 0,
+    "movement": -21492
+   },
+   "KP93852674": {
+    "held": 0,
+    "movement": -1990
+   },
+   "KP93908052": {
+    "held": 0,
+    "movement": -963
+   },
+   "KP93991661": {
+    "held": 0,
+    "movement": -2218
+   },
+   "KP94004347": {
+    "held": 1642,
+    "movement": 0
+   },
+   "KP94020335": {
+    "held": 18571,
+    "movement": -8454
+   },
+   "KP94047165": {
+    "held": 0,
+    "movement": -29971
+   },
+   "KP94091010": {
+    "held": 0,
+    "movement": -6429
+   },
+   "KP94108607": {
+    "held": 0,
+    "movement": 26475
+   },
+   "KP94188661": {
+    "held": 6589,
+    "movement": 0
+   },
+   "KP94289115": {
+    "held": 0,
+    "movement": -18871
+   },
+   "KP94361973": {
+    "held": 0,
+    "movement": -5379
+   },
+   "KP94401023": {
+    "held": 4747,
+    "movement": -2717
+   },
+   "KP94431809": {
+    "held": 0,
+    "movement": -49098
+   },
+   "KP94485475": {
+    "held": 0,
+    "movement": -3688
+   },
+   "KP94488108": {
+    "held": 0,
+    "movement": -14540
+   },
+   "KP94559674": {
+    "held": 0,
+    "movement": 3325
+   },
+   "KP94597521": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP94618313": {
+    "held": 0,
+    "movement": -20709
+   },
+   "KP95022442": {
+    "held": 0,
+    "movement": -2905
+   },
+   "KP95022705": {
+    "held": 0,
+    "movement": -41488
+   },
+   "KP95029409": {
+    "held": 0,
+    "movement": -4353
+   },
+   "KP95124783": {
+    "held": 0,
+    "movement": 5434
+   },
+   "KP95188527": {
+    "held": 0,
+    "movement": 406
+   },
+   "KP95201668": {
+    "held": 0,
+    "movement": -29352
+   },
+   "KP95206370": {
+    "held": 0,
+    "movement": 1977
+   },
+   "KP95245852": {
+    "held": 0,
+    "movement": -6125
+   },
+   "KP95349066": {
+    "held": 11962,
+    "movement": 0
+   },
+   "KP95403319": {
+    "held": 0,
+    "movement": 6660
+   },
+   "KP95423352": {
+    "held": 0,
+    "movement": 2180
+   },
+   "KP95498844": {
+    "held": 0,
+    "movement": 1841
+   },
+   "KP95603998": {
+    "held": 27696,
+    "movement": -16895
+   },
+   "KP95635582": {
+    "held": 0,
+    "movement": 7214
+   },
+   "KP95667613": {
+    "held": 0,
+    "movement": -1452
+   },
+   "KP95688603": {
+    "held": 15796,
+    "movement": -5450
+   },
+   "KP95696989": {
+    "held": 0,
+    "movement": -18529
+   },
+   "KP95698987": {
+    "held": 15425,
+    "movement": -5927
+   },
+   "KP95741580": {
+    "held": 0,
+    "movement": -41916
+   },
+   "KP95753832": {
+    "held": 0,
+    "movement": -14653
+   },
+   "KP95781223": {
+    "held": 0,
+    "movement": -36545
+   },
+   "KP95805093": {
+    "held": 0,
+    "movement": -10000
+   },
+   "KP95836321": {
+    "held": 0,
+    "movement": -6206
+   },
+   "KP95889809": {
+    "held": 4652,
+    "movement": -18535
+   },
+   "KP95937480": {
+    "held": 0,
+    "movement": -43794
+   },
+   "KP95958606": {
+    "held": 7077,
+    "movement": 15000
+   },
+   "KP96064045": {
+    "held": 0,
+    "movement": -5388
+   },
+   "KP96077034": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP96298356": {
+    "held": 6185,
+    "movement": -62982
+   },
+   "KP96316413": {
+    "held": 0,
+    "movement": 12872
+   },
+   "KP96350866": {
+    "held": 0,
+    "movement": -13349
+   },
+   "KP96360355": {
+    "held": 13309,
+    "movement": -8744
+   },
+   "KP96391580": {
+    "held": 0,
+    "movement": -35741
+   },
+   "KP96430796": {
+    "held": 0,
+    "movement": -46642
+   },
+   "KP96446146": {
+    "held": 0,
+    "movement": -25791
+   },
+   "KP96450461": {
+    "held": 0,
+    "movement": -6439
+   },
+   "KP96473637": {
+    "held": 0,
+    "movement": -10174
+   },
+   "KP96531884": {
+    "held": 0,
+    "movement": -13870
+   },
+   "KP96654421": {
+    "held": 0,
+    "movement": -32096
+   },
+   "KP96720540": {
+    "held": 36398,
+    "movement": -630
+   },
+   "KP96737758": {
+    "held": 0,
+    "movement": -9243
+   },
+   "KP96912940": {
+    "held": 0,
+    "movement": -15428
+   },
+   "KP96933186": {
+    "held": 13172,
+    "movement": 0
+   },
+   "KP96976778": {
+    "held": 0,
+    "movement": -2412
+   },
+   "KP96989729": {
+    "held": 0,
+    "movement": 14320
+   },
+   "KP96996948": {
+    "held": 0,
+    "movement": -20000
+   },
+   "KP97038662": {
+    "held": 0,
+    "movement": -6483
+   },
+   "KP97066584": {
+    "held": 0,
+    "movement": -2113
+   },
+   "KP97120570": {
+    "held": 0,
+    "movement": -11341
+   },
+   "KP97132422": {
+    "held": 0,
+    "movement": 9805
+   },
+   "KP97146669": {
+    "held": 0,
+    "movement": -2582
+   },
+   "KP97153789": {
+    "held": 15285,
+    "movement": -15304
+   },
+   "KP97210269": {
+    "held": 0,
+    "movement": -33817
+   },
+   "KP97270532": {
+    "held": 0,
+    "movement": -19262
+   },
+   "KP97291072": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP97463010": {
+    "held": 0,
+    "movement": 8136
+   },
+   "KP97517116": {
+    "held": 0,
+    "movement": 4845
+   },
+   "KP97598983": {
+    "held": 2143,
+    "movement": 0
+   },
+   "KP97691487": {
+    "held": 0,
+    "movement": -13567
+   },
+   "KP97705796": {
+    "held": 0,
+    "movement": -1170
+   },
+   "KP97714650": {
+    "held": 0,
+    "movement": -18795
+   },
+   "KP97725500": {
+    "held": 0,
+    "movement": -18128
+   },
+   "KP97788736": {
+    "held": 0,
+    "movement": 8288
+   },
+   "KP97870841": {
+    "held": 4723,
+    "movement": -16261
+   },
+   "KP97956951": {
+    "held": 0,
+    "movement": -31100
+   },
+   "KP97973326": {
+    "held": 0,
+    "movement": -6368
+   },
+   "KP98037521": {
+    "held": 0,
+    "movement": 700
+   },
+   "KP98039572": {
+    "held": 0,
+    "movement": -21446
+   },
+   "KP98044582": {
+    "held": 4026,
+    "movement": -9252
+   },
+   "KP98090142": {
+    "held": 1749,
+    "movement": -28646
+   },
+   "KP98113430": {
+    "held": 0,
+    "movement": 6924
+   },
+   "KP98172967": {
+    "held": 0,
+    "movement": -12355
+   },
+   "KP98185724": {
+    "held": 14195,
+    "movement": -24767
+   },
+   "KP98225018": {
+    "held": 0,
+    "movement": -11214
+   },
+   "KP98322336": {
+    "held": 0,
+    "movement": -8088
+   },
+   "KP98412047": {
+    "held": 0,
+    "movement": 7118
+   },
+   "KP98454970": {
+    "held": 10448,
+    "movement": -14744
+   },
+   "KP98582194": {
+    "held": 0,
+    "movement": -22056
+   },
+   "KP98692793": {
+    "held": 0,
+    "movement": -3952
+   },
+   "KP98695571": {
+    "held": 24793,
+    "movement": 7955
+   },
+   "KP98735391": {
+    "held": 0,
+    "movement": -18519
+   },
+   "KP98763818": {
+    "held": 9698,
+    "movement": -33471
+   },
+   "KP98771049": {
+    "held": 0,
+    "movement": -52530
+   },
+   "KP98793844": {
+    "held": 0,
+    "movement": 4754
+   },
+   "KP98860169": {
+    "held": 0,
+    "movement": -21094
+   },
+   "KP98862799": {
+    "held": 0,
+    "movement": -33727
+   },
+   "KP98917840": {
+    "held": 0,
+    "movement": -37088
+   },
+   "KP98959424": {
+    "held": 0,
+    "movement": -16409
+   },
+   "KP99040763": {
+    "held": 12322,
+    "movement": -18132
+   },
+   "KP99192174": {
+    "held": 0,
+    "movement": 5000
+   },
+   "KP99213727": {
+    "held": 0,
+    "movement": -14205
+   },
+   "KP99251495": {
+    "held": 0,
+    "movement": 3419
+   },
+   "KP99357981": {
+    "held": 0,
+    "movement": -2897
+   },
+   "KP99359761": {
+    "held": 0,
+    "movement": -4664
+   },
+   "KP99360796": {
+    "held": 0,
+    "movement": -8045
+   },
+   "KP99378885": {
+    "held": 0,
+    "movement": -26466
+   },
+   "KP99483937": {
+    "held": 0,
+    "movement": -24515
+   },
+   "KP99486279": {
+    "held": 0,
+    "movement": -12258
+   },
+   "KP99497332": {
+    "held": 0,
+    "movement": -61426
+   },
+   "KP99528273": {
+    "held": 0,
+    "movement": 10000
+   },
+   "KP99576723": {
+    "held": 0,
+    "movement": -2000
+   },
+   "KP99591475": {
+    "held": 0,
+    "movement": -5117
+   },
+   "KP99596257": {
+    "held": 0,
+    "movement": -6071
+   },
+   "KP99620223": {
+    "held": 0,
+    "movement": -44995
+   },
+   "KP99656954": {
+    "held": 0,
+    "movement": -10811
+   },
+   "KP99668745": {
+    "held": 0,
+    "movement": 2000
+   },
+   "KP99889706": {
+    "held": 0,
+    "movement": -13419
+   },
+   "KP99892019": {
+    "held": 29231,
+    "movement": -41724
+   },
+   "KP99899156": {
+    "held": 21326,
+    "movement": 5605
+   },
+   "KP99919872": {
+    "held": 0,
+    "movement": -35770
+   },
+   "KP99919959": {
+    "held": 0,
+    "movement": -13111
+   },
+   "KP99922911": {
+    "held": 0,
+    "movement": -25316
+   }
+  },
+  "clearings_by_group": {
+   "cash": {
+    "amount": 867000,
+    "count": 109
+   },
+   "fuel": {
+    "amount": 2168560,
+    "count": 369
+   },
+   "online": {
+    "amount": 4134857,
+    "count": 512
+   },
+   "retail": {
+    "amount": 13950514,
+    "count": 2051
+   },
+   "transport": {
+    "amount": 2026453,
+    "count": 1583
+   },
+   "travel": {
+    "amount": 9149850,
+    "count": 379
+   }
+  },
+  "counts": {
+   "atm_fee": 0,
+   "clearing": 5003,
+   "fx_fee": 391,
+   "open_holds": 456,
+   "refund": 76,
+   "topup": 835
+  },
+  "totals": {
+   "atm_fee": 0,
+   "clearing": 32297234,
+   "fx_fee": 63824,
+   "held": 4164893,
+   "net_movement": -23018740,
+   "refund": 720756,
+   "topup": 8621562
+  }
+ }
+}

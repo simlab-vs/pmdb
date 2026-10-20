@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Runs a Python program and records a pmdb trace of every call to its own functions.
+
+Usage: pmdb-record [-o TRACE] [--root DIR]... SCRIPT [ARGS...]
+       pmdb-record [-o TRACE] [--root DIR]... -m MODULE [ARGS...]    (e.g. -m pytest tests/x.py::t)
+
+Every call of a function defined in a Python file under the roots (by default, the current
+directory) is recorded, except for code in installed packages and the standard library, without
+modifying any file. The trace is written when the program exits, even if it raises.
+
+The pmdb Python recorder must be importable, e.g. by adding the directory `Python` of the pmdb
+repository to `PYTHONPATH`, unless this script is in the pmdb repository.
+"""
+
+import argparse
+import os
+import runpy
+import sys
+import traceback
+
+try:
+  import recorder
+except ImportError:
+  # Look for the recorder in the pmdb repository containing this script, if any.
+  REPOSITORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", "..")
+  sys.path.append(os.path.join(REPOSITORY, "Python"))
+  try:
+    import recorder
+  except ImportError:
+    sys.exit("pmdb-record: cannot import the pmdb recorder; add the directory containing the "
+             "package 'recorder' (the directory 'Python' of the pmdb repository) to PYTHONPATH")
+
+if not hasattr(recorder, "Monitor"):
+  sys.exit(f"pmdb-record: the recorder imported from {os.path.dirname(recorder.__file__)} is an "
+           "older version; put the one next to this script first on PYTHONPATH")
+
+
+def main():
+  # The options of this script come first; the script or module ends them, so that the rest of
+  # the command line, options included, goes to the program.
+  args = argparse.Namespace(output="trace.pmdb", root=[], module=None, arguments=[])
+  argv = sys.argv[1:]
+  while argv:
+    a = argv.pop(0)
+    if a in ("-h", "--help"):
+      print(__doc__.strip())
+      sys.exit(0)
+    elif a in ("-o", "--output", "--root", "-m") and argv:
+      v = argv.pop(0)
+      if a == "-m":
+        args.module, args.arguments = v, argv
+        break
+      elif a == "--root":
+        args.root.append(v)
+      else:
+        args.output = v
+    elif a.startswith("-"):
+      sys.exit(f"pmdb-record: unknown option {a}\n\n{__doc__.strip()}")
+    else:
+      args.arguments = [a] + argv
+      break
+  if args.module is None and not args.arguments:
+    sys.exit(f"pmdb-record: a script or -m MODULE is required\n\n{__doc__.strip()}")
+
+  output = os.path.abspath(args.output)
+  m = recorder.Monitor(args.root or None, exclude=[os.path.dirname(os.path.realpath(__file__))])
+  if args.module is not None:
+    sys.argv = [args.module] + args.arguments
+    sys.path.insert(0, os.getcwd())
+    run = lambda: runpy.run_module(args.module, run_name="__main__", alter_sys=True)
+  else:
+    script = os.path.abspath(args.arguments[0])
+    sys.argv = args.arguments
+    sys.path[0] = os.path.dirname(script)
+    run = lambda: runpy.run_path(script, run_name="__main__")
+
+  status = 0
+  m.start()
+  try:
+    run()
+  except SystemExit as e:
+    status = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+  except BaseException:
+    traceback.print_exc()
+    status = 1
+  finally:
+    m.stop()
+    sys.stdout.flush()
+    m.write(output)
+    calls = sum(1 for o in m.observations[1:] if isinstance(o, recorder.recorder.Call))
+    print(f"pmdb-record: recorded {calls} calls to {args.output}", file=sys.stderr)
+  sys.exit(status)
+
+
+if __name__ == "__main__":
+  main()

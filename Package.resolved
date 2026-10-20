@@ -1,5 +1,5 @@
 {
-  "originHash" : "8f4c6bcf7bf5d7b60bbd8975da759ef08090cfcbfabedd710a3032442cc14c0c",
+  "originHash" : "cad23d369ee244f12021fac8f6f7350e3946419653ca91ee2c777b456c4303f3",
   "pins" : [
     {
       "identity" : "archivist",
@@ -8,6 +8,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "086c16e150ae2ea11bbdbe4546c3a6de6bd22a31"
+      }
+    },
+    {
+      "identity" : "bigint",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/attaswift/BigInt.git",
+      "state" : {
+        "revision" : "63feef7820abb1a8fb08587d7da56bb0b7db8751",
+        "version" : "6.0.1"
       }
     },
     {
@@ -38,12 +47,29 @@
       }
     },
     {
+      "identity" : "swift-subprocess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-subprocess.git",
+      "state" : {
+        "revision" : "b3937ab85dd32f6e9435914599c1519074769c1a"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax",
       "state" : {
         "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
         "version" : "601.0.1"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system",
+      "state" : {
+        "revision" : "869129b7bf4ecc57b97d0193ad29690ca2134750",
+        "version" : "1.8.1"
       }
     }
   ],

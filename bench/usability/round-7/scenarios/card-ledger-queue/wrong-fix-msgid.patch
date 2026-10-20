@@ -1,0 +1,15 @@
+--- a/ledger/dedup.py
++++ b/ledger/dedup.py
+@@ -54,12 +54,5 @@
+         stats[REDELIVERY] += 1
+         return REDELIVERY
+     _message_ids.add(message.message_id)
+-    key = fingerprint(message)
+-    first = _fingerprints.get(key)
+-    if first is not None:
+-        stats[RESEND] += 1
+-        stats[f"{RESEND}.{message.event_type}"] += 1
+-        return RESEND
+-    _fingerprints[key] = message.event_id
+     stats[NEW] += 1
+     return NEW

@@ -1,0 +1,18 @@
+Order allocation 2026-09-29
+Generated: 2026-09-29T00:00:04Z
+
+warehouse       orders   lines    units
+Leeds              380     592     1993
+Rotterdam         1347    2038     7402
+Leipzig           1260    2098     7200
+Madrid             226     305     1159
+
+channel          lines  ordered  allocated  backordered
+web               2545     4262       4074          188
+marketplace       1416     2623       2288          335
+b2b               1162    13864      11189         2675
+
+Backordered lines: 377
+  no warehouse stocks it: 67
+  not enough stock: 243
+  partly in stock: 67

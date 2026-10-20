@@ -1,0 +1,20 @@
+2026-09-29 02:00:03,412 INFO alloc: order allocation 2.7.3 for 2026-09-29
+2026-09-29 02:00:03,417 INFO alloc.catalog: catalog: 924 SKUs, 24 kits
+2026-09-29 02:00:03,436 INFO alloc.inventory: inventory: 2512 SKU locations from https://inventory.prod.internal:8443/v2 (2474 active, 12 blocked, 26 counting)
+2026-09-29 02:00:03,437 INFO alloc.inventory: inventory: LEE 15938 units available
+2026-09-29 02:00:03,437 INFO alloc.inventory: inventory: RTM 20665 units available
+2026-09-29 02:00:03,437 INFO alloc.inventory: inventory: LEJ 21575 units available
+2026-09-29 02:00:03,437 INFO alloc.inventory: inventory: MAD 10182 units available
+2026-09-29 02:00:03,477 INFO alloc.orders: read 2700 orders, 5123 open lines from /srv/oms/exports/open-lines-2026-09-29.jsonl
+2026-09-29 02:00:03,477 INFO alloc.orders: left for the next run: 35 held orders, 56 lines not open
+2026-09-29 02:00:03,478 INFO alloc.orders: lines by channel: web 2545, marketplace 1416, b2b 1162
+2026-09-29 02:00:03,514 INFO alloc.allocator: allocated 5123 lines: 4746 in full, 67 in part, 310 backordered
+2026-09-29 02:00:03,519 INFO alloc.checks: checks passed: no stock promised twice, every unit allocated or backordered
+2026-09-29 02:00:03,549 INFO alloc.picklists: wrote 4 pick lists to /srv/allocation/out
+2026-09-29 02:00:03,560 INFO alloc.summary: wrote /srv/allocation/reports/allocation-2026-09-29.txt and /srv/allocation/reports/allocation-2026-09-29.json
+2026-09-29 02:00:03,560 INFO alloc: Leeds: 380 orders, 592 lines, 1993 units
+2026-09-29 02:00:03,560 INFO alloc: Rotterdam: 1347 orders, 2038 lines, 7402 units
+2026-09-29 02:00:03,560 INFO alloc: Leipzig: 1260 orders, 2098 lines, 7200 units
+2026-09-29 02:00:03,560 INFO alloc: Madrid: 226 orders, 305 lines, 1159 units
+2026-09-29 02:00:03,560 INFO alloc: reserved this run: LEE 1993, RTM 7402, LEJ 7200, MAD 1159
+2026-09-29 02:00:03,562 INFO alloc: done

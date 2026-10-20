@@ -1,0 +1,14 @@
+--- a/routeplan/apply.py
++++ b/routeplan/apply.py
+@@ -20,9 +20,9 @@
+     changed = []
+     if src:
+         changed.append(plan.refresh(mv.r1))
+-    else:
+-        plan.release(mv.r1)
+     changed.append(plan.refresh(mv.r2))
++    if not src:
++        plan.release(mv.r1)
+     return changed
+ 
+ 

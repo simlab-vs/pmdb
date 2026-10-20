@@ -1,0 +1,12 @@
+/work/report.pmdb is a binary trace of that run: every call of the program's own functions, in the order the calls started, with its arguments as they were when it started and the value it returned or the exception it raised. Its format:
+
+- u = unsigned LEB128 integer; s = string: u byte length, then UTF-8 bytes.
+- File: b"pmdb", major byte (1), minor byte (1), 16-byte id; then the value table: u count, then that many values V; then u N, then N observations O; then N u: the parent of each observation (the index of the call it happened in; observation 0 is the root and is its own parent).
+- V (value): a tag byte, then
+  0x00 None | 0x01 int: signed LEB128 | 0x02 float: 8-byte little-endian double | 0x03 str: s | 0x04 list: u count, V... | 0x05 dict: u count, (s key, V)... | 0x06 bool: 1 byte | 0x07 reference: u index into the value table | 0xfe function: s qualified name | 0xff object: u length, pickle bytes.
+  Values other than None, bools, numbers and strings shorter than 8 characters are stored once in the value table and referred to with 0x07; a table entry refers only to earlier entries. Tuples are lists; named tuples are dicts; objects without a better form are pickled (0xff) or recorded as their repr (0x03).
+- O (observation): a tag byte, s call-site file, u call-site line, then
+  0x04 call: s function (qualified name, e.g. Ledger.post), s file and u line of its definition, u count, (s parameter name, V)... for positional arguments (`self` first; items of *args are named "*args"), u count, (s name, V)... for keyword arguments.
+  0x03 outcome: u index of its call, 1 byte (0 returned, 1 raised), V (the returned value, or a dict with "type" and "message" of the exception). Its parent is its call's parent. An exception is recorded on every call it passes through.
+  0x01 snap: 1 byte (1 if a label follows), [s label], V.
+  0x02 call: s function, u count, V..., u count, (s name, V)... (only observation 0, the root, uses it).

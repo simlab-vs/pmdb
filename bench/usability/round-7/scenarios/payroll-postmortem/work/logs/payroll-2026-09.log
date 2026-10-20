@@ -1,0 +1,16 @@
+2026-09-30 22:30:02,417 INFO payroll: payroll 5.2.0 for 2026-09
+2026-09-30 22:30:02,432 INFO payroll.hrexport: read 650 persons, 903 assignment rows, 223 absences and 3827 timesheet entries from /srv/payroll/in/hr-2026-09.json (exported 2026-09-30T18:00:04Z)
+2026-09-30 22:30:02,484 INFO payroll: 619 payslips (393 salaried, 226 hourly, 31 for part of the month); 31 persons not employed in 2026-09, 0 rejected
+2026-09-30 22:30:02,484 INFO payroll: timesheets: 30832 h worked, 8863 h at night, 2523 h overtime; 253 paid absence days; 44 unpaid leave days
+2026-09-30 22:30:02,484 INFO payroll.checks: checks passed: 619 payslips, gross 2,960,714.03, net 2,015,999.07, employer contributions 543,585.25
+2026-09-30 22:30:02,484 INFO payroll.report: wrote /srv/payroll/app/reports/payroll-register-2026-09.txt and /srv/payroll/app/reports/payroll-register-2026-09.json
+2026-09-30 22:30:02,484 INFO payroll: CC-110 gross 367,090.26 net 244,424.07
+2026-09-30 22:30:02,484 INFO payroll: CC-120 gross 436,356.53 net 289,373.53
+2026-09-30 22:30:02,484 INFO payroll: CC-210 gross 501,061.97 net 348,518.86
+2026-09-30 22:30:02,484 INFO payroll: CC-220 gross 448,248.91 net 307,902.18
+2026-09-30 22:30:02,484 INFO payroll: CC-310 gross 486,088.27 net 342,080.21
+2026-09-30 22:30:02,484 INFO payroll: CC-410 gross 377,388.13 net 254,936.12
+2026-09-30 22:30:02,484 INFO payroll: CC-510 gross 344,479.96 net 228,764.10
+2026-09-30 22:30:02,486 INFO payroll.bankfile: wrote 619 credit transfers, 2,015,999.07 EUR, to /srv/payroll/out/credit-transfers-2026-09.csv
+2026-09-30 22:30:02,486 INFO payroll: total gross 2,960,714.03 EUR, net 2,015,999.07 EUR
+2026-09-30 22:30:02,486 INFO payroll: done
